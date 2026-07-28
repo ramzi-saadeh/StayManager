@@ -1,0 +1,56 @@
+[
+    {
+        "id": 1,
+        "title": "New Community Center Opening Soon",
+        "summary": "Our state-of-the-art community center will open its doors next month, featuring modern facilities for all residents.",
+        "content": "We are excited to announce that our new community center will be opening on January 15th. The facility includes a gymnasium, library, meeting rooms, and recreational spaces for all age groups. This project has been in development for two years and represents our commitment to enhancing community life.",
+        "imageUrl": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop",
+        "publishedDate": "2025-12-10",
+        "category": "announcement"
+    },
+    {
+        "id": 2,
+        "title": "Annual Village Festival - Save the Date",
+        "summary": "Join us for our annual village festival celebrating local culture, food, and traditions on March 20th.",
+        "content": "Mark your calendars for our biggest event of the year! The annual village festival will feature local artisans, food vendors, live music, and activities for children. This year's theme is \"Celebrating Our Heritage\" and we'll have special performances showcasing our village's rich history.",
+        "imageUrl": "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&h=600&fit=crop",
+        "publishedDate": "2025-12-08",
+        "category": "event"
+    },
+    {
+        "id": 3,
+        "title": "Road Maintenance Schedule Update",
+        "summary": "Important updates regarding the ongoing road maintenance project on Main Street and surrounding areas.",
+        "content": "The road maintenance project on Main Street is progressing on schedule. We expect completion by the end of January. During this time, please use alternative routes and follow posted detour signs. We appreciate your patience as we work to improve our infrastructure.",
+        "imageUrl": "https://images.unsplash.com/photo-1581094271901-8022df4466f9?w=800&h=600&fit=crop",
+        "publishedDate": "2025-12-05",
+        "category": "update"
+    },
+    {
+        "id": 4,
+        "title": "New Recycling Program Launched",
+        "summary": "Enhanced recycling services now available to all residents as part of our sustainability initiative.",
+        "content": "We're proud to launch our enhanced recycling program! New recycling bins have been distributed to all households, and we've expanded the types of materials we accept. Collection days remain the same, but we now accept plastics #1-7, all paper products, glass, and metals. Visit our website for detailed guidelines.",
+        "imageUrl": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=800&h=600&fit=crop",
+        "publishedDate": "2025-12-01",
+        "category": "announcement"
+    },
+    {
+        "id": 5,
+        "title": "Winter Safety Tips for Residents",
+        "summary": "Essential safety information to help you prepare for the winter season and stay safe during cold weather.",
+        "content": "As winter approaches, we want to ensure all residents are prepared. Remember to: insulate pipes to prevent freezing, keep emergency supplies on hand, clear snow from walkways promptly, and check on elderly neighbors. Our emergency hotline is available 24/7 for urgent situations.",
+        "imageUrl": "https://images.unsplash.com/photo-1483664852095-d6cc6870702d?w=800&h=600&fit=crop",
+        "publishedDate": "2025-11-28",
+        "category": "general"
+    },
+    {
+        "id": 6,
+        "title": "Youth Sports Program Registration Open",
+        "summary": "Sign up your children for our winter youth sports programs including basketball, swimming, and indoor soccer.",
+        "content": "Registration is now open for our winter youth sports programs! We offer programs for ages 5-17 in various sports. All programs are led by certified coaches and focus on skill development, teamwork, and fun. Early bird registration discount available until December 20th. Limited spots available!",
+        "imageUrl": "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=800&h=600&fit=crop",
+        "publishedDate": "2025-11-25",
+        "category": "event"
+    }
+]

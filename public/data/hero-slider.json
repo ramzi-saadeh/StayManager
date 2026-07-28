@@ -1,0 +1,24 @@
+{
+    "heroSlides": [
+        "images/hero-bg-new.png",
+        "images/slide-1.jpeg",
+        "images/slide-2.jpeg",
+        "images/slide-3.jpeg"
+    ],
+    "sliderThumbnails": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHVAweoz7UyK9MNG2WAgwsc1vYd_N1_C6iidwHMan9XrNoA1e3U5w08Jg0i8E_4GGXif3HTSMIfUfSlzpuvGF8uSSq54SSiaKEu1fAX3EcyHnyB1A4Q7bDIywX37JSN7MNdXYRqIiR_vxxoKtuo=s661-k",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHVAweq7T99x832Ujswz9VGUo8sUgonfSZ4lvjB7obESk4UXzy_63jzWRme84jsa-cnK_g4sW_-qMPtrrCFxpknbGfJyr424qwnYFlMGpXY9EhazsEa1YEZhX4ctbcs-7pcqRRI8reexdbltmIK-=s800",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHVAwerxKwo_kwWMJN2-IU4ljqUmLh4Llg_inoFCkQYNgrft_AQIv-f9H13HlhfNsrt9qTVY_bofMP4ntCObpxEZaiOubh5vaXRBc4rAMBQyB9RjPav3MW4tbeLVHoI26cj6WldwhHfM=s800",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHVAweouRn6X8o1nVU3mOY93BNC93XFhFnARonc9tSQIi_LECV58DdaatEcHAjmXIdBjrOUz3hnaX9mUI3xFADwx2ZtIZqZVPU2IkKxrD2QZhePTcpVRgdYC5D13lnrA8EII50aSN9RX=s800",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHVAwepV8xE01-5iU0T5NXHs9VSopyldkzKsC6FWpZXx2XqG-u9sEoI4oiuOPHvGnuWUkVQ2J0F_zwpbDoxFnzH7yLqjeKDZRjpxYo3oOcCd_91uYwSkdnzgCoHFHk47gWQzbqmQgRM3=s800",
+        "https://bamleb.s3.eu-central-1.amazonaws.com/e1547af62c6e7861-20170427_113810.jpeg"
+    ],
+    "sliderFullImages": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHVAweoz7UyK9MNG2WAgwsc1vYd_N1_C6iidwHMan9XrNoA1e3U5w08Jg0i8E_4GGXif3HTSMIfUfSlzpuvGF8uSSq54SSiaKEu1fAX3EcyHnyB1A4Q7bDIywX37JSN7MNdXYRqIiR_vxxoKtuo=s0",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHVAweq7T99x832Ujswz9VGUo8sUgonfSZ4lvjB7obESk4UXzy_63jzWRme84jsa-cnK_g4sW_-qMPtrrCFxpknbGfJyr424qwnYFlMGpXY9EhazsEa1YEZhX4ctbcs-7pcqRRI8reexdbltmIK-=s0",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHVAwerxKwo_kwWMJN2-IU4ljqUmLh4Llg_inoFCkQYNgrft_AQIv-f9H13HlhfNsrt9qTVY_bofMP4ntCObpxEZaiOubh5vaXRBc4rAMBQyB9RjPav3MW4tbeLVHoI26cj6WldwhHfM=s0",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHVAweouRn6X8o1nVU3mOY93BNC93XFhFnARonc9tSQIi_LECV58DdaatEcHAjmXIdBjrOUz3hnaX9mUI3xFADwx2ZtIZqZVPU2IkKxrD2QZhePTcpVRgdYC5D13lnrA8EII50aSN9RX=s0",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHVAwepV8xE01-5iU0T5NXHs9VSopyldkzKsC6FWpZXx2XqG-u9sEoI4oiuOPHvGnuWUkVQ2J0F_zwpbDoxFnzH7yLqjeKDZRjpxYo3oOcCd_91uYwSkdnzgCoHFHk47gWQzbqmQgRM3=s0",
+        "https://bamleb.s3.eu-central-1.amazonaws.com/e1547af62c6e7861-20170427_113810.jpeg"
+    ]
+}

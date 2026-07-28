@@ -1,0 +1,235 @@
+[
+    {
+        "id": 1,
+        "name": "Mountain View Guest House",
+        "description": "A cozy guest house nestled in the hills with breathtaking mountain views. Perfect for a peaceful retreat with modern amenities and traditional hospitality.",
+        "category": "guest-house",
+        "imageUrl": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop",
+        "address": "45 Hillside Road, Village Center",
+        "phone": "+1 (555) 234-5678",
+        "email": "info@mountainviewguesthouse.com",
+        "website": "https://mountainviewguesthouse.com",
+        "socialMedia": {
+            "facebook": "https://facebook.com/mountainviewguesthouse",
+            "instagram": "https://instagram.com/mountainviewguesthouse",
+            "twitter": "https://twitter.com/mountainviewgh"
+        },
+        "rating": 4.8,
+        "features": [
+            "Free WiFi",
+            "Mountain Views",
+            "Breakfast Included",
+            "Parking",
+            "Pet Friendly"
+        ]
+    },
+    {
+        "id": 2,
+        "name": "Heritage Manor B&B",
+        "description": "Experience old-world charm in this beautifully restored historic manor. Each room is uniquely decorated with antique furnishings and modern comforts.",
+        "category": "guest-house",
+        "imageUrl": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&h=600&fit=crop",
+        "address": "12 Heritage Lane, Old Town",
+        "phone": "+1 (555) 345-6789",
+        "email": "stay@heritagemanor.com",
+        "website": "https://heritagemanor.com",
+        "socialMedia": {
+            "facebook": "https://facebook.com/heritagemanorbb",
+            "instagram": "https://instagram.com/heritagemanor"
+        },
+        "rating": 4.9,
+        "features": [
+            "Historic Building",
+            "Garden",
+            "Gourmet Breakfast",
+            "Library",
+            "Fireplace"
+        ]
+    },
+    {
+        "id": 3,
+        "name": "Village Clock Tower",
+        "description": "Built in 1875, this iconic clock tower stands as a testament to our village's rich history. Climb to the top for panoramic views of the surrounding countryside.",
+        "category": "landmark",
+        "imageUrl": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&h=600&fit=crop",
+        "address": "Town Square, Village Center",
+        "phone": "+1 (555) 123-4567",
+        "socialMedia": {
+            "facebook": "https://facebook.com/villageclocktower",
+            "instagram": "https://instagram.com/villageclocktower"
+        },
+        "rating": 4.7,
+        "features": [
+            "Historic Site",
+            "Guided Tours",
+            "Observation Deck",
+            "Museum",
+            "Gift Shop"
+        ]
+    },
+    {
+        "id": 4,
+        "name": "Old Stone Church",
+        "description": "A magnificent 18th-century stone church featuring stunning stained glass windows and remarkable architecture. Open for tours and special events.",
+        "category": "landmark",
+        "imageUrl": "https://images.unsplash.com/photo-1548625149-fc4a29cf7092?w=800&h=600&fit=crop",
+        "address": "8 Church Street, Village Center",
+        "phone": "+1 (555) 234-5670",
+        "email": "info@oldstonechurch.org",
+        "website": "https://oldstonechurch.org",
+        "socialMedia": {
+            "facebook": "https://facebook.com/oldstonechurch",
+            "instagram": "https://instagram.com/oldstonechurch",
+            "twitter": "https://twitter.com/oldstonechurch"
+        },
+        "rating": 4.9,
+        "features": [
+            "Historic Architecture",
+            "Stained Glass",
+            "Guided Tours",
+            "Events Venue",
+            "Photography Allowed"
+        ]
+    },
+    {
+        "id": 5,
+        "name": "Riverside Nature Park",
+        "description": "A beautiful 50-acre park along the river featuring walking trails, picnic areas, and diverse wildlife. Perfect for nature lovers and families.",
+        "category": "nature",
+        "imageUrl": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop",
+        "address": "River Road, East Village",
+        "phone": "+1 (555) 345-6780",
+        "email": "info@riversidenaturepark.com",
+        "website": "https://riversidenaturepark.com",
+        "socialMedia": {
+            "facebook": "https://facebook.com/riversidenaturepark",
+            "instagram": "https://instagram.com/riversidenaturepark"
+        },
+        "rating": 4.6,
+        "features": [
+            "Hiking Trails",
+            "Picnic Areas",
+            "Wildlife Viewing",
+            "Fishing",
+            "Playground"
+        ]
+    },
+    {
+        "id": 6,
+        "name": "Sunset Botanical Gardens",
+        "description": "Explore over 100 varieties of plants and flowers in these meticulously maintained gardens. Features seasonal displays and a butterfly conservatory.",
+        "category": "nature",
+        "imageUrl": "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&h=600&fit=crop",
+        "address": "25 Garden Way, South Village",
+        "phone": "+1 (555) 456-7890",
+        "email": "visit@sunsetgardens.com",
+        "website": "https://sunsetgardens.com",
+        "socialMedia": {
+            "facebook": "https://facebook.com/sunsetbotanicalgardens",
+            "instagram": "https://instagram.com/sunsetgardens",
+            "twitter": "https://twitter.com/sunsetgardens"
+        },
+        "rating": 4.8,
+        "features": [
+            "Botanical Gardens",
+            "Butterfly House",
+            "Seasonal Events",
+            "Photography",
+            "Gift Shop"
+        ]
+    },
+    {
+        "id": 7,
+        "name": "The Harvest Table",
+        "description": "Farm-to-table dining featuring locally sourced ingredients and traditional recipes. Enjoy authentic village cuisine in a warm, rustic atmosphere.",
+        "category": "restaurant",
+        "imageUrl": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=600&fit=crop",
+        "address": "18 Main Street, Village Center",
+        "phone": "+1 (555) 567-8901",
+        "email": "reservations@harvesttable.com",
+        "website": "https://harvesttable.com",
+        "socialMedia": {
+            "facebook": "https://facebook.com/theharvesttable",
+            "instagram": "https://instagram.com/harvesttable",
+            "twitter": "https://twitter.com/harvesttable"
+        },
+        "rating": 4.7,
+        "features": [
+            "Farm-to-Table",
+            "Local Cuisine",
+            "Outdoor Seating",
+            "Wine Selection",
+            "Reservations"
+        ]
+    },
+    {
+        "id": 8,
+        "name": "Lakeside Café & Bistro",
+        "description": "Casual dining with spectacular lake views. Serving breakfast, lunch, and dinner with a focus on fresh, seasonal ingredients and homemade pastries.",
+        "category": "restaurant",
+        "imageUrl": "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800&h=600&fit=crop",
+        "address": "33 Lakeshore Drive, West Village",
+        "phone": "+1 (555) 678-9012",
+        "email": "info@lakesidecafe.com",
+        "website": "https://lakesidecafe.com",
+        "socialMedia": {
+            "facebook": "https://facebook.com/lakesidecafebistro",
+            "instagram": "https://instagram.com/lakesidecafe"
+        },
+        "rating": 4.5,
+        "features": [
+            "Lake Views",
+            "Outdoor Patio",
+            "Homemade Pastries",
+            "Coffee Bar",
+            "Family Friendly"
+        ]
+    },
+    {
+        "id": 9,
+        "name": "Countryside Inn",
+        "description": "A charming countryside inn offering comfortable rooms and exceptional service. Ideal for weekend getaways and extended stays in a tranquil setting.",
+        "category": "guest-house",
+        "imageUrl": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop",
+        "address": "67 Country Lane, North Village",
+        "phone": "+1 (555) 789-0123",
+        "email": "bookings@countrysideinn.com",
+        "website": "https://countrysideinn.com",
+        "socialMedia": {
+            "facebook": "https://facebook.com/countrysideinn",
+            "instagram": "https://instagram.com/countrysideinn",
+            "twitter": "https://twitter.com/countrysideinn"
+        },
+        "rating": 4.6,
+        "features": [
+            "Quiet Location",
+            "Spa Services",
+            "Restaurant",
+            "Conference Room",
+            "Free Parking"
+        ]
+    },
+    {
+        "id": 10,
+        "name": "Village Heritage Museum",
+        "description": "Discover the fascinating history of our village through interactive exhibits, artifacts, and historical documents spanning three centuries.",
+        "category": "landmark",
+        "imageUrl": "https://images.unsplash.com/photo-1565301660306-29e08751cc3d?w=800&h=600&fit=crop",
+        "address": "5 Museum Plaza, Village Center",
+        "phone": "+1 (555) 890-1234",
+        "email": "info@villagemuseum.org",
+        "website": "https://villagemuseum.org",
+        "socialMedia": {
+            "facebook": "https://facebook.com/villageheritagemuseum",
+            "instagram": "https://instagram.com/villagemuseum"
+        },
+        "rating": 4.8,
+        "features": [
+            "Interactive Exhibits",
+            "Historical Artifacts",
+            "Educational Programs",
+            "Gift Shop",
+            "Group Tours"
+        ]
+    }
+]

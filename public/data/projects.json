@@ -1,0 +1,56 @@
+[
+    {
+        "id": 1,
+        "title": "New Community Park Development",
+        "description": "Construction of a 5-acre community park featuring playgrounds, walking trails, and green spaces for families.",
+        "startDate": "2024-01-15",
+        "endDate": "2025-06-30",
+        "status": "In Progress",
+        "imageUrl": "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=800&h=600&fit=crop"
+    },
+    {
+        "id": 2,
+        "title": "Main Street Revitalization",
+        "description": "Upgrading downtown infrastructure including new sidewalks, street lighting, and landscaping to enhance the business district.",
+        "startDate": "2024-03-01",
+        "endDate": "2025-12-31",
+        "status": "In Progress",
+        "imageUrl": "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&h=600&fit=crop"
+    },
+    {
+        "id": 3,
+        "title": "Public Library Expansion",
+        "description": "Adding a new wing to the public library with modern study spaces, computer labs, and a children's reading area.",
+        "startDate": "2023-09-01",
+        "endDate": "2024-08-31",
+        "status": "Completed",
+        "imageUrl": "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=800&h=600&fit=crop"
+    },
+    {
+        "id": 4,
+        "title": "Renewable Energy Initiative",
+        "description": "Installing solar panels on municipal buildings to reduce carbon footprint and energy costs.",
+        "startDate": "2024-06-01",
+        "endDate": "2025-03-31",
+        "status": "Planning",
+        "imageUrl": "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&h=600&fit=crop"
+    },
+    {
+        "id": 5,
+        "title": "Water Treatment Facility Upgrade",
+        "description": "Modernizing the water treatment plant with advanced filtration systems to ensure clean water supply.",
+        "startDate": "2024-02-01",
+        "endDate": "2026-01-31",
+        "status": "In Progress",
+        "imageUrl": "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800&h=600&fit=crop"
+    },
+    {
+        "id": 6,
+        "title": "Youth Sports Complex",
+        "description": "Building a multi-sport facility with soccer fields, basketball courts, and a running track for community youth programs.",
+        "startDate": "2025-01-01",
+        "endDate": "2026-06-30",
+        "status": "Planning",
+        "imageUrl": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&h=600&fit=crop"
+    }
+]

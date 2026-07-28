@@ -1,0 +1,48 @@
+{
+    "documents": [
+        // {
+        //     "id": "1",
+        //     "title": "Building Permit Application",
+        //     "titleAr": "طلب رخصة بناء",
+        //     "description": "Official form for building permit applications",
+        //     "descriptionAr": "النموذج الرسمي لطلبات رخص البناء",
+        //     "category": "Permits",
+        //     "categoryAr": "التراخيص",
+        //     "icon": "description",
+        //     "filename": "building-permit.pdf"
+        // },
+        // {
+        //     "id": "2",
+        //     "title": "Building Permit Application (Alternative)",
+        //     "titleAr": "طلب رخصة بناء (بديل)",
+        //     "description": "Alternative building permit form",
+        //     "descriptionAr": "نموذج بديل لرخصة البناء",
+        //     "category": "Permits",
+        //     "categoryAr": "التراخيص",
+        //     "icon": "description",
+        //     "filename": "building-permit1.pdf"
+        // },
+        // {
+        //     "id": "3",
+        //     "title": "Municipal Expenses Report",
+        //     "titleAr": "تقرير نفقات البلدية",
+        //     "description": "Detailed financial expenses documentation",
+        //     "descriptionAr": "توثيق مفصل للنفقات المالية",
+        //     "category": "Financial",
+        //     "categoryAr": "مالي",
+        //     "icon": "receipt_long",
+        //     "filename": "expenses.pdf"
+        // },
+        // {
+        //     "id": "4",
+        //     "title": "Petition Form",
+        //     "titleAr": "نموذج العريضة",
+        //     "description": "Official petition submission form",
+        //     "descriptionAr": "نموذج تقديم العريضة الرسمي",
+        //     "category": "Forms",
+        //     "categoryAr": "نماذج",
+        //     "icon": "edit_document",
+        //     "filename": "petition.pdf"
+        // }
+    ]
+}

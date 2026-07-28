@@ -1,0 +1,242 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+:root {
+  --primary-color: #1976d2;
+  --primary-dark: #1565c0;
+  --accent-color: #ff4081;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+@media (max-width: 900px) {
+  h1:not(.hero-title) {
+    font-size: 24px !important;
+  }
+
+  /* Force remove default toolbar padding on mobile */
+  .mat-toolbar-row,
+  .mat-toolbar-single-row {
+    padding: 0 !important;
+  }
+}
+
+/* ── Water Distribution: Leaflet popup styles ───────────────────────────── */
+/* These must be global because Leaflet injects DOM outside Angular's tree  */
+.popup-card {
+  font-family: inherit;
+  min-width: 200px;
+}
+
+.popup-header {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.popup-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.popup-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.83rem;
+}
+
+.popup-row span {
+  color: #666;
+}
+
+.popup-notes {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: #888;
+  font-style: italic;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 4px;
+}
+
+/* ── Water Distribution: Leaflet map marker styles ──────────────────────── */
+.map-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* Tank: water-tower SVG pin */
+.tank-marker-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  filter: drop-shadow(0 4px 10px rgba(13, 71, 161, 0.55));
+}
+
+.tank-marker-wrap svg {
+  display: block;
+}
+
+.tank-pin-label {
+  background: #0d47a1;
+  color: #fff;
+  border-radius: 5px;
+  padding: 3px 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: nowrap;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  margin-top: 2px;
+}
+
+/* Legend mini-tank icon */
+.tank-legend-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: #1565c0;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+  vertical-align: middle;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+/* Box: prominent orange badge */
+.box-icon {
+  filter: drop-shadow(0 3px 6px rgba(230, 81, 0, 0.55));
+}
+.box-icon .marker-emoji {
+  font-size: 1.5rem;
+  line-height: 1;
+  background: #ff6f00;
+  border-radius: 50%;
+  padding: 5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+.box-icon .marker-label {
+  background: #e65100;
+  color: #fff;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  white-space: nowrap;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin-top: 3px;
+}
+
+/* House active */
+.house-active {
+  filter: drop-shadow(0 2px 6px rgba(46, 125, 50, 0.5));
+}
+.house-active .marker-emoji {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.house-active .marker-label {
+  background: #2e7d32;
+  color: #fff;
+  border-radius: 5px;
+  padding: 3px 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  white-space: normal;
+  max-width: 130px;
+  text-align: center;
+  /* display: -webkit-box;
+  -webkit-line-clamp: 2; */
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.3;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  margin-top: 3px;
+}
+
+/* House inactive */
+.house-inactive {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  opacity: 0.75;
+}
+.house-inactive .marker-emoji {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.house-inactive .marker-label {
+  background: #757575;
+  color: #fff;
+  border-radius: 5px;
+  padding: 3px 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  white-space: normal;
+  max-width: 130px;
+  text-align: center;
+  /* display: -webkit-box;
+  -webkit-line-clamp: 2; */
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.3;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  margin-top: 3px;
+}

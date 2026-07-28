@@ -1,0 +1,66 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 100px);
+    padding: 24px;
+    background-color: #f5f5f5;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+mat-card-header {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: center;
+}
+
+mat-card-title {
+    font-size: 24px;
+    color: #1976d2;
+    font-weight: 500;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+.submit-button {
+    margin-top: 16px;
+    height: 48px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.loading-icon {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+[dir="rtl"] mat-icon[matPrefix] {
+    margin-right: 0;
+    margin-left: 8px;
+}

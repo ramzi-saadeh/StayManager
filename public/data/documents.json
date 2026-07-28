@@ -1,0 +1,23 @@
+[
+    {
+        "title": "building-permit.pdf",
+        "description": "DOCUMENTS.BUILDING_PERMIT_DESC",
+        "category": "DOCUMENTS.CATEGORY_CONSTRUCTION",
+        "icon": "apartment",
+        "downloadUrl": "documents/building-permit.pdf"
+    },
+    {
+        "title": "petition.pdf",
+        "description": "DOCUMENTS.PETITION_DESC",
+        "category": "DOCUMENTS.CATEGORY_GENERAL",
+        "icon": "description",
+        "downloadUrl": "documents/petition.pdf"
+    },
+    {
+        "title": "expenses.pdf",
+        "description": "DOCUMENTS.EXPENSES_DESC",
+        "category": "DOCUMENTS.CATEGORY_FINANCE",
+        "icon": "receipt_long",
+        "downloadUrl": "documents/expenses.pdf"
+    }
+]
