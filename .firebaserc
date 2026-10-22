@@ -1,7 +1,7 @@
 {
   "projects": {
-    "default": "kafar-banin-2025",
-    "kafar-banin-25": "kafar-banin-2025"
+    "default": "staymanager-15f31",
+    "staymanager": "staymanager-15f31"
   },
   "targets": {},
   "etags": {}

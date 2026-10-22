@@ -1,0 +1,434 @@
+<main id="top">
+    <section class="hero container">
+      <div class="hero-copy reveal">
+        <p class="eyebrow">{{ 'PUBLIC_HOME.HERO_EYEBROW' | translate }}</p>
+        <h1>{{ 'PUBLIC_HOME.HERO_TITLE' | translate }}</h1>
+        <p class="subheadline">{{ 'PUBLIC_HOME.HERO_SUBHEADLINE' | translate }}</p>
+        <p class="hero-body">
+          {{ 'PUBLIC_HOME.HERO_BODY' | translate }}
+        </p>
+        <div class="hero-cta-row">
+          @if (isLoggedIn()) {
+          <a mat-flat-button class="cta-btn large" routerLink="/dashboard">Dashboard</a>
+          } @else {
+          <a mat-flat-button class="cta-btn large" routerLink="/login">{{ 'PUBLIC_HOME.CREATE_YOUR_WORKSPACE' |
+            translate }}</a>
+          }
+          <a mat-stroked-button class="ghost-btn large" href="#features">{{ 'PUBLIC_HOME.EXPLORE_PUBLIC_WORKSPACES' |
+            translate }}</a>
+        </div>
+        <p class="hero-trust">{{ 'PUBLIC_HOME.HERO_TRUST' | translate }}</p>
+
+        <!-- <div class="hero-stats" aria-label="Platform statistics">
+          @for (stat of stats; track stat.label) {
+            <div class="stat-chip">
+              <strong>{{ stat.value }}</strong>
+              <span>{{ stat.label }}</span>
+            </div>
+          }
+        </div> -->
+      </div>
+
+      <div class="hero-visual reveal">
+        <article class="dashboard-mockup" aria-label="Workspace dashboard preview">
+          <header>
+            <div>
+              <p>{{ 'PUBLIC_HOME.BRAND' | translate }}</p>
+              <h3>{{ 'PUBLIC_HOME.MOCKUP_WORKSPACE_NAME' | translate }}</h3>
+            </div>
+            <span class="pill public">{{ 'PUBLIC_HOME.PUBLIC' | translate }}</span>
+          </header>
+
+          <div class="kpis">
+            <div>
+              <span>{{ 'PUBLIC_HOME.TODAY' | translate }}</span>
+              <strong>{{ 'PUBLIC_HOME.MOCKUP_KPI_TODAY' | translate }}</strong>
+            </div>
+            <div>
+              <span>{{ 'PUBLIC_HOME.UPCOMING' | translate }}</span>
+              <strong>{{ 'PUBLIC_HOME.MOCKUP_KPI_UPCOMING' | translate }}</strong>
+            </div>
+            <div>
+              <span>{{ 'PUBLIC_HOME.REVENUE' | translate }}</span>
+              <strong>$1,240</strong>
+            </div>
+          </div>
+
+          <div class="availability-list">
+            <div class="row">
+              <span>09:00</span>
+              <div class="meter available"></div>
+              <em>{{ 'PUBLIC_HOME.AVAILABLE' | translate }}</em>
+            </div>
+            <div class="row">
+              <span>10:00</span>
+              <div class="meter booked"></div>
+              <em>{{ 'PUBLIC_HOME.BOOKED' | translate }}</em>
+            </div>
+            <div class="row">
+              <span>11:00</span>
+              <div class="meter available"></div>
+              <em>{{ 'PUBLIC_HOME.AVAILABLE' | translate }}</em>
+            </div>
+            <div class="row">
+              <span>12:00</span>
+              <div class="meter available"></div>
+              <em>{{ 'PUBLIC_HOME.AVAILABLE' | translate }}</em>
+            </div>
+          </div>
+
+          <footer>
+            <span>{{ 'PUBLIC_HOME.CALENDAR' | translate }}</span>
+            <span>{{ 'PUBLIC_HOME.RESERVATIONS' | translate }}</span>
+            <span>{{ 'PUBLIC_HOME.AVAILABILITY' | translate }}</span>
+            <span>{{ 'PUBLIC_HOME.SETTINGS' | translate }}</span>
+          </footer>
+        </article>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="section container reveal">
+      <div class="section-headline">
+        <p>{{ 'PUBLIC_HOME.HOW_IT_WORKS' | translate }}</p>
+        <h2>{{ 'PUBLIC_HOME.HOW_IT_WORKS_TITLE' | translate }}</h2>
+      </div>
+      <div class="step-grid">
+        <article class="step-card reveal">
+          <span>01</span>
+          <h3>{{ 'PUBLIC_HOME.STEP1_TITLE' | translate }}</h3>
+          <p>{{ 'PUBLIC_HOME.STEP1_DESC' | translate }}</p>
+        </article>
+        <article class="step-card reveal">
+          <span>02</span>
+          <h3>{{ 'PUBLIC_HOME.STEP2_TITLE' | translate }}</h3>
+          <p>{{ 'PUBLIC_HOME.STEP2_DESC' | translate }}</p>
+        </article>
+        <article class="step-card reveal">
+          <span>03</span>
+          <h3>{{ 'PUBLIC_HOME.STEP3_TITLE' | translate }}</h3>
+          <p>{{ 'PUBLIC_HOME.STEP3_DESC' | translate }}</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section container reveal">
+      <div class="section-headline">
+        <p>{{ 'PUBLIC_HOME.VISIBILITY_MODE' | translate }}</p>
+        <h2>{{ 'PUBLIC_HOME.VISIBILITY_TITLE' | translate }}</h2>
+      </div>
+
+      <div class="visibility-toggle">
+        <button type="button" [class.active]="selectedVisibility() === 'PUBLIC'" (click)="setVisibility('PUBLIC')">
+          {{ 'PUBLIC_HOME.PUBLIC' | translate }}
+        </button>
+        <button type="button" [class.active]="selectedVisibility() === 'PRIVATE'" (click)="setVisibility('PRIVATE')">
+          {{ 'PUBLIC_HOME.PRIVATE' | translate }}
+        </button>
+      </div>
+
+      <div class="visibility-note">
+        <strong>{{ activeVisibilityCopy().titleKey | translate }}</strong>
+        <span>{{ activeVisibilityCopy().subtitleKey | translate }}</span>
+      </div>
+
+      <div class="policy-grid">
+        <article class="policy-card public">
+          <h3><mat-icon>public</mat-icon> {{ 'PUBLIC_HOME.PUBLIC' | translate }}</h3>
+          <p>{{ 'PUBLIC_HOME.PUBLIC_POLICY_DESC' | translate }}</p>
+          <ul>
+            <li>{{ 'PUBLIC_HOME.PUBLIC_POLICY_1' | translate }}</li>
+            <li>{{ 'PUBLIC_HOME.PUBLIC_POLICY_2' | translate }}</li>
+            <li>{{ 'PUBLIC_HOME.PUBLIC_POLICY_3' | translate }}</li>
+            <li>{{ 'PUBLIC_HOME.PUBLIC_POLICY_4' | translate }}</li>
+            <li>{{ 'PUBLIC_HOME.PUBLIC_POLICY_5' | translate }}</li>
+          </ul>
+          <a mat-stroked-button href="#features">{{ 'PUBLIC_HOME.EXPLORE_PUBLIC_WORKSPACES' | translate }}</a>
+        </article>
+
+        <article class="policy-card private">
+          <h3><mat-icon>lock</mat-icon> {{ 'PUBLIC_HOME.PRIVATE' | translate }}</h3>
+          <p>{{ 'PUBLIC_HOME.PRIVATE_POLICY_DESC' | translate }}</p>
+          <ul>
+            <li>{{ 'PUBLIC_HOME.PRIVATE_POLICY_1' | translate }}</li>
+            <li>{{ 'PUBLIC_HOME.PRIVATE_POLICY_2' | translate }}</li>
+            <li>{{ 'PUBLIC_HOME.PRIVATE_POLICY_3' | translate }}</li>
+            <li>{{ 'PUBLIC_HOME.PRIVATE_POLICY_4' | translate }}</li>
+          </ul>
+          <a mat-stroked-button routerLink="/login">{{ 'PUBLIC_HOME.CREATE_PRIVATE_WORKSPACE' | translate }}</a>
+        </article>
+      </div>
+    </section>
+
+    <section id="features" class="section container reveal">
+      <div class="section-headline">
+        <p>{{ 'PUBLIC_HOME.PUBLIC_DIRECTORY' | translate }}</p>
+        <h2>{{ 'PUBLIC_HOME.EXPLORE_PUBLIC_WORKSPACES' | translate }}</h2>
+        <span>{{ 'PUBLIC_HOME.PUBLIC_DIRECTORY_HINT' | translate }}</span>
+      </div>
+
+      <div class="search-surface">
+        <input type="search" [value]="search()" (input)="onSearchInput($event)"
+          [placeholder]="'PUBLIC_HOME.SEARCH_PLACEHOLDER' | translate"
+          [attr.aria-label]="'PUBLIC_HOME.SEARCH_ARIA' | translate" />
+        <select [value]="selectedBusinessType()" (change)="onCategoryChange($event)" aria-label="Workspace category filter">
+          <option value="All">All categories</option>
+          @for (type of businessTypeOptions.slice(1); track type) {
+            <option [value]="type">{{ businessTypeLabelKey(type) | translate }}</option>
+          }
+        </select>
+        <span class="directory-badge">{{ 'PUBLIC_HOME.BUSY_SLOTS_ONLY' | translate }}</span>
+      </div>
+
+      @if (publicWorkspaces().length === 0) {
+      <article class="empty-directory">
+        <h3>{{ 'PUBLIC_HOME.NO_PUBLIC_WORKSPACES' | translate }}</h3>
+        <p>{{ 'PUBLIC_HOME.NO_PUBLIC_WORKSPACES_DESC' | translate }}</p>
+      </article>
+      } @else if (filteredPublicWorkspaces().length === 0) {
+      <article class="empty-directory">
+        <h3>{{ 'PUBLIC_HOME.NO_MATCHING_WORKSPACES' | translate }}</h3>
+        <p>{{ 'PUBLIC_HOME.TRY_ANOTHER_KEYWORD' | translate }}</p>
+      </article>
+      } @else {
+      <div class="workspace-grid">
+        @for (workspace of filteredPublicWorkspaces(); track trackByPublicWorkspace($index, workspace)) {
+        <article class="workspace-card reveal">
+          <div class="workspace-thumb">{{ workspace.name.charAt(0).toUpperCase() }}</div>
+          <div class="workspace-content">
+            <div class="workspace-topline">
+              <p>{{ 'PUBLIC_HOME.PUBLIC_WORKSPACE' | translate }}</p>
+              <span>{{ workspace.timezone }}</span>
+            </div>
+            <h3>{{ workspace.name }}</h3>
+            <p class="location">{{ workspace.address || ('PUBLIC_HOME.ADDRESS_NOT_PROVIDED' | translate) }}</p>
+            <p class="rating">{{ 'PUBLIC_HOME.CURRENCY_LABEL' | translate }} {{ workspace.currency }}</p>
+            <p class="description">{{ workspace.phone || ('PUBLIC_HOME.PHONE_NOT_PROVIDED' | translate) }}</p>
+            @if (workspace.whishNumber) {
+            <p class="description whish-line">
+              {{ 'PUBLIC_HOME.WHISH_NUMBER' | translate }}: {{ whishDisplay(workspace.whishNumber) }}
+              <button type="button" class="copy-whish-btn" (click)="copyWhishNumber(workspace.whishNumber)"
+                [attr.aria-label]="'PUBLIC_HOME.COPY_WHISH_NUMBER' | translate">
+                <mat-icon>content_copy</mat-icon>
+              </button>
+            </p>
+            }
+            <div class="workspace-actions">
+              @if (workspace.phone) {
+              <a [href]="telUrl(workspace.phone)">
+                <mat-icon>call</mat-icon>
+                {{ 'PUBLIC_HOME.CALL' | translate }}
+              </a>
+              <a [href]="whatsappUrl(workspace.phone)" target="_blank" rel="noopener noreferrer">
+                <mat-icon>chat</mat-icon>
+                {{ 'PUBLIC_HOME.WHATSAPP' | translate }}
+              </a>
+              }
+              @if (workspace.address || (workspace.latitude != null && workspace.longitude != null)) {
+              <a [href]="mapsUrl(workspace)" target="_blank" rel="noopener noreferrer">
+                <mat-icon>map</mat-icon>
+                {{ 'PUBLIC_HOME.DIRECTIONS' | translate }}
+              </a>
+              }
+            </div>
+            <div class="workspace-links">
+              @if (workspace.websiteUrl) {
+              <a [href]="externalUrl(workspace.websiteUrl)" target="_blank" rel="noopener noreferrer">
+                <mat-icon>language</mat-icon>
+                {{ 'PUBLIC_HOME.WEBSITE' | translate }}
+              </a>
+              }
+              @if (workspace.instagramUrl) {
+              <a [href]="externalUrl(workspace.instagramUrl)" target="_blank" rel="noopener noreferrer">
+                <mat-icon>photo_camera</mat-icon>
+                {{ 'PUBLIC_HOME.INSTAGRAM' | translate }}
+              </a>
+              }
+              @if (workspace.facebookUrl) {
+              <a [href]="externalUrl(workspace.facebookUrl)" target="_blank" rel="noopener noreferrer">
+                <mat-icon>groups</mat-icon>
+                {{ 'PUBLIC_HOME.FACEBOOK' | translate }}
+              </a>
+              }
+              @if (workspace.tiktokUrl) {
+              <a [href]="externalUrl(workspace.tiktokUrl)" target="_blank" rel="noopener noreferrer">
+                <mat-icon>smart_display</mat-icon>
+                {{ 'PUBLIC_HOME.TIKTOK' | translate }}
+              </a>
+              }
+            </div>
+            <div class="workspace-bottom">
+              <strong>{{ 'PUBLIC_HOME.PUBLIC_BOOKINGS_ENABLED' | translate }}</strong>
+              <a mat-stroked-button [routerLink]="workspace.publicBookingPath">{{ 'PUBLIC_HOME.VIEW_WORKSPACE' |
+                translate }}</a>
+            </div>
+          </div>
+        </article>
+        }
+      </div>
+      }
+    </section>
+
+    <section class="section container reveal">
+      <div class="section-headline">
+        <p>{{ 'PUBLIC_HOME.WHY_WORKSPACE' | translate }}</p>
+        <h2>{{ 'PUBLIC_HOME.WHY_WORKSPACE_TITLE' | translate }}</h2>
+      </div>
+      <div class="feature-grid">
+        @for (feature of features; track feature.titleKey) {
+        <article class="feature-card reveal">
+          <mat-icon>{{ feature.icon }}</mat-icon>
+          <h3>{{ feature.titleKey | translate }}</h3>
+          <p>{{ feature.descriptionKey | translate }}</p>
+        </article>
+        }
+      </div>
+    </section>
+
+    <section class="section container reveal">
+      <div class="section-headline">
+        <p>{{ 'PUBLIC_HOME.USE_CASES' | translate }}</p>
+        <h2>{{ 'PUBLIC_HOME.USE_CASES_TITLE' | translate }}</h2>
+      </div>
+      <div class="business-grid">
+        @for (type of businessTypes; track type) {
+        <article class="business-card reveal">
+          <h3>{{ businessTypeLabelKey(type) | translate }}</h3>
+          <p>{{ businessTypeDescriptionKey(type) | translate }}</p>
+        </article>
+        }
+        <article class="business-card custom reveal">
+          <h3>{{ 'PUBLIC_HOME.YOUR_BUSINESS' | translate }}</h3>
+          <p>{{ 'PUBLIC_HOME.YOUR_BUSINESS_DESC' | translate }}</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="for-businesses" class="section container reveal">
+      <div class="section-headline">
+        <p>{{ 'PUBLIC_HOME.FOR_BUSINESS_OWNERS' | translate }}</p>
+        <h2>{{ 'PUBLIC_HOME.FOR_BUSINESS_OWNERS_TITLE' | translate }}</h2>
+      </div>
+      <div class="before-after">
+        <article>
+          <h3>{{ 'PUBLIC_HOME.BEFORE' | translate }}</h3>
+          <ul>
+            <li>{{ 'PUBLIC_HOME.BEFORE_1' | translate }}</li>
+            <li>{{ 'PUBLIC_HOME.BEFORE_2' | translate }}</li>
+            <li>{{ 'PUBLIC_HOME.BEFORE_3' | translate }}</li>
+            <li>{{ 'PUBLIC_HOME.BEFORE_4' | translate }}</li>
+            <li>{{ 'PUBLIC_HOME.BEFORE_5' | translate }}</li>
+          </ul>
+        </article>
+        <article>
+          <h3>{{ 'PUBLIC_HOME.AFTER' | translate }}</h3>
+          <p>{{ 'PUBLIC_HOME.AFTER_DESC' | translate }}</p>
+          <div class="flow">{{ 'PUBLIC_HOME.AFTER_FLOW' | translate }}</div>
+        </article>
+      </div>
+    </section>
+
+    <section id="pricing" class="section container reveal">
+      <div class="section-headline">
+        <p>{{ 'PUBLIC_HOME.PRICING' | translate }}</p>
+        <h2>{{ 'PUBLIC_HOME.PRICING_TITLE' | translate }}</h2>
+        <span>{{ 'PUBLIC_HOME.PRICING_SUBTITLE' | translate }}</span>
+      </div>
+
+      <div class="pricing-grid">
+        @for (plan of pricingPlans; track plan.id) {
+        <article class="plan-card" [class.featured]="plan.featured">
+          @if (plan.featured) {
+          <span class="plan-badge">{{ 'PUBLIC_HOME.PLAN_POPULAR' | translate }}</span>
+          }
+
+          <h3>{{ plan.titleKey | translate }}</h3>
+          <p class="plan-subtitle">{{ plan.subtitleKey | translate }}</p>
+
+          <div class="plan-price-row">
+            <div>
+              <strong>${{ plan.priceMonthlyUsd }}</strong>
+              <span>{{ 'PUBLIC_HOME.PLAN_PER_MONTH' | translate }}</span>
+            </div>
+            <small>
+              {{ 'PUBLIC_HOME.PLAN_YEARLY' | translate }}: ${{ plan.priceYearlyUsd }}
+            </small>
+          </div>
+
+          <ul>
+            @for (featureKey of plan.featureKeys; track featureKey) {
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ featureKey | translate }}</span>
+            </li>
+            }
+          </ul>
+
+          <a mat-flat-button class="cta-btn" routerLink="/login">{{ plan.ctaKey | translate }}</a>
+        </article>
+        }
+      </div>
+
+      <div class="pricing-legal">
+        <h3>{{ 'PUBLIC_HOME.PRICING_LEGAL_TITLE' | translate }}</h3>
+        <ul>
+          <li>{{ 'PUBLIC_HOME.PRICING_LEGAL_LINE_1' | translate }}</li>
+          <li>{{ 'PUBLIC_HOME.PRICING_LEGAL_LINE_2' | translate }}</li>
+          <li>{{ 'PUBLIC_HOME.PRICING_LEGAL_LINE_3' | translate }}</li>
+        </ul>
+        <p>
+          {{ 'PUBLIC_HOME.PRICING_LEGAL_NOTE' | translate }}
+          <a routerLink="/terms">{{ 'PUBLIC_HOME.FOOTER_TERMS' | translate }}</a>
+          {{ 'PUBLIC_HOME.PRICING_AND' | translate }}
+          <a routerLink="/privacy">{{ 'PUBLIC_HOME.FOOTER_PRIVACY' | translate }}</a>.
+        </p>
+      </div>
+
+      <div class="cta-block">
+        <h2>{{ 'PUBLIC_HOME.PRICING_CTA_TITLE' | translate }}</h2>
+        <p>{{ 'PUBLIC_HOME.PRICING_CTA_DESC' | translate }}</p>
+        <div class="hero-cta-row">
+          @if (isLoggedIn()) {
+          <a mat-flat-button class="cta-btn large" routerLink="/dashboard">Dashboard</a>
+          } @else {
+          <a mat-flat-button class="cta-btn large" routerLink="/login">{{ 'PUBLIC_HOME.CREATE_WORKSPACE' | translate
+            }}</a>
+          }
+          <a mat-stroked-button class="ghost-btn large" href="#features">{{ 'PUBLIC_HOME.EXPLORE_WORKSPACES' | translate
+            }}</a>
+        </div>
+        <small>{{ 'PUBLIC_HOME.FREE_TO_START' | translate }}</small>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <article>
+        <h4>{{ 'PUBLIC_HOME.FOOTER_PRODUCT' | translate }}</h4>
+        <a href="#features">{{ 'PUBLIC_HOME.FOOTER_FEATURES' | translate }}</a>
+        <a href="#features">{{ 'PUBLIC_HOME.EXPLORE_WORKSPACES' | translate }}</a>
+        <a href="#pricing">{{ 'PUBLIC_HOME.PRICING' | translate }}</a>
+        <a href="#how-it-works">{{ 'PUBLIC_HOME.HOW_IT_WORKS' | translate }}</a>
+      </article>
+      <article>
+        <h4>{{ 'PUBLIC_HOME.FOOTER_BUSINESS' | translate }}</h4>
+        <a routerLink="/login">{{ 'PUBLIC_HOME.CREATE_WORKSPACE' | translate }}</a>
+        <a href="#for-businesses">{{ 'PUBLIC_HOME.FOOTER_BUSINESS_FEATURES' | translate }}</a>
+        <a routerLink="/login">{{ 'PUBLIC_HOME.FOOTER_RESOURCES' | translate }}</a>
+      </article>
+      <article>
+        <h4>{{ 'PUBLIC_HOME.FOOTER_COMPANY' | translate }}</h4>
+        <a routerLink="/login">{{ 'PUBLIC_HOME.FOOTER_ABOUT' | translate }}</a>
+        <a routerLink="/login">{{ 'PUBLIC_HOME.FOOTER_CONTACT' | translate }}</a>
+        <a routerLink="/terms">{{ 'PUBLIC_HOME.FOOTER_TERMS' | translate }}</a>
+        <a routerLink="/privacy">{{ 'PUBLIC_HOME.FOOTER_PRIVACY' | translate }}</a>
+      </article>
+      <article>
+        <h4>{{ 'PUBLIC_HOME.FOOTER_SOCIAL' | translate }}</h4>
+        <a routerLink="/login">Instagram</a>
+        <a routerLink="/login">Facebook</a>
+        <a routerLink="/login">LinkedIn</a>
+      </article>
+    </div>
+    <p class="copyright">{{ 'PUBLIC_HOME.COPYRIGHT' | translate }}</p>
+  </footer>

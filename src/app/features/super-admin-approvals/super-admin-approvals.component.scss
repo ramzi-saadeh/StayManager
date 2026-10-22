@@ -1,0 +1,129 @@
+.admin-page {
+  min-height: 100dvh;
+  background:
+    radial-gradient(1000px 440px at 10% -20%, rgba(16, 185, 129, 0.12), transparent 60%),
+    radial-gradient(800px 420px at 100% 0%, rgba(14, 165, 233, 0.12), transparent 58%),
+    #f5f8fa;
+  padding: 1.2rem;
+}
+
+.container {
+  width: min(1080px, 100%);
+  margin: 0 auto;
+}
+
+.header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  color: #0f766e;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0.4rem 0 0;
+  color: #0f2f2a;
+}
+
+.subtitle {
+  margin: 0.45rem 0 0;
+  color: #496862;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.workspace-card {
+  border-radius: 0.95rem;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.card-top h3 {
+  margin: 0;
+}
+
+.status {
+  border-radius: 999px;
+  padding: 0.2rem 0.58rem;
+  font-size: 0.72rem;
+  background: #fef3c7;
+  color: #92400e;
+  font-weight: 600;
+}
+
+.meta {
+  margin-top: 0.8rem;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.meta p {
+  margin: 0;
+  color: #2f4f49;
+  font-size: 0.9rem;
+}
+
+.actions {
+  margin-top: 0.95rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.empty-card {
+  border-radius: 0.95rem;
+  border: 1px dashed rgba(15, 23, 42, 0.2);
+  text-align: center;
+  padding: 1.2rem;
+}
+
+.empty-card mat-icon {
+  width: 28px;
+  height: 28px;
+  font-size: 28px;
+  color: #059669;
+}
+
+.empty-card h2 {
+  margin: 0.6rem 0 0;
+}
+
+.empty-card p {
+  margin: 0.45rem 0 0;
+  color: #4b6a64;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

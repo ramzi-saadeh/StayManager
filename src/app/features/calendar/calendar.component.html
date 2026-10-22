@@ -1,0 +1,270 @@
+<div class="page-container animate-fade-in">
+
+  <!-- ── Toolbar ─────────────────────────────────────────────────────── -->
+  <div class="cal-toolbar">
+    <div class="cal-nav">
+      <button mat-icon-button (click)="prev()" [attr.aria-label]="'CALENDAR.PREVIOUS' | translate">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <h1 class="cal-month-label">
+        {{ view() === 'week' ? weekLabel() : monthLabel() }}
+      </h1>
+      <button mat-icon-button (click)="next()" [attr.aria-label]="'CALENDAR.NEXT' | translate">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+      <button mat-stroked-button class="today-btn" (click)="goToToday()">{{ 'CALENDAR.TODAY' | translate }}</button>
+    </div>
+
+    <div class="cal-controls">
+      <mat-button-toggle-group [value]="view()" (change)="view.set($event.value)" [attr.aria-label]="'CALENDAR.VIEW_ARIA' | translate">
+        <mat-button-toggle value="month">
+          <mat-icon>calendar_view_month</mat-icon>
+          <span class="toggle-label">{{ 'CALENDAR.MONTH' | translate }}</span>
+        </mat-button-toggle>
+        <mat-button-toggle value="week">
+          <mat-icon>view_week</mat-icon>
+          <span class="toggle-label">{{ 'CALENDAR.WEEK' | translate }}</span>
+        </mat-button-toggle>
+        <mat-button-toggle value="timeline">
+          <mat-icon>view_timeline</mat-icon>
+          <span class="toggle-label">{{ 'CALENDAR.GANTT' | translate }}</span>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+
+      <button mat-flat-button color="primary" class="new-booking-btn"
+        routerLink="/reservations/new">
+        <mat-icon>add</mat-icon>
+        {{ 'CALENDAR.NEW_BOOKING' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Resource filter chips ───────────────────────────────────────── -->
+  <div class="resource-filters" role="group" [attr.aria-label]="'CALENDAR.FILTER_BY_RESOURCE' | translate">
+    <button class="filter-chip" [class.active]="!selectedResourceIds().length"
+      (click)="selectedResourceIds.set([])">{{ 'CALENDAR.ALL_RESOURCES' | translate }}</button>
+    @for (resource of resources(); track resource.id) {
+      <button class="filter-chip resource-chip"
+        [class.active]="isResourceSelected(resource.id) && selectedResourceIds().length > 0"
+        (click)="toggleResource(resource.id)"
+        [style.--chip-color]="resourceTypeColor(resource.type)">
+        <span class="chip-dot" [style.background]="resourceTypeColor(resource.type)"></span>
+        {{ resource.name }}
+      </button>
+    }
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════ -->
+  <!-- Month view                                                         -->
+  <!-- ══════════════════════════════════════════════════════════════════ -->
+  @if (view() === 'month') {
+    <div class="calendar-grid sm-card">
+      <div class="cal-header-row">
+        @for (day of WEEK_DAYS; track day; let i = $index) {
+          <div class="cal-day-header" [class.weekend]="i >= 5">{{ day | translate }}</div>
+        }
+      </div>
+      <div class="cal-body">
+        @for (day of calendarDays(); track day.date.toISOString()) {
+          <div class="cal-day"
+            [class.other-month]="!day.isCurrentMonth"
+            [class.today]="day.isToday"
+            [class.has-reservations]="day.eventCount > 0"
+            [class.has-pending]="day.pendingEventCount > 0"
+            [class.blocked-day]="!isDateBookable(day.date)"
+            [class.weekend]="day.isWeekend"
+            [title]="('CALENDAR.DOUBLE_CLICK_BOOKING' | translate) + ' ' + (day.date | date:'mediumDate')"
+            (dblclick)="newBookingOnDate(day.date)">
+            <div class="day-number">
+              <span class="day-num-inner">
+                @if (isFirstOfMonth(day.date) && !day.isToday) { {{ shortMonth(day.date) }}&#32; }
+                {{ dayOfMonth(day.date) }}
+              </span>
+              @if (day.eventCount > 0) {
+                <span class="day-booking-count"
+                  [class.pending-count]="day.pendingEventCount > 0"
+                  [matTooltip]="'CALENDAR.BOOKING_COUNT' | translate: { count: day.eventCount }"
+                  [attr.aria-label]="'CALENDAR.BOOKING_COUNT' | translate: { count: day.eventCount }">
+                  <mat-icon>event_available</mat-icon>{{ day.eventCount }}
+                </span>
+              }
+            </div>
+            <div class="day-events">
+              @for (event of day.events; track event.id) {
+                <div class="event-pill"
+                  [style.--event-color]="resourceTypeColor(event.resourceType)"
+                  [class.pending]="event.status === 'PENDING'"
+                  [class.confirmed]="event.status === 'CONFIRMED'"
+                  [class.completed]="event.status === 'COMPLETED'"
+                  [matTooltip]="event.guestName + ' · ' + event.resourceName + ' · ' + (('CALENDAR.' + event.status) | translate)">
+                  <span class="event-dot" [style.background]="statusDot(event.status)"></span>
+                  <span class="event-name">{{ event.guestName }}</span>
+                  @if (event.status === 'PENDING') {
+                    <span class="event-status">{{ 'CALENDAR.PENDING' | translate }}</span>
+                  }
+                </div>
+              }
+              @if (day.additionalEventCount > 0) {
+                <span class="event-more">
+                  {{ '+' + day.additionalEventCount }} {{ 'CALENDAR.MORE_BOOKINGS' | translate }}
+                </span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+    <div class="cal-legend">
+      @for (resource of resources(); track resource.id) {
+        <div class="legend-item">
+          <span class="legend-dot" [style.background]="resourceTypeColor(resource.type)"></span>
+          <span class="legend-label">{{ resource.name }}</span>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════════════════════════ -->
+  <!-- Week hourly view                                                   -->
+  <!-- Rows = configured visible hours, Columns = Mon-Sun                -->
+  <!-- ══════════════════════════════════════════════════════════════════ -->
+  @if (view() === 'week') {
+    <div class="week-wrapper sm-card">
+      <div class="week-scroll">
+
+        <!-- Sticky header: time gutter + day columns -->
+        <div class="week-header">
+          <div class="wk-gutter wk-gutter--head"></div>
+          @for (day of weekDays(); track day.toISOString()) {
+            <div class="wk-day-head" [class.today]="isWeekdayToday(day)" [class.weekend]="isWeekend(day)">
+              <span class="wk-dow">{{ day | date:'EEE' }}</span>
+              <span class="wk-date" [class.today-badge]="isWeekdayToday(day)">{{ day | date:'d' }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- Body: one section per resource -->
+        @for (row of hourlyRows(); track row.resourceId) {
+          <div class="wk-resource-section">
+
+            <!-- Resource label spanning full width -->
+            <div class="wk-resource-label">
+              <span class="tl-resource-dot" [style.background]="resourceTypeColor(row.resourceType)"></span>
+              <span class="tl-resource-name">{{ row.resourceName }}</span>
+            </div>
+
+            <!-- Grid: hour rows × day columns -->
+            <div class="wk-grid">
+              <!-- Time gutter -->
+              <div class="wk-gutter">
+                @for (h of visibleWeekHours(); track h) {
+                  <div class="wk-hour-label"
+                    [class.current-hour]="isCurrentHour(h)"
+                    [class.off-hour]="isOffHour(h)">
+                    {{ formatHour(h) }}
+                  </div>
+                }
+              </div>
+
+              <!-- Day columns -->
+              @for (day of weekDays(); track day.toISOString(); let di = $index) {
+                <div class="wk-day-col" [class.today]="isWeekdayToday(day)" [class.weekend]="isWeekend(day)">
+                  <!-- Hour cell backgrounds -->
+                  @for (h of visibleWeekHours(); track h) {
+                        <div class="wk-hour-cell"
+                          [class.current-hour]="isCurrentHour(h)"
+                          [class.blocked-hour-cell]="isBlockedHourForDate(day, h)"
+                          [class.off-hour]="isOffHour(h)"
+                          [title]="('CALENDAR.CLICK_BOOKING_SLOT' | translate) + ' ' + (day | date:'MMM d') + ' ' + formatHour(h)"
+                          (click)="newBookingOnWeekSlot(row.resourceId, row.bookingMode, day, h)">
+                        </div>
+                  }
+
+                  <!-- Booking blocks for this day & resource -->
+                  @for (block of row.blocks; track block.event.id) {
+                    @if (block.dayIndex === di) {
+                      <div class="wk-event-block"
+                        [style.top]="(block.startRow * 52) + 'px'"
+                        [style.height]="(block.spanRows * 52 - 4) + 'px'"
+                        [style.background]="resourceTypeColor(block.event.resourceType)"
+                        [matTooltip]="block.event.guestName
+                          + '\n' + (block.event.checkIn | date:'HH:mm')
+                          + ' → ' + (block.event.checkOut | date:'HH:mm')
+                          + '\n' + block.event.status">
+                        <span class="wk-event-name">{{ block.event.guestName }}</span>
+                        <span class="wk-event-time">
+                          {{ block.event.checkIn | date:'HH:mm' }} – {{ block.event.checkOut | date:'HH:mm' }}
+                        </span>
+                      </div>
+                    }
+                  }
+                </div>
+              }
+            </div>
+
+          </div>
+        }
+
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="cal-legend">
+      <div class="legend-item"><span class="legend-dot" style="background:var(--sm-confirmed)"></span>{{ 'CALENDAR.CONFIRMED' | translate }}</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--sm-pending)"></span>{{ 'CALENDAR.PENDING' | translate }}</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#059669"></span>{{ 'CALENDAR.COMPLETED' | translate }}</div>
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════════════════════════ -->
+  <!-- Gantt (monthly timeline) view                                      -->
+  <!-- ══════════════════════════════════════════════════════════════════ -->
+  @if (view() === 'timeline') {
+    <div class="timeline-wrapper sm-card">
+      <div class="timeline-scroll">
+        <div class="timeline-header">
+          <div class="tl-resource-col">{{ 'CALENDAR.RESOURCE' | translate }}</div>
+          <div class="tl-days-header">
+            @for (day of timelineDays(); track day.toISOString()) {
+              <div class="tl-day-head" [class.today]="isSameDay(day, viewDate())" [class.weekend]="isWeekend(day)">
+                <span class="tl-day-num">{{ dayOfMonth(day) }}</span>
+                <span class="tl-day-dow">{{ day | date:'EEE' }}</span>
+              </div>
+            }
+          </div>
+        </div>
+        @for (row of ganttRows(); track row.resourceId) {
+          <div class="timeline-row">
+            <div class="tl-resource-col">
+              <div class="tl-resource-info">
+                <span class="tl-resource-dot" [style.background]="resourceTypeColor(row.resourceType)"></span>
+                <span class="tl-resource-name">{{ row.resourceName }}</span>
+              </div>
+            </div>
+            <div class="tl-days-body"
+              [style.grid-template-columns]="'repeat(' + timelineDays().length + ', var(--tl-col-width))'">
+              @for (day of timelineDays(); track day.toISOString()) {
+                <div class="tl-day-cell" [class.weekend]="isWeekend(day)" [class.today]="isSameDay(day, viewDate())"></div>
+              }
+              @for (event of row.events; track event.id) {
+                <div class="tl-event"
+                  [style.grid-column]="(event.startCol + 1) + ' / span ' + event.spanCols"
+                  [style.background]="resourceTypeColor(event.resourceType)"
+                  [matTooltip]="event.guestName + '\n' + (event.checkIn | date:'MMM d') + ' → ' + (event.checkOut | date:'MMM d')">
+                  <span class="tl-event-label">{{ event.guestName }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+    <div class="cal-legend">
+      <div class="legend-item"><span class="legend-dot" style="background:var(--sm-confirmed)"></span>{{ 'CALENDAR.CONFIRMED' | translate }}</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--sm-pending)"></span>{{ 'CALENDAR.PENDING' | translate }}</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--sm-cancelled)"></span>{{ 'CALENDAR.CANCELLED' | translate }}</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#059669"></span>{{ 'CALENDAR.COMPLETED' | translate }}</div>
+    </div>
+  }
+
+</div>

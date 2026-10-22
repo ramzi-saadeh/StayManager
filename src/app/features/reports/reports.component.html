@@ -1,0 +1,310 @@
+<div class="page-container reports-page animate-fade-in">
+  <section class="reports-hero sm-card no-print">
+    <div>
+      <p class="hero-eyebrow">{{ 'REPORTS.HERO_EYEBROW' | translate }}</p>
+      <h1 class="page-title">{{ 'REPORTS.TITLE' | translate }}</h1>
+      <p class="page-subtitle">{{ 'REPORTS.SUBTITLE' | translate }}</p>
+    </div>
+
+    <div class="hero-actions">
+      <mat-form-field appearance="outline" class="period-field">
+        <mat-label>{{ 'REPORTS.PERIOD' | translate }}</mat-label>
+        <mat-select [value]="reportMonth()" (selectionChange)="setReportMonth($event.value)">
+          @for (option of monthOptions(); track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" type="button" (click)="printAllReports()">
+        <mat-icon>print</mat-icon>
+        {{ 'REPORTS.PRINT_ALL' | translate }}
+      </button>
+    </div>
+  </section>
+
+  <section class="metrics-grid report-print-section" id="report-overview">
+    <h2 class="report-title">{{ 'REPORTS.OVERVIEW' | translate }}</h2>
+    <div class="metric-grid">
+      <article class="metric">
+        <span class="metric-label">{{ 'REPORTS.TOTAL_INCOME' | translate }}</span>
+        <strong class="metric-value">{{ amount(totalIncome()) }}</strong>
+      </article>
+      <article class="metric">
+        <span class="metric-label">{{ 'REPORTS.TOTAL_EXPENSES' | translate }}</span>
+        <strong class="metric-value">{{ amount(totalExpenses()) }}</strong>
+      </article>
+      <article class="metric">
+        <span class="metric-label">{{ 'REPORTS.NET_RESULT' | translate }}</span>
+        <strong class="metric-value" [class.net-positive]="totalNet() >= 0" [class.net-negative]="totalNet() < 0">{{ amount(totalNet()) }}</strong>
+      </article>
+    </div>
+  </section>
+
+  <section class="report-card sm-card report-print-section" id="report-monthly-finance">
+    <div class="report-head">
+      <h2 class="report-title">{{ 'REPORTS.MONTHLY_FINANCE' | translate }}</h2>
+      <button mat-stroked-button type="button" class="no-print" (click)="printSectionByKey('report-monthly-finance', 'REPORTS.MONTHLY_FINANCE')">
+        <mat-icon>print</mat-icon>
+        {{ 'REPORTS.PRINT' | translate }}
+      </button>
+    </div>
+
+    @if (monthlyFinanceReport().length) {
+      <div class="table-wrap">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>{{ 'REPORTS.MONTH' | translate }}</th>
+              <th>{{ 'REPORTS.INCOME' | translate }}</th>
+              <th>{{ 'REPORTS.EXPENSES' | translate }}</th>
+              <th>{{ 'REPORTS.EXPENSE_LABELS' | translate }}</th>
+              <th>{{ 'REPORTS.NET' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of monthlyFinanceReport(); track row.month) {
+              <tr>
+                <td>{{ monthLabel(row.month) }}</td>
+                <td>{{ amount(row.income) }}</td>
+                <td>{{ amount(row.expenses) }}</td>
+                <td>{{ expenseLabelsSummary(row.expenseLabels) }}</td>
+                <td [class.net-positive]="row.net >= 0" [class.net-negative]="row.net < 0">{{ amount(row.net) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <app-empty-state icon="bar_chart" [title]="'REPORTS.NO_DATA' | translate" [description]="'REPORTS.NO_DATA_DESC' | translate" />
+    }
+  </section>
+
+  <section class="report-card sm-card report-print-section" id="report-monthly-chart">
+    <div class="report-head">
+      <h2 class="report-title">{{ 'REPORTS.MONTHLY_CHART' | translate }}</h2>
+      <button mat-stroked-button type="button" class="no-print" (click)="printSectionByKey('report-monthly-chart', 'REPORTS.MONTHLY_CHART')">
+        <mat-icon>print</mat-icon>
+        {{ 'REPORTS.PRINT' | translate }}
+      </button>
+    </div>
+
+    @if (monthlyChartRows().length) {
+      <div class="chart-insights">
+        <div class="insight-card">
+          <span class="insight-label">{{ 'REPORTS.BEST_MONTH' | translate }}</span>
+          @if (bestMonthByNet()) {
+            <strong>{{ monthLabel(bestMonthByNet()!.month) }}</strong>
+            <small class="net-positive">{{ amount(bestMonthByNet()!.net) }}</small>
+          }
+        </div>
+        <div class="insight-card">
+          <span class="insight-label">{{ 'REPORTS.WORST_MONTH' | translate }}</span>
+          @if (worstMonthByNet()) {
+            <strong>{{ monthLabel(worstMonthByNet()!.month) }}</strong>
+            <small [class]="chartMonthNetClass(worstMonthByNet()!)">{{ amount(worstMonthByNet()!.net) }}</small>
+          }
+        </div>
+      </div>
+
+      <div class="chart-legend">
+        <span><i class="legend-dot income"></i> {{ 'REPORTS.INCOME' | translate }}</span>
+        <span><i class="legend-dot expense"></i> {{ 'REPORTS.EXPENSES' | translate }}</span>
+      </div>
+
+      <div class="vertical-chart" [attr.aria-label]="'REPORTS.MONTHLY_CHART_ARIA' | translate">
+        @for (row of monthlyChartRows(); track row.month) {
+          <div class="month-column" [attr.title]="chartMonthTooltip(row)">
+            <div class="bars-wrap">
+              <div class="bar income" [style.height.%]="chartBarHeight(row.income)"></div>
+              <div class="bar expense" [style.height.%]="chartBarHeight(row.expenses)"></div>
+            </div>
+            <span class="month-label">{{ row.monthLabel }}</span>
+            <span class="month-net" [class]="chartMonthNetClass(row)">{{ amount(row.net) }}</span>
+          </div>
+        }
+      </div>
+    } @else {
+      <app-empty-state icon="bar_chart" [title]="'REPORTS.NO_CHART_DATA' | translate" [description]="'REPORTS.NO_CHART_DATA_DESC' | translate" />
+    }
+  </section>
+
+  <section class="report-card sm-card report-print-section" id="report-reservation-status">
+    <div class="report-head">
+      <h2 class="report-title">{{ 'REPORTS.RESERVATION_STATUS' | translate }}</h2>
+      <button mat-stroked-button type="button" class="no-print" (click)="printSectionByKey('report-reservation-status', 'REPORTS.RESERVATION_STATUS')">
+        <mat-icon>print</mat-icon>
+        {{ 'REPORTS.PRINT' | translate }}
+      </button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>{{ 'REPORTS.STATUS' | translate }}</th>
+            <th>{{ 'REPORTS.BOOKINGS' | translate }}</th>
+            <th>{{ 'REPORTS.VALUE' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of statusReport(); track row.status) {
+            <tr>
+              <td>{{ statusLabel(row.status) }}</td>
+              <td>{{ row.count }}</td>
+              <td>{{ amount(row.amount) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="report-card sm-card report-print-section" id="report-payment-methods">
+    <div class="report-head">
+      <h2 class="report-title">{{ 'REPORTS.PAYMENT_METHODS' | translate }}</h2>
+      <button mat-stroked-button type="button" class="no-print" (click)="printSectionByKey('report-payment-methods', 'REPORTS.PAYMENT_METHODS')">
+        <mat-icon>print</mat-icon>
+        {{ 'REPORTS.PRINT' | translate }}
+      </button>
+    </div>
+
+    @if (paymentMethodReport().length) {
+      <div class="table-wrap">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>{{ 'REPORTS.METHOD' | translate }}</th>
+              <th>{{ 'REPORTS.BOOKINGS' | translate }}</th>
+              <th>{{ 'REPORTS.COLLECTED' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of paymentMethodReport(); track row.method) {
+              <tr>
+                <td>{{ row.method }}</td>
+                <td>{{ row.count }}</td>
+                <td>{{ amount(row.amount) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <app-empty-state icon="payments" [title]="'REPORTS.NO_PAID_BOOKINGS' | translate" [description]="'REPORTS.NO_PAID_BOOKINGS_DESC' | translate" />
+    }
+  </section>
+
+  <section class="report-card sm-card report-print-section" id="report-resource-performance">
+    <div class="report-head">
+      <h2 class="report-title">{{ 'REPORTS.RESOURCE_PERFORMANCE' | translate }}</h2>
+      <button mat-stroked-button type="button" class="no-print" (click)="printSectionByKey('report-resource-performance', 'REPORTS.RESOURCE_PERFORMANCE')">
+        <mat-icon>print</mat-icon>
+        {{ 'REPORTS.PRINT' | translate }}
+      </button>
+    </div>
+
+    @if (resourcePerformanceReport().length) {
+      <div class="table-wrap">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>{{ 'REPORTS.RESOURCE' | translate }}</th>
+              <th>{{ 'REPORTS.BOOKINGS' | translate }}</th>
+              <th>{{ 'REPORTS.COLLECTED' | translate }}</th>
+              <th>{{ 'REPORTS.RECEIVABLES' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of resourcePerformanceReport(); track row.resourceName) {
+              <tr>
+                <td>{{ row.resourceName }}</td>
+                <td>{{ row.bookings }}</td>
+                <td>{{ amount(row.income) }}</td>
+                <td>{{ amount(row.unpaid) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <app-empty-state icon="hotel" [title]="'REPORTS.NO_RESOURCE_DATA' | translate" [description]="'REPORTS.NO_RESOURCE_DATA_DESC' | translate" />
+    }
+  </section>
+
+  <section class="report-card sm-card report-print-section" id="report-receivables">
+    <div class="report-head">
+      <h2 class="report-title">{{ 'REPORTS.RECEIVABLES_REPORT' | translate }}</h2>
+      <button mat-stroked-button type="button" class="no-print" (click)="printSectionByKey('report-receivables', 'REPORTS.RECEIVABLES_REPORT')">
+        <mat-icon>print</mat-icon>
+        {{ 'REPORTS.PRINT' | translate }}
+      </button>
+    </div>
+
+    @if (receivablesReport().length) {
+      <div class="table-wrap">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>{{ 'REPORTS.CUSTOMER' | translate }}</th>
+              <th>{{ 'REPORTS.PHONE' | translate }}</th>
+              <th>{{ 'REPORTS.RESOURCE' | translate }}</th>
+              <th>{{ 'REPORTS.DATE' | translate }}</th>
+              <th>{{ 'REPORTS.PAYMENT_STATUS' | translate }}</th>
+              <th>{{ 'REPORTS.AMOUNT' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of receivablesReport(); track row.reservationId) {
+              <tr>
+                <td>{{ row.customerName }}</td>
+                <td>{{ row.customerPhone }}</td>
+                <td>{{ row.resourceName }}</td>
+                <td>{{ row.bookingDate }}</td>
+                <td>{{ paymentStatusLabel(row.paymentStatus) }}</td>
+                <td>{{ amount(row.amount) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <app-empty-state icon="check_circle" [title]="'REPORTS.NO_RECEIVABLES' | translate" [description]="'REPORTS.NO_RECEIVABLES_DESC' | translate" />
+    }
+  </section>
+
+  <section class="report-card sm-card report-print-section" id="report-expense-categories">
+    <div class="report-head">
+      <h2 class="report-title">{{ 'REPORTS.EXPENSE_CATEGORIES' | translate }}</h2>
+      <button mat-stroked-button type="button" class="no-print" (click)="printSectionByKey('report-expense-categories', 'REPORTS.EXPENSE_CATEGORIES')">
+        <mat-icon>print</mat-icon>
+        {{ 'REPORTS.PRINT' | translate }}
+      </button>
+    </div>
+
+    @if (expenseLabelsReport().length) {
+      <div class="table-wrap">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>{{ 'REPORTS.LABEL' | translate }}</th>
+              <th>{{ 'REPORTS.ENTRIES' | translate }}</th>
+              <th>{{ 'REPORTS.TOTAL' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of expenseLabelsReport(); track row.label) {
+              <tr>
+                <td>{{ row.label }}</td>
+                <td>{{ row.count }}</td>
+                <td>{{ amount(row.total) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <app-empty-state icon="receipt_long" [title]="'REPORTS.NO_EXPENSES' | translate" [description]="'REPORTS.NO_EXPENSES_DESC' | translate" />
+    }
+  </section>
+</div>

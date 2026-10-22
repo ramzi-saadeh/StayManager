@@ -1,0 +1,233 @@
+<div class="page-container">
+
+  <div class="breadcrumb">
+    <a routerLink="/reservations" mat-button>
+      <mat-icon>arrow_back</mat-icon> {{ 'RESERVATIONS.TITLE' | translate }}
+    </a>
+  </div>
+
+  @if (!reservation()) {
+    <div class="loading-center"><mat-spinner diameter="40" /></div>
+  }
+
+  @else {
+    <!-- Header row -->
+    <div class="detail-header">
+      <div class="res-title-row">
+        <div class="res-icon">
+          <mat-icon>{{ typeIcon(reservation()!.resourceType) }}</mat-icon>
+        </div>
+        <div>
+          <h1 class="res-resource-name">{{ reservation()!.resourceName }}</h1>
+          <p class="res-id"># {{ reservation()!.reservationId }}</p>
+        </div>
+      </div>
+      <app-status-badge [status]="reservation()!.status" size="md" />
+    </div>
+
+    <!-- Action buttons -->
+    <div class="action-bar">
+      <a mat-stroked-button [routerLink]="['/reservations', reservation()!.reservationId, 'receipt']">
+        <mat-icon>receipt_long</mat-icon>
+        {{ 'RESERVATION_DETAIL.PRINT_RECEIPT' | translate }}
+      </a>
+      @if (canEdit()) {
+        <button mat-stroked-button
+          [disabled]="!!actionLoading()"
+          (click)="edit()">
+          @if (actionLoading() === 'edit') { <mat-icon class="spin">autorenew</mat-icon> }
+          @else { <mat-icon>edit</mat-icon> }
+          {{ 'COMMON.EDIT' | translate }}
+        </button>
+      }
+      @if (canConfirm()) {
+        <button mat-flat-button color="primary"
+          [disabled]="!!actionLoading()"
+          (click)="confirm()">
+          @if (actionLoading() === 'confirm') { <mat-icon class="spin">autorenew</mat-icon> }
+          @else { <mat-icon>check_circle</mat-icon> }
+          {{ 'RESERVATION_DETAIL.CONFIRM' | translate }}
+        </button>
+      }
+      @if (canComplete()) {
+        <button mat-flat-button color="accent"
+          [disabled]="!!actionLoading()"
+          (click)="complete()">
+          @if (actionLoading() === 'complete') { <mat-icon class="spin">autorenew</mat-icon> }
+          @else { <mat-icon>task_alt</mat-icon> }
+          {{ 'RESERVATION_DETAIL.MARK_COMPLETE' | translate }}
+        </button>
+      }
+      @if (canCancel()) {
+        <button mat-stroked-button color="warn"
+          [disabled]="!!actionLoading()"
+          (click)="cancel()">
+          @if (actionLoading() === 'cancel') { <mat-icon class="spin">autorenew</mat-icon> }
+          @else { <mat-icon>cancel</mat-icon> }
+          @if (reservation()!.status === ReservationStatus.PENDING) {
+            {{ 'RESERVATION_DETAIL.DECLINE_REQUEST' | translate }}
+          } @else {
+            {{ 'RESERVATION_DETAIL.CANCEL_BOOKING' | translate }}
+          }
+        </button>
+      }
+      @if (canDelete()) {
+        <button mat-stroked-button color="warn"
+          [disabled]="!!actionLoading()"
+          (click)="softDelete()">
+          @if (actionLoading() === 'delete') { <mat-icon class="spin">autorenew</mat-icon> }
+          @else { <mat-icon>delete</mat-icon> }
+          {{ 'COMMON.DELETE' | translate }}
+        </button>
+      }
+    </div>
+
+    <mat-divider class="my-divider" />
+
+    <div class="detail-grid">
+
+      <!-- ── Guest card ──────────────────────────────────────────────── -->
+      <div class="info-card">
+        <h2 class="card-title"><mat-icon>person</mat-icon> {{ 'RESERVATION_DETAIL.GUEST' | translate }}</h2>
+        <dl>
+          <div class="dl-row">
+            <dt>{{ 'RESERVATION_DETAIL.NAME' | translate }}</dt><dd>{{ reservation()!.customer.name }}</dd>
+          </div>
+          <div class="dl-row">
+            <dt>{{ 'RESERVATION_DETAIL.PHONE' | translate }}</dt>
+            <dd>
+              <a [href]="'tel:' + reservation()!.customer.phone">
+                {{ reservation()!.customer.phone }}
+              </a>
+            </dd>
+          </div>
+          @if (reservation()!.customer.email) {
+            <div class="dl-row">
+              <dt>{{ 'RESERVATION_DETAIL.EMAIL' | translate }}</dt>
+              <dd>
+                <a [href]="'mailto:' + reservation()!.customer.email">
+                  {{ reservation()!.customer.email }}
+                </a>
+              </dd>
+            </div>
+          }
+          @if (reservation()!.customer.notes) {
+            <div class="dl-row">
+              <dt>{{ 'RESERVATION_DETAIL.NOTES' | translate }}</dt><dd>{{ reservation()!.customer.notes }}</dd>
+            </div>
+          }
+        </dl>
+      </div>
+
+      <!-- ── Dates card ──────────────────────────────────────────────── -->
+      <div class="info-card">
+        <h2 class="card-title"><mat-icon>calendar_month</mat-icon> {{ 'RESERVATION_DETAIL.BOOKING_PERIOD' | translate }}</h2>
+        <dl>
+          @if (reservation()!.startDate) {
+            <div class="dl-row">
+              <dt>{{ 'RESERVATION_DETAIL.CHECKIN' | translate }}</dt><dd>{{ reservation()!.startDate }}</dd>
+            </div>
+            <div class="dl-row">
+              <dt>{{ 'RESERVATION_DETAIL.CHECKOUT' | translate }}</dt><dd>{{ reservation()!.endDate }}</dd>
+            </div>
+          } @else {
+            <div class="dl-row">
+              <dt>{{ 'RESERVATION_DETAIL.START' | translate }}</dt><dd>{{ reservation()!.start.toDate() | date:'d MMM y, HH:mm' }}</dd>
+            </div>
+            <div class="dl-row">
+              <dt>{{ 'RESERVATION_DETAIL.END' | translate }}</dt><dd>{{ reservation()!.end.toDate() | date:'d MMM y, HH:mm' }}</dd>
+            </div>
+          }
+        </dl>
+      </div>
+
+      <!-- ── Payment card ────────────────────────────────────────────── -->
+      <div class="info-card">
+        <h2 class="card-title"><mat-icon>payments</mat-icon> {{ 'RESERVATION_DETAIL.PAYMENT' | translate }}</h2>
+        <dl>
+          <div class="dl-row">
+            <dt>{{ 'RESERVATION_DETAIL.TOTAL' | translate }}</dt>
+            <dd class="price-total">
+              {{ reservation()!.price.currency }} {{ reservation()!.price.amount | number:'1.2-2' }}
+            </dd>
+          </div>
+          <div class="dl-row">
+            <dt>{{ 'RESERVATION_DETAIL.STATUS' | translate }}</dt>
+            <dd>
+              <app-status-badge [status]="reservation()!.paymentStatus" size="sm" />
+            </dd>
+          </div>
+          <div class="dl-row">
+            <dt>{{ 'RESERVATION_DETAIL.UNIT' | translate }}</dt>
+            <dd>{{ reservation()!.price.quantity }} × {{ reservation()!.price.basePrice | number:'1.0-0' }} ({{ unitLabel(reservation()!.price.unit) }})</dd>
+          </div>
+          @if (reservation()!.deposit) {
+            <div class="dl-row">
+              <dt>{{ 'RESERVATION_DETAIL.DEPOSIT' | translate }}</dt>
+              <dd>
+                {{ reservation()!.price.currency }} {{ reservation()!.deposit!.amount | number:'1.0-0' }}
+                <app-status-badge [status]="reservation()!.deposit!.status" size="sm" />
+              </dd>
+            </div>
+          }
+        </dl>
+
+        <div class="payment-actions">
+          @if (canMarkPaid()) {
+            <button mat-flat-button color="primary" type="button" (click)="markPaid()" [disabled]="!!actionLoading()">
+              {{ 'RESERVATION_DETAIL.MARK_AS_PAID' | translate }}
+            </button>
+          }
+          @if (canMarkUnpaid()) {
+            <button mat-stroked-button color="warn" type="button" (click)="markUnpaid()" [disabled]="!!actionLoading()">
+              {{ 'RESERVATION_DETAIL.MARK_AS_UNPAID' | translate }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- ── Series card ─────────────────────────────────────────────── -->
+      @if (reservation()!.seriesId) {
+        <div class="info-card info-card--full">
+          <h2 class="card-title"><mat-icon>repeat</mat-icon> {{ 'RESERVATION_SERIES.TITLE' | translate }}</h2>
+          <p class="series-summary">
+            {{ 'RESERVATION_SERIES.POSITION' | translate:{ index: reservation()!.occurrenceIndex, count: reservation()!.occurrenceCount } }}
+            @if (reservation()!.recurrence) {
+              &middot; {{ ruleSummary(reservation()!.recurrence) }}
+            }
+          </p>
+          <ol class="series-list">
+            @for (member of series(); track member.reservationId) {
+              <li class="series-item" [class.series-item--current]="member.reservationId === reservation()!.reservationId">
+                <span class="series-index">{{ member.occurrenceIndex }}</span>
+                <a [routerLink]="['/reservations', member.reservationId]">
+                  {{ member.start.toDate() | date: (member.startDate ? 'EEE, d MMM y' : 'EEE, d MMM y, HH:mm') }}
+                </a>
+                <app-status-badge [status]="member.status" size="sm" />
+              </li>
+            }
+          </ol>
+        </div>
+      }
+
+      <!-- ── Notes card ──────────────────────────────────────────────── -->
+      @if (reservation()!.notes) {
+        <div class="info-card info-card--full">
+          <h2 class="card-title"><mat-icon>notes</mat-icon> {{ 'RESERVATION_DETAIL.NOTES' | translate }}</h2>
+          <p class="notes-text">{{ reservation()!.notes }}</p>
+        </div>
+      }
+
+    </div>
+
+    <!-- Cancellation reason (if cancelled) -->
+    @if (reservation()!.cancellationReason) {
+      <div class="cancellation-banner">
+        <mat-icon>info</mat-icon>
+        <span>{{ 'RESERVATION_DETAIL.CANCELLED_REASON' | translate:{ reason: reservation()!.cancellationReason } }}</span>
+      </div>
+    }
+
+  }
+
+</div>

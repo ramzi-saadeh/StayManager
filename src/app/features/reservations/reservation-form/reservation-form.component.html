@@ -1,0 +1,244 @@
+<div class="page-container">
+
+  <div class="breadcrumb">
+    <a routerLink="/reservations" mat-button>
+      <mat-icon>arrow_back</mat-icon> {{ 'RESERVATIONS.TITLE' | translate }}
+    </a>
+  </div>
+
+  <h1 class="page-title">{{ 'RESERVATION_FORM.NEW_BOOKING' | translate }}</h1>
+
+  <mat-stepper orientation="vertical" #stepper [linear]="true">
+
+    <!-- ── Step 1: Resource & Dates ─────────────────────────────────── -->
+    <mat-step [stepControl]="bookingForm" [label]="'RESERVATION_FORM.STEP_RESOURCE_DATES' | translate">
+      <form [formGroup]="bookingForm" class="step-form" novalidate>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'RESERVATION_FORM.RESOURCE' | translate }}</mat-label>
+          <mat-select formControlName="resourceId">
+            @for (r of resources(); track r.resourceId) {
+              <mat-option [value]="r.resourceId">{{ r.name }}</mat-option>
+            }
+          </mat-select>
+          <mat-icon matPrefix>home_work</mat-icon>
+        </mat-form-field>
+
+        @if (selectedResource()) {
+
+          <!-- DATE_RANGE (nightly) -->
+          @if (isDateRange) {
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'RESERVATION_FORM.CHECKIN_DATE' | translate }}</mat-label>
+                <input matInput [matDatepicker]="checkInPicker"
+                  formControlName="startDate" [min]="today" readonly />
+                <mat-icon matPrefix>login</mat-icon>
+                <mat-datepicker-toggle matIconSuffix [for]="checkInPicker" />
+                <mat-datepicker #checkInPicker />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'RESERVATION_FORM.CHECKOUT_DATE' | translate }}</mat-label>
+                <input matInput [matDatepicker]="checkOutPicker"
+                  formControlName="endDate" [min]="minCheckoutDate()" readonly />
+                <mat-icon matPrefix>logout</mat-icon>
+                <mat-datepicker-toggle matIconSuffix [for]="checkOutPicker" />
+                <mat-datepicker #checkOutPicker />
+              </mat-form-field>
+            </div>
+            @if (estimatedNights() > 0) {
+              <p class="estimate-hint">
+                <mat-icon>nights_stay</mat-icon>
+                {{ 'RESERVATION_FORM.ESTIMATE_NIGHTS_TOTAL' | translate:{ nights: estimatedNights(), currency: ws.currency(), total: (estimatedTotal() | number:'1.0-0') } }}
+              </p>
+            }
+          }
+
+          <!-- DATETIME_RANGE (hourly) -->
+          @else {
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'RESERVATION_FORM.START_DATETIME' | translate }}</mat-label>
+                <input matInput formControlName="startDatetime" type="datetime-local" />
+                <mat-icon matPrefix>schedule</mat-icon>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'RESERVATION_FORM.END_DATETIME' | translate }}</mat-label>
+                <input matInput formControlName="endDatetime" type="datetime-local" />
+                <mat-icon matPrefix>schedule</mat-icon>
+              </mat-form-field>
+            </div>
+          }
+
+          <app-recurrence-editor
+            [firstStart]="firstStart()"
+            [isDateRange]="isDateRange"
+            [preview]="seriesPreview()"
+            [previewLoading]="previewLoading()"
+            [(rule)]="recurrence"
+            [(valid)]="recurrenceValid"
+            [(skipConflicts)]="skipConflicts" />
+
+        }
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'RESERVATION_FORM.INTERNAL_NOTES' | translate }}</mat-label>
+          <textarea matInput formControlName="notes" rows="2"
+            [placeholder]="'RESERVATION_FORM.INTERNAL_NOTES_PLACEHOLDER' | translate"></textarea>
+        </mat-form-field>
+
+        <div class="step-actions">
+          <button mat-flat-button matStepperNext color="primary"
+            [disabled]="bookingForm.invalid || !selectedResource() || !recurrenceValid()">
+            {{ 'RESERVATION_FORM.CONTINUE' | translate }} <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+          </button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- ── Step 2: Guest Info ────────────────────────────────────────── -->
+    <mat-step [stepControl]="guestForm" [label]="'RESERVATION_FORM.STEP_GUEST_INFORMATION' | translate">
+      <form [formGroup]="guestForm" class="step-form" novalidate>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'RESERVATION_FORM.CUSTOMER_LOOKUP' | translate }}</mat-label>
+          <input matInput
+            [value]="customerLookupQuery()"
+            (input)="onCustomerLookupInput($event)"
+            [matAutocomplete]="customerAutocomplete"
+            [placeholder]="'RESERVATION_FORM.CUSTOMER_LOOKUP_PLACEHOLDER' | translate" />
+          <mat-icon matPrefix>manage_search</mat-icon>
+          <mat-autocomplete #customerAutocomplete="matAutocomplete"
+            autoActiveFirstOption
+            (optionSelected)="selectCustomerById($event.option.value)">
+            @for (customer of filteredCustomers(); track customer.customerId) {
+              <mat-option [value]="customer.customerId">
+                <span class="customer-option-name">{{ customer.name }}</span>
+                <span class="customer-option-meta">
+                  {{ customer.phone }}
+                  @if (customer.email) {
+                    · {{ customer.email }}
+                  }
+                </span>
+              </mat-option>
+            }
+          </mat-autocomplete>
+          <mat-hint>{{ 'RESERVATION_FORM.CUSTOMER_LOOKUP_HINT' | translate }}</mat-hint>
+        </mat-form-field>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="field-grow">
+            <mat-label>{{ 'RESERVATION_FORM.GUEST_NAME' | translate }}</mat-label>
+            <input matInput formControlName="name" />
+            <mat-icon matPrefix>person</mat-icon>
+            @if (guestForm.controls.name.hasError('minlength')) {
+              <mat-error>{{ 'RESERVATION_FORM.ERROR_GUEST_NAME_MIN' | translate }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'RESERVATION_FORM.PHONE' | translate }}</mat-label>
+            <input matInput formControlName="phone" type="tel" />
+            <mat-icon matPrefix>phone</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'RESERVATION_FORM.EMAIL_OPTIONAL' | translate }}</mat-label>
+          <input matInput formControlName="email" type="email" />
+          <mat-icon matPrefix>email</mat-icon>
+          @if (guestForm.controls.email.hasError('email')) {
+            <mat-error>{{ 'RESERVATION_FORM.ERROR_VALID_EMAIL' | translate }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'RESERVATION_FORM.GUEST_NOTES_OPTIONAL' | translate }}</mat-label>
+          <textarea matInput formControlName="guestNotes" rows="2"
+            [placeholder]="'RESERVATION_FORM.GUEST_NOTES_PLACEHOLDER' | translate"></textarea>
+        </mat-form-field>
+
+        <div class="step-actions">
+          <button mat-stroked-button matStepperPrevious>{{ 'COMMON.BACK' | translate }}</button>
+          <button mat-flat-button matStepperNext color="primary"
+            [disabled]="guestForm.invalid">
+            {{ 'RESERVATION_FORM.CONTINUE' | translate }} <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+          </button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- ── Step 3: Payment ───────────────────────────────────────────── -->
+    <mat-step [stepControl]="paymentForm" [label]="'RESERVATION_FORM.STEP_PAYMENT' | translate">
+      <form [formGroup]="paymentForm" class="step-form" novalidate>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'RESERVATION_FORM.TOTAL_AMOUNT' | translate }}</mat-label>
+            <input matInput formControlName="totalAmount" type="number" min="0" />
+            <span matPrefix>{{ ws.currency() }}&nbsp;</span>
+            @if (paymentForm.controls.totalAmount.hasError('min')) {
+              <mat-error>{{ 'RESERVATION_FORM.ERROR_AMOUNT_MIN' | translate }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'RESERVATION_FORM.PAYMENT_STATUS' | translate }}</mat-label>
+            <mat-select formControlName="paymentStatus">
+              <mat-option [value]="PaymentStatus.UNPAID">{{ 'RESERVATION_FORM.NOT_PAID_YET' | translate }}</mat-option>
+              <mat-option [value]="PaymentStatus.PAID">{{ 'RESERVATION_FORM.PAID_NOW' | translate }}</mat-option>
+            </mat-select>
+            <mat-icon matPrefix>receipt_long</mat-icon>
+          </mat-form-field>
+
+          @if (paymentForm.controls.paymentStatus.value === PaymentStatus.PAID) {
+            <mat-form-field appearance="outline">
+            <mat-label>{{ 'RESERVATION_FORM.PAYMENT_METHOD' | translate }}</mat-label>
+            <mat-select formControlName="paymentMethod">
+              @for (method of paymentMethods(); track method) {
+                <mat-option [value]="method">{{ method }}</mat-option>
+              }
+            </mat-select>
+            <mat-icon matPrefix>payments</mat-icon>
+            </mat-form-field>
+          }
+
+          @if (paymentForm.controls.paymentStatus.value === PaymentStatus.PAID) {
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'RESERVATION_FORM.DEPOSIT_OPTIONAL' | translate }}</mat-label>
+              <input matInput formControlName="depositAmount" type="number" min="0"
+                [placeholder]="'RESERVATION_FORM.DEPOSIT_PLACEHOLDER' | translate" />
+              <span matPrefix>{{ ws.currency() }}&nbsp;</span>
+            </mat-form-field>
+          }
+        </div>
+
+        @if (recurrence()) {
+          <p class="series-hint">
+            <mat-icon>repeat</mat-icon>
+            {{ 'RESERVATION_FORM.RECURRENCE.PAYMENT_HINT' | translate }}
+          </p>
+        }
+
+        @if (seriesBlocker(); as blocker) {
+          <p class="series-blocker" role="alert">{{ blocker | translate }}</p>
+        }
+
+        <div class="step-actions">
+          <button mat-stroked-button matStepperPrevious>{{ 'COMMON.BACK' | translate }}</button>
+          <button mat-flat-button color="primary" type="button"
+            [disabled]="paymentForm.invalid || isLoading() || !!seriesBlocker()"
+            (click)="onSubmit()">
+            @if (isLoading()) { <mat-icon class="spin">autorenew</mat-icon> }
+            @if (recurrence() && seriesPreview()) {
+              {{ 'RESERVATION_FORM.RECURRENCE.CONFIRM_SERIES' | translate:{ count: seriesBookableCount() } }}
+            } @else {
+              {{ 'RESERVATION_FORM.CONFIRM_BOOKING' | translate }}
+            }
+          </button>
+        </div>
+      </form>
+    </mat-step>
+
+  </mat-stepper>
+</div>

@@ -1,0 +1,84 @@
+<main class="customer-reservations page-container">
+  <header class="customer-page-header">
+    <div>
+      <p class="customer-eyebrow">{{ 'CUSTOMER_RESERVATIONS.EYEBROW' | translate }}</p>
+      <h1>{{ 'CUSTOMER_RESERVATIONS.TITLE' | translate }}</h1>
+      <p class="customer-intro">{{ 'CUSTOMER_RESERVATIONS.SUBTITLE' | translate }}</p>
+    </div>
+    <a mat-flat-button color="primary" routerLink="/" fragment="features">
+      <mat-icon>search</mat-icon>{{ 'CUSTOMER_RESERVATIONS.BROWSE' | translate }}
+    </a>
+  </header>
+
+  @if (reservations() === null) {
+    <div class="customer-state" role="status">
+      <mat-spinner diameter="32" />
+      <span>{{ 'COMMON.LOADING' | translate }}</span>
+    </div>
+  } @else if (loadFailed()) {
+    <div class="customer-state customer-state--error" role="alert">
+      <mat-icon>cloud_off</mat-icon>
+      <h2>{{ 'CUSTOMER_RESERVATIONS.ERROR_TITLE' | translate }}</h2>
+      <p>{{ 'CUSTOMER_RESERVATIONS.ERROR_DESCRIPTION' | translate }}</p>
+    </div>
+  } @else if (reservations()!.length === 0) {
+    <div class="customer-state customer-state--empty">
+      <mat-icon>event_available</mat-icon>
+      <h2>{{ 'CUSTOMER_RESERVATIONS.EMPTY_TITLE' | translate }}</h2>
+      <p>{{ 'CUSTOMER_RESERVATIONS.EMPTY_DESCRIPTION' | translate }}</p>
+      @if (currentUser() && !currentUser()!.emailVerified) {
+        <div class="verification-note">
+          <p>{{ 'CUSTOMER_RESERVATIONS.VERIFY_EMAIL_HINT' | translate }}</p>
+          <button mat-stroked-button type="button" [disabled]="verificationSending() || verificationSent()"
+            (click)="resendVerificationEmail()">
+            <mat-icon>mark_email_read</mat-icon>{{ 'CUSTOMER_RESERVATIONS.SEND_VERIFICATION' | translate }}
+          </button>
+          @if (verificationSent()) {
+            <p role="status">{{ 'CUSTOMER_RESERVATIONS.VERIFICATION_SENT' | translate }}</p>
+          } @else if (verificationSendFailed()) {
+            <p role="alert">{{ 'CUSTOMER_RESERVATIONS.VERIFICATION_FAILED' | translate }}</p>
+          }
+        </div>
+      }
+      <a mat-stroked-button routerLink="/" fragment="features">
+        <mat-icon>search</mat-icon>{{ 'CUSTOMER_RESERVATIONS.BROWSE' | translate }}
+      </a>
+    </div>
+  } @else {
+    <section class="reservation-list" [attr.aria-label]="'CUSTOMER_RESERVATIONS.TITLE' | translate">
+      @for (reservation of reservations(); track reservation.reservationId) {
+        <article class="reservation-row">
+          <div class="reservation-main">
+            <div class="reservation-title-row">
+              <mat-icon class="reservation-icon">event</mat-icon>
+              <h2>{{ reservation.resourceName }}</h2>
+            </div>
+            <div class="reservation-details">
+              @if (reservation.startDate && reservation.endDate) {
+                <span>
+                  <mat-icon>calendar_today</mat-icon>
+                  {{ reservation.startDate }} – {{ reservation.endDate }}
+                </span>
+              } @else {
+                <span>
+                  <mat-icon>schedule</mat-icon>
+                  {{ reservation.start.toDate() | date:'MMM d, y, h:mm a' }} –
+                  {{ reservation.end.toDate() | date:'MMM d, y, h:mm a' }}
+                </span>
+              }
+              <span class="reservation-total">
+                {{ reservation.price.currency }} {{ reservation.price.amount | number:'1.0-2' }}
+              </span>
+            </div>
+          </div>
+          <div class="reservation-status">
+            <app-status-badge [status]="reservation.status" size="sm" />
+            @if (reservation.status === 'PENDING') {
+              <span class="pending-hint">{{ 'CUSTOMER_RESERVATIONS.PENDING_HINT' | translate }}</span>
+            }
+          </div>
+        </article>
+      }
+    </section>
+  }
+</main>

@@ -1,0 +1,152 @@
+<div class="page-container">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a routerLink="/resources" mat-button>
+      <mat-icon>arrow_back</mat-icon> Resources
+    </a>
+  </div>
+
+  <div class="form-header">
+    <h1 class="page-title">{{ isEdit() ? 'Edit Resource' : 'New Resource' }}</h1>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSave()" novalidate class="resource-form">
+
+    <!-- ── Section: Identity ─────────────────────────────────────────── -->
+    <div class="form-section">
+      <h2 class="section-title">Identity</h2>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="field-grow">
+          <mat-label>Resource name</mat-label>
+          <input matInput formControlName="name" placeholder="e.g. Villa A" />
+          @if (form.controls.name.hasError('maxlength')) {
+            <mat-error>Max 64 characters</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Type</mat-label>
+          <mat-select formControlName="type">
+            @for (t of resourceTypes; track t) {
+              <mat-option [value]="t">{{ typeLabel(t) }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="3"
+          placeholder="Brief description shown to staff…"></textarea>
+      </mat-form-field>
+    </div>
+
+    <mat-divider />
+
+    <!-- ── Section: Booking Mode ─────────────────────────────────────── -->
+    <div class="form-section">
+      <h2 class="section-title">Booking Mode</h2>
+      <p class="section-hint">
+        Immutable once the first reservation is created on this resource.
+      </p>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Booking mode</mat-label>
+        <mat-select formControlName="bookingMode">
+          <mat-option [value]="BookingMode.DATE_RANGE">Nightly (Date Range) — Guest House, Chalet, Camp</mat-option>
+          <mat-option [value]="BookingMode.DATETIME_RANGE">Hourly (Date-Time Range) — Football Field, Meeting Room, Event Venue</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <mat-divider />
+
+    <!-- ── Section: Pricing ───────────────────────────────────────────── -->
+    <div class="form-section">
+      <h2 class="section-title">Pricing</h2>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Base price</mat-label>
+          <input matInput formControlName="basePrice" type="number" min="0" />
+          <mat-icon matPrefix>payments</mat-icon>
+          @if (form.controls.basePrice.hasError('min')) {
+            <mat-error>Price must be 0 or more</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Price unit</mat-label>
+          <mat-select formControlName="priceUnit">
+            @for (u of priceUnits; track u) {
+              <mat-option [value]="u">{{ priceUnitLabel(u) }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <mat-divider />
+
+    <!-- ── Section: Constraints ───────────────────────────────────────── -->
+    <div class="form-section">
+      <h2 class="section-title">Capacity & Timing</h2>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Capacity (persons)</mat-label>
+          <input matInput formControlName="capacity" type="number" min="1" placeholder="Unlimited" />
+          <mat-icon matPrefix>group</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Buffer (minutes)</mat-label>
+          <input matInput formControlName="bufferMinutes" type="number" min="0" />
+          <mat-icon matPrefix>timer</mat-icon>
+          <mat-hint>Gap between consecutive bookings</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Min duration (minutes)</mat-label>
+          <input matInput formControlName="minDurationMinutes" type="number" min="0" placeholder="No minimum" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Max duration (minutes)</mat-label>
+          <input matInput formControlName="maxDurationMinutes" type="number" min="0" placeholder="No maximum" />
+        </mat-form-field>
+      </div>
+    </div>
+
+    <mat-divider />
+
+    <!-- ── Section: Visibility ────────────────────────────────────────── -->
+    <div class="form-section">
+      <h2 class="section-title">Visibility</h2>
+      <mat-slide-toggle formControlName="isActive">
+        Active — visible for new reservations
+      </mat-slide-toggle>
+
+      <mat-form-field appearance="outline" class="mt-16">
+        <mat-label>Sort order</mat-label>
+        <input matInput formControlName="sortOrder" type="number" />
+        <mat-hint>Lower numbers appear first in lists</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <!-- ── Actions ───────────────────────────────────────────────────── -->
+    <div class="form-actions">
+      <a mat-stroked-button routerLink="/resources">Cancel</a>
+      <button mat-flat-button color="primary" type="submit"
+        [disabled]="form.invalid || isLoading()">
+        @if (isLoading()) { <mat-icon class="spin">autorenew</mat-icon> }
+        {{ isEdit() ? 'Save Changes' : 'Create Resource' }}
+      </button>
+    </div>
+
+  </form>
+</div>

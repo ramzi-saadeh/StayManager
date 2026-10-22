@@ -1,0 +1,182 @@
+<div class="page-container animate-fade-in">
+
+  <!-- ── Page header ─────────────────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="header-text">
+      <h1 class="page-title">{{ 'DASHBOARD.GOOD' | translate }} {{ greetingPeriod }} 👋</h1>
+      <p class="page-subtitle">
+        {{ today | date:'EEEE, MMMM d, y' }} · {{ 'DASHBOARD.TODAY_SUMMARY' | translate }}
+      </p>
+    </div>
+    <div class="header-actions">
+      @if (isOwner()) {
+      <button mat-stroked-button routerLink="/calendar">
+        <mat-icon>calendar_month</mat-icon>
+        {{ 'DASHBOARD.VIEW_CALENDAR' | translate }}
+      </button>
+
+      <button mat-flat-button color="primary" routerLink="/reservations/new">
+        <mat-icon>add</mat-icon>
+        {{ 'DASHBOARD.NEW_BOOKING' | translate }}
+      </button>
+      } @else {
+      <button mat-flat-button color="primary" routerLink="/">
+        <mat-icon>travel_explore</mat-icon>
+        Explore public workspaces
+      </button>
+      }
+    </div>
+  </div>
+
+  @if (hasNoResources()) {
+  <section class="setup-alert" role="alert" aria-live="polite">
+    <div class="setup-alert-icon">
+      <mat-icon>warning_amber</mat-icon>
+    </div>
+    <div class="setup-alert-content">
+      <h2>{{ 'DASHBOARD.NO_RESOURCES_ALERT_TITLE' | translate }}</h2>
+      <p>{{ 'DASHBOARD.NO_RESOURCES_ALERT_DESC' | translate }}</p>
+    </div>
+    <a mat-flat-button color="primary" routerLink="/resources/new">
+      <mat-icon>add_business</mat-icon>
+      {{ 'DASHBOARD.NO_RESOURCES_ALERT_CTA' | translate }}
+    </a>
+  </section>
+  }
+
+  @if (isOwner()) {
+  <!-- ── KPI stats grid ──────────────────────────────────────────────── -->
+  <section class="stats-grid" [attr.aria-label]="'DASHBOARD.KEY_METRICS_ARIA' | translate">
+    @for (stat of stats(); track stat.label) {
+    <app-stat-card [label]="stat.label" [value]="stat.value" [icon]="stat.icon" [accent]="stat.accent"
+      [trend]="stat.trend" [trendLabel]="stat.trendLabel" />
+    }
+  </section>
+  }
+
+  <!-- ── Main content grid ──────────────────────────────────────────── -->
+  <div class="content-grid">
+
+    <!-- Left: upcoming reservations ────────────────────────────────── -->
+    <section class="upcoming-section sm-card">
+      <div class="section-header">
+        <h2 class="section-title">{{ 'DASHBOARD.UPCOMING_RESERVATIONS' | translate }}</h2>
+        <a mat-button color="primary" routerLink="/reservations">{{ 'DASHBOARD.VIEW_ALL' | translate }}</a>
+      </div>
+
+      <div class="reservation-list">
+        @for (res of upcomingReservations(); track res.reservationId) {
+        <div class="reservation-row">
+          <!-- Resource icon -->
+          <div class="res-type-icon" [style.background]="resourceTypeColor(res.resourceType) + '20'"
+            [style.color]="resourceTypeColor(res.resourceType)">
+            <mat-icon>{{ resourceTypeIcon(res.resourceType) }}</mat-icon>
+          </div>
+
+          <!-- Details -->
+          <div class="res-details">
+            <div class="res-top">
+              <span class="res-guest">{{ res.customer.name }}</span>
+              <app-status-badge [status]="res.status" size="sm" />
+            </div>
+            <div class="res-bottom">
+              <span class="res-resource">{{ res.resourceName }}</span>
+              <span class="res-sep">·</span>
+              <span class="res-dates">
+                {{ dateLabel(res.startDate) }}
+                @if (res.endDate && res.endDate !== res.startDate) {
+                → {{ dateLabel(res.endDate) }}
+                }
+                @if (nights(res) > 0) {
+                · {{ nightsLabel(nights(res)) }}
+                }
+              </span>
+            </div>
+          </div>
+
+          <!-- Amount -->
+          <div class="res-amount">
+            {{ res.price.currency }} {{ res.price.amount | number }}
+          </div>
+        </div>
+        } @empty {
+        <app-empty-state icon="event_available" [title]="'DASHBOARD.NO_UPCOMING_RESERVATIONS' | translate"
+          [description]="'DASHBOARD.NO_UPCOMING_RESERVATIONS_DESC' | translate"
+          [actionLabel]="isOwner() ? ('DASHBOARD.CREATE_BOOKING' | translate) : ''"
+          [actionLink]="isOwner() ? '/reservations/new' : ''" actionIcon="add" />
+        }
+      </div>
+    </section>
+
+    <!-- Right: resource utilization ────────────────────────────────── -->
+    <section class="utilization-section">
+
+      @if (isOwner()) {
+      <!-- Quick actions card -->
+      <div class="quick-actions sm-card">
+        <h2 class="section-title">{{ 'DASHBOARD.QUICK_ACTIONS' | translate }}</h2>
+        <div class="action-grid">
+          <button mat-stroked-button class="action-btn" routerLink="/reservations/new">
+            <mat-icon>add_circle</mat-icon>
+            <span>{{ 'DASHBOARD.NEW_BOOKING' | translate }}</span>
+          </button>
+          <button mat-stroked-button class="action-btn" routerLink="/resources">
+            <mat-icon>hotel</mat-icon>
+            <span>{{ 'DASHBOARD.MANAGE_RESOURCES' | translate }}</span>
+          </button>
+          <button mat-stroked-button class="action-btn" routerLink="/calendar">
+            <mat-icon>calendar_month</mat-icon>
+            <span>{{ 'DASHBOARD.AVAILABILITY' | translate }}</span>
+          </button>
+          <button mat-stroked-button class="action-btn" routerLink="/finance">
+            <mat-icon>account_balance_wallet</mat-icon>
+            <span>{{ 'DASHBOARD.FINANCE' | translate }}</span>
+          </button>
+        </div>
+      </div>
+      }
+
+      <!-- Resource utilization card -->
+      <div class="utilization-card sm-card">
+        <div class="section-header">
+          <h2 class="section-title">{{ 'DASHBOARD.RESOURCE_UTILIZATION' | translate }}</h2>
+          <span class="section-hint">{{ 'DASHBOARD.THIS_MONTH' | translate }}</span>
+        </div>
+
+        <div class="utilization-list">
+          @for (resource of resourceUtilization(); track resource.resourceId) {
+          <div class="utilization-row">
+            <div class="util-type-dot" [style.background]="resourceTypeColor(resource.type)">
+            </div>
+            <div class="util-info">
+              <div class="util-name-row">
+                <span class="util-name">{{ resource.name }}</span>
+                <span class="util-pct" [class.high]="resource.occupancyRate >= 80"
+                  [class.low]="resource.occupancyRate < 40">
+                  {{ resource.occupancyRate }}%
+                </span>
+              </div>
+              <div class="util-bar-track">
+                <div class="util-bar-fill" [style.width]="resource.occupancyRate + '%'"
+                  [style.background]="resourceTypeColor(resource.type)">
+                </div>
+              </div>
+              <span class="util-meta">
+                {{ 'DASHBOARD.BOOKINGS_COUNT' | translate:{ count: resource.totalBookings } }} ·
+                @if (resource.nextAvailable) {
+                {{ 'DASHBOARD.NEXT_FREE' | translate }} {{ dateLabel(resource.nextAvailable) }}
+                } @else {
+                {{ 'DASHBOARD.FULLY_BOOKED' | translate }}
+                }
+              </span>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+</div>

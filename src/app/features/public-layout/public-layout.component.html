@@ -1,0 +1,89 @@
+<div class="landing-shell">
+  <header class="top-nav" [class.compact]="isCompactNav()">
+    <div class="container nav-inner">
+      <a class="brand" routerLink="/" (click)="closeMobileMenu()">
+        <span class="brand-mark" aria-hidden="true">W</span>
+        <span class="brand-text">{{ 'PUBLIC_HOME.BRAND' | translate }}</span>
+      </a>
+
+      <nav class="desktop-nav" [attr.aria-label]="'PUBLIC_HOME.MAIN_NAV_ARIA' | translate">
+        <a routerLink="/" fragment="how-it-works">{{ 'PUBLIC_HOME.HOW_IT_WORKS' | translate }}</a>
+        <a routerLink="/" fragment="features">{{ 'PUBLIC_HOME.EXPLORE_WORKSPACES' | translate }}</a>
+        <a routerLink="/" fragment="for-businesses">{{ 'PUBLIC_HOME.FOR_BUSINESSES' | translate }}</a>
+        <a routerLink="/" fragment="pricing">{{ 'PUBLIC_HOME.PRICING' | translate }}</a>
+      </nav>
+
+      <div class="desktop-actions">
+        <div class="lang-switch" [attr.aria-label]="'PUBLIC_HOME.LANGUAGE_SWITCH_ARIA' | translate" role="group">
+          @for (lang of languageOptions; track lang.code) {
+          <button type="button" class="lang-btn" [class.active]="languageService.language() === lang.code"
+            (click)="onLanguageChange(lang.code)">
+            {{ lang.label }}
+          </button>
+          }
+        </div>
+
+        @if (isLoggedIn()) {
+          @if (isOwner()) {
+            <a mat-flat-button class="cta-btn" routerLink="/dashboard">Open dashboard</a>
+          } @else {
+            <a mat-flat-button class="cta-btn" routerLink="/my-reservations">{{ 'PUBLIC_HOME.MY_RESERVATIONS' | translate }}</a>
+            <button type="button" class="text-link logout-btn" (click)="logout()">
+              <mat-icon>logout</mat-icon>{{ 'PUBLIC_HOME.LOG_OUT' | translate }}
+            </button>
+          }
+        } @else {
+        <a class="text-link" routerLink="/login">{{ 'PUBLIC_HOME.LOG_IN_OR_SIGN_UP' | translate }}</a>
+        <a mat-flat-button class="cta-btn" routerLink="/login">{{ 'PUBLIC_HOME.CREATE_WORKSPACE' | translate }}</a>
+        }
+      </div>
+
+      <div class="mobile-actions">
+        @if (isLoggedIn()) {
+          @if (isOwner()) {
+            <a mat-flat-button class="cta-btn" routerLink="/dashboard">Dashboard</a>
+          } @else {
+            <a mat-flat-button class="cta-btn" routerLink="/my-reservations">{{ 'PUBLIC_HOME.MY_RESERVATIONS' | translate }}</a>
+          }
+        } @else {
+        <a mat-flat-button class="cta-btn" routerLink="/login">{{ 'PUBLIC_HOME.CREATE' | translate }}</a>
+        }
+        <button class="menu-btn" type="button" [attr.aria-label]="'PUBLIC_HOME.TOGGLE_MENU' | translate"
+          [attr.aria-expanded]="isMobileMenuOpen()" (click)="toggleMobileMenu()">
+          <mat-icon>{{ isMobileMenuOpen() ? 'close' : 'menu' }}</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    @if (isMobileMenuOpen()) {
+    <div class="mobile-panel">
+      <div class="mobile-lang-switch" role="group" [attr.aria-label]="'PUBLIC_HOME.LANGUAGE_SWITCH_ARIA' | translate">
+        @for (lang of languageOptions; track lang.code) {
+        <button type="button" class="lang-btn" [class.active]="languageService.language() === lang.code"
+          (click)="onLanguageChange(lang.code)">
+          {{ lang.label }}
+        </button>
+        }
+      </div>
+      <a routerLink="/" fragment="how-it-works" (click)="closeMobileMenu()">{{ 'PUBLIC_HOME.HOW_IT_WORKS' | translate }}</a>
+      <a routerLink="/" fragment="features" (click)="closeMobileMenu()">{{ 'PUBLIC_HOME.EXPLORE_WORKSPACES' | translate }}</a>
+      <a routerLink="/" fragment="for-businesses" (click)="closeMobileMenu()">{{ 'PUBLIC_HOME.FOR_BUSINESSES' | translate }}</a>
+      <a routerLink="/" fragment="pricing" (click)="closeMobileMenu()">{{ 'PUBLIC_HOME.PRICING' | translate }}</a>
+      @if (isLoggedIn()) {
+        @if (isOwner()) {
+          <a routerLink="/dashboard" (click)="closeMobileMenu()">Dashboard</a>
+        } @else {
+          <a routerLink="/my-reservations" (click)="closeMobileMenu()">{{ 'PUBLIC_HOME.MY_RESERVATIONS' | translate }}</a>
+          <button type="button" class="mobile-logout" (click)="logout()">
+            <mat-icon>logout</mat-icon>{{ 'PUBLIC_HOME.LOG_OUT' | translate }}
+          </button>
+        }
+      } @else {
+      <a routerLink="/login" (click)="closeMobileMenu()">{{ 'PUBLIC_HOME.LOG_IN' | translate }}</a>
+      }
+    </div>
+    }
+  </header>
+
+  <router-outlet></router-outlet>
+</div>

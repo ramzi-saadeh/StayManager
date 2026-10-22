@@ -1,0 +1,94 @@
+.stat-card {
+  padding: var(--sm-sp-5) var(--sm-sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sm-sp-1);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+  cursor: default;
+
+  &:hover {
+    box-shadow: var(--sm-shadow-md) !important;
+    transform: translateY(-1px);
+  }
+}
+
+.stat-header {
+  margin-bottom: var(--sm-sp-2);
+}
+
+.stat-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--sm-r-md);
+  background: #f1f5f9;
+
+  .stat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #64748b;
+  }
+}
+
+/* Accent colour overrides */
+.accent-primary .stat-icon-wrap { background: #dbeafe; .stat-icon { color: #2563eb; } }
+.accent-success .stat-icon-wrap { background: var(--sm-confirmed-bg); .stat-icon { color: var(--sm-confirmed); } }
+.accent-warning .stat-icon-wrap { background: var(--sm-pending-bg);   .stat-icon { color: var(--sm-pending); } }
+.accent-error   .stat-icon-wrap { background: var(--sm-cancelled-bg); .stat-icon { color: var(--sm-cancelled); } }
+.accent-neutral .stat-icon-wrap { background: #f3f4f6;                .stat-icon { color: #6b7280; } }
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.03em;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.stat-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  margin: 0;
+}
+
+.stat-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: var(--sm-sp-1);
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+
+  &.positive { color: var(--sm-confirmed); }
+  &.negative { color: var(--sm-cancelled); }
+}
+
+/* ── Skeleton loading ───────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+.skeleton-icon,
+.skeleton-value,
+.skeleton-label {
+  border-radius: var(--sm-r-sm);
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.skeleton-icon  { width: 40px; height: 40px; border-radius: var(--sm-r-md); margin-bottom: 8px; }
+.skeleton-value { width: 80px; height: 28px; margin-bottom: 4px; }
+.skeleton-label { width: 120px; height: 14px; }

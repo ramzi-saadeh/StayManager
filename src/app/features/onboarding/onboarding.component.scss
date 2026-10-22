@@ -1,0 +1,120 @@
+.onboarding-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 40px 16px;
+  background:
+    radial-gradient(900px 400px at 0% 0%, rgba(15, 118, 110, 0.18), transparent 60%),
+    #f6f5f1;
+}
+
+.onboarding-language {
+  width: 100%;
+  max-width: 560px;
+
+  mat-form-field {
+    width: 220px;
+    margin-inline-start: auto;
+    display: block;
+  }
+}
+
+.onboarding-header {
+  width: 100%;
+  max-width: 560px;
+  text-align: center;
+  padding: 18px 20px;
+  border-radius: 16px;
+  border: 1px solid #dbe7f5;
+  background: linear-gradient(180deg, #f8fbff 0%, #f2f7ff 100%);
+
+  h1 { font-size: 1.65rem; font-weight: 800; color: #0f172a; margin: 12px 0 6px; }
+  p  { color: #506279; margin: 0; }
+}
+
+.onboarding-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px; height: 56px;
+  border-radius: 16px;
+  background: var(--mat-sys-primary, #2563eb);
+  color: #fff;
+  mat-icon { font-size: 28px; width: 28px; height: 28px; }
+}
+
+.onboarding-card {
+  width: 100%;
+  max-width: 560px;
+  border-radius: 16px !important;
+  box-shadow: 0 18px 38px rgb(0 0 0 / 0.1) !important;
+  padding: 8px 0;
+}
+
+.step-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 0 8px;
+
+  mat-form-field { width: 100%; }
+}
+
+.step-actions {
+  display: flex;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.access-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.access-card {
+  text-align: start;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 12px;
+  background: #fff;
+  padding: 14px;
+  cursor: pointer;
+
+  h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #143d37;
+  }
+
+  p {
+    margin: 6px 0 0;
+    color: #4a6661;
+    font-size: 13px;
+  }
+}
+
+.access-card.selected {
+  border-color: #0f766e;
+  box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.15);
+}
+
+.ready-state {
+  padding: 8px 0;
+
+  h3 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 20px;
+  }
+
+  p {
+    margin: 8px 0 0;
+    color: #47635e;
+  }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 0.8s linear infinite; }

@@ -1,0 +1,274 @@
+<div class="page-container finance-page animate-fade-in">
+  <section class="finance-hero sm-card">
+    <div class="hero-copy">
+      <p class="hero-eyebrow">{{ 'FINANCE.HERO_EYEBROW' | translate }}</p>
+      <h1 class="page-title">{{ 'FINANCE.TITLE' | translate }}</h1>
+      <p class="page-subtitle">
+        {{ 'FINANCE.SUBTITLE' | translate }}
+      </p>
+    </div>
+
+    <div class="hero-actions">
+      <mat-form-field appearance="outline" class="month-field">
+        <mat-label>{{ 'FINANCE.MONTH' | translate }}</mat-label>
+        <mat-select [value]="month()" (selectionChange)="setMonth($event.value)">
+          @for (option of monthOptions(); track option.value) {
+            <mat-option [value]="option.value">
+              {{ option.label }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <div class="hero-note">
+        <mat-icon>info</mat-icon>
+        <span>{{ 'FINANCE.PENDING_NOTE' | translate }}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats-grid" [attr.aria-label]="'FINANCE.METRICS_ARIA' | translate">
+    <app-stat-card
+      [label]="'FINANCE.COLLECTED_INCOME' | translate"
+      [value]="amount(cashCollected())"
+      icon="savings"
+      accent="success" />
+    <app-stat-card
+      [label]="'FINANCE.UNPAID_BOOKINGS' | translate"
+      [value]="amount(unpaidBookings())"
+      icon="hourglass_top"
+      accent="warning" />
+    <app-stat-card
+      [label]="'FINANCE.NET_AFTER_EXPENSES' | translate"
+      [value]="amount(netCashAfterExpenses())"
+      icon="account_balance_wallet"
+      [accent]="netCashAfterExpenses() >= 0 ? 'success' : 'error'" />
+  </section>
+
+  <div class="content-grid">
+    <section class="finance-panel sm-card">
+      <div class="section-header">
+        <h2 class="section-title">{{ 'FINANCE.CASH_AND_EXPENSES' | translate }}</h2>
+        <span class="section-hint">{{ monthLabel(month()) }}</span>
+      </div>
+
+      <div class="cash-summary">
+        <span class="summary-label">{{ 'FINANCE.EXPECTED_INCOME' | translate }}</span>
+        <strong>{{ amount(forecastIncome()) }}</strong>
+        <small>{{ 'FINANCE.EXPECTED_INCOME_HINT' | translate }}</small>
+      </div>
+
+      <div class="expense-form">
+        <mat-form-field appearance="outline" class="expense-label-field">
+          <mat-label>{{ 'FINANCE.EXPENSE_LABEL' | translate }}</mat-label>
+          <input matInput [placeholder]="'FINANCE.EXPENSE_PLACEHOLDER' | translate" [value]="expenseDraftLabel()" (input)="setExpenseDraftLabel($event)">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="expense-date-field">
+          <mat-label>{{ 'FINANCE.EXPENSE_DATE' | translate }}</mat-label>
+          <input matInput [matDatepicker]="expenseDatePicker" [value]="expenseDraftDate()" (dateChange)="setExpenseDraftDate($event.value ?? null)" [placeholder]="'FINANCE.EXPENSE_DATE_PLACEHOLDER' | translate">
+          <mat-datepicker-toggle matIconSuffix [for]="expenseDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #expenseDatePicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="expense-amount-field">
+          <mat-label>{{ 'FINANCE.AMOUNT' | translate }}</mat-label>
+          <input matInput type="number" min="0" step="1" [value]="expenseDraftAmount() ?? ''" (input)="setExpenseDraftAmount($event)">
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" type="button" class="add-expense-btn" (click)="addExpense()">
+          <mat-icon>add</mat-icon>
+          {{ 'FINANCE.ADD_EXPENSE' | translate }}
+        </button>
+      </div>
+
+      <div class="expense-list-header">
+        <h3>{{ 'FINANCE.EXPENSE_ENTRIES' | translate }}</h3>
+        <span>{{ expenseTotal() | number }} {{ 'FINANCE.TOTAL' | translate }}</span>
+      </div>
+
+      @if (expenses().length) {
+        <div class="expense-list">
+          @for (expense of expenses(); track expense.id) {
+            <div class="expense-row">
+              <div class="expense-meta">
+                <span class="expense-label">{{ expense.label }}</span>
+                <span class="expense-date">{{ expenseDateLabel(expense.date) }}</span>
+                <span class="expense-amount">{{ amount(expense.amount) }}</span>
+              </div>
+
+              <button mat-icon-button type="button" (click)="removeExpense(expense.id)" [attr.aria-label]="'FINANCE.REMOVE_EXPENSE' | translate">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+      } @else {
+        <app-empty-state
+          icon="receipt_long"
+          [title]="'FINANCE.NO_EXPENSES' | translate"
+          [description]="'FINANCE.NO_EXPENSES_DESC' | translate" />
+      }
+
+      <section class="monthly-table-panel">
+        <div class="section-header monthly-table-header">
+          <h3>{{ 'FINANCE.MONTHLY_TABLE_TITLE' | translate }}</h3>
+          <button
+            mat-stroked-button
+            type="button"
+            (click)="exportMonthlySummaryCsv()"
+            [disabled]="!monthlyPerformance().length"
+          >
+            <mat-icon>download</mat-icon>
+            {{ 'FINANCE.EXPORT_CSV' | translate }}
+          </button>
+        </div>
+
+        @if (monthlyPerformance().length) {
+          <div class="monthly-table-wrap">
+            <table class="monthly-table" [attr.aria-label]="'FINANCE.MONTHLY_TABLE_ARIA' | translate">
+              <thead>
+                <tr>
+                  <th>{{ 'FINANCE.TABLE_MONTH' | translate }}</th>
+                  <th>{{ 'FINANCE.TABLE_INCOME' | translate }}</th>
+                  <th>{{ 'FINANCE.TABLE_EXPENSES' | translate }}</th>
+                  <th>{{ 'FINANCE.TABLE_EXPENSE_LABELS' | translate }}</th>
+                  <th>{{ 'FINANCE.TABLE_NET' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of monthlyPerformance(); track row.month) {
+                  <tr>
+                    <td>{{ monthLabel(row.month) }}</td>
+                    <td>{{ amount(row.income) }}</td>
+                    <td>{{ amount(row.expenses) }}</td>
+                    <td class="expense-labels-cell">{{ expenseLabelsSummary(row) }}</td>
+                    <td [class.net-positive]="row.net >= 0" [class.net-negative]="row.net < 0">{{ amount(row.net) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <app-empty-state
+            icon="table_chart"
+            [title]="'FINANCE.NO_MONTHLY_TABLE_DATA' | translate"
+            [description]="'FINANCE.NO_MONTHLY_TABLE_DATA_DESC' | translate" />
+        }
+      </section>
+    </section>
+
+    <aside class="finance-sidebar">
+      <section class="snapshot-card sm-card">
+        <div class="section-header">
+          <h2 class="section-title">{{ 'FINANCE.SNAPSHOT' | translate }}</h2>
+          <span class="section-hint">{{ 'FINANCE.BOOKINGS_COUNT' | translate:{ count: bookingCount() } }}</span>
+        </div>
+
+        <div class="snapshot-list">
+          <div class="snapshot-row">
+            <span>{{ 'FINANCE.COLLECTED_INCOME' | translate }}</span>
+            <strong>{{ amount(cashCollected()) }}</strong>
+          </div>
+          <div class="snapshot-row">
+            <span>{{ 'FINANCE.PENDING_RECEIVABLES' | translate }}</span>
+            <strong>{{ amount(unpaidBookings()) }}</strong>
+          </div>
+          <div class="snapshot-row emphasis">
+            <span>{{ 'FINANCE.EXPECTED_TOTAL_INCOME' | translate }}</span>
+            <strong>{{ amount(forecastIncome()) }}</strong>
+          </div>
+          <div class="snapshot-row">
+            <span>{{ 'FINANCE.EXPENSES' | translate }}</span>
+            <strong>{{ amount(expenseTotal()) }}</strong>
+          </div>
+          <div class="snapshot-row emphasis">
+            <span>{{ 'FINANCE.NET_AFTER_EXPENSES' | translate }}</span>
+            <strong>{{ amount(netCashAfterExpenses()) }}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="methods-card sm-card">
+        <div class="section-header">
+          <h2 class="section-title">{{ 'FINANCE.PAYMENT_METHODS' | translate }}</h2>
+          <span class="section-hint">{{ 'FINANCE.COLLECTED_INCOME' | translate }}</span>
+        </div>
+
+        @if (paymentMethodBreakdown().length) {
+          <div class="methods-list">
+            @for (item of paymentMethodBreakdown(); track item.method) {
+              <div class="method-row">
+                <div class="method-main">
+                  <strong>{{ methodLabel(item.method) }}</strong>
+                  <span>{{ methodHint(item.method) }}</span>
+                </div>
+                <strong class="method-total">{{ amount(item.amount) }}</strong>
+              </div>
+            }
+          </div>
+        } @else {
+          <app-empty-state
+            icon="payments"
+            [title]="'FINANCE.NO_COLLECTED_PAYMENTS' | translate"
+            [description]="'FINANCE.NO_COLLECTED_PAYMENTS_DESC' | translate" />
+        }
+      </section>
+
+      <section class="methods-card sm-card">
+        <div class="section-header">
+          <h2 class="section-title">{{ 'FINANCE.MONTHLY_HIGHLIGHTS' | translate }}</h2>
+          <span class="section-hint">{{ 'FINANCE.WORKSPACE_SUMMARY' | translate }}</span>
+        </div>
+
+        <div class="snapshot-list">
+          <div class="snapshot-row">
+            <span>{{ 'FINANCE.TOP_INCOME_MONTH' | translate }}</span>
+            @if (topIncomeMonth()) {
+              <strong>{{ monthLabel(topIncomeMonth()!.month) }} · {{ amount(topIncomeMonth()!.income) }}</strong>
+            } @else {
+              <strong>{{ 'FINANCE.NO_DATA' | translate }}</strong>
+            }
+          </div>
+          <div class="snapshot-row">
+            <span>{{ 'FINANCE.TOP_EXPENSE_MONTH' | translate }}</span>
+            @if (topExpenseMonth()) {
+              <strong>{{ monthLabel(topExpenseMonth()!.month) }} · {{ amount(topExpenseMonth()!.expenses) }}</strong>
+            } @else {
+              <strong>{{ 'FINANCE.NO_DATA' | translate }}</strong>
+            }
+          </div>
+        </div>
+      </section>
+
+      <section class="history-card sm-card">
+        <div class="section-header">
+          <h2 class="section-title">{{ 'FINANCE.RECENT_MONTHS' | translate }}</h2>
+          <span class="section-hint">{{ 'FINANCE.WORKSPACE_SUMMARY' | translate }}</span>
+        </div>
+
+        @if (recentSummaries().length) {
+          <div class="history-list">
+            @for (summary of recentSummaries(); track summary.month) {
+              <div class="history-row">
+                <div class="history-main">
+                  <strong>{{ monthLabel(summary.month) }}</strong>
+                  <span>{{ 'FINANCE.BOOKINGS_COUNT' | translate:{ count: summary.confirmedCount + summary.pendingCount } }}</span>
+                </div>
+                <div class="history-values">
+                  <span>{{ amount(summary.totalRevenue) }}</span>
+                  <small>{{ 'FINANCE.PENDING_REVENUE' | translate:{ amount: amount(summary.pendingRevenue) } }}</small>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <app-empty-state
+            icon="bar_chart"
+            [title]="'FINANCE.NO_MONTHLY_SUMMARIES' | translate"
+            [description]="'FINANCE.NO_MONTHLY_SUMMARIES_DESC' | translate" />
+        }
+      </section>
+    </aside>
+  </div>
+</div>

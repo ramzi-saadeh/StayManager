@@ -1,0 +1,70 @@
+<div class="settings-page">
+  <div class="settings-header">
+    <h1>{{ 'PROFILE_SETTINGS.TITLE' | translate }}</h1>
+    <p>{{ 'PROFILE_SETTINGS.SUBTITLE' | translate }}</p>
+  </div>
+
+  <!-- Avatar -->
+  <div class="avatar-section">
+    <div class="avatar">{{ initials() }}</div>
+    <div>
+      <p class="avatar-name">{{ currentUser?.displayName || ('PROFILE_SETTINGS.NO_NAME' | translate) }}</p>
+      <p class="avatar-email">{{ currentUser?.email }}</p>
+    </div>
+  </div>
+
+  <mat-divider class="divider" />
+
+  <!-- Form -->
+  <form [formGroup]="form" (ngSubmit)="onSave()" novalidate class="profile-form">
+
+    <mat-form-field appearance="outline" class="field">
+      <mat-label>{{ 'PROFILE_SETTINGS.DISPLAY_NAME' | translate }}</mat-label>
+      <input matInput formControlName="displayName" />
+      <mat-icon matPrefix>person</mat-icon>
+      @if (form.controls.displayName.hasError('minlength')) {
+        <mat-error>{{ 'PROFILE_SETTINGS.ERROR_DISPLAY_NAME_MIN' | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="field">
+      <mat-label>{{ 'PROFILE_SETTINGS.EMAIL' | translate }}</mat-label>
+      <input matInput formControlName="email" />
+      <mat-icon matPrefix>email</mat-icon>
+      <mat-hint>{{ 'PROFILE_SETTINGS.EMAIL_HINT' | translate }}</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="field">
+      <mat-label>{{ 'PROFILE_SETTINGS.THEME' | translate }}</mat-label>
+      <mat-select formControlName="theme">
+        @for (option of themeOptions; track option.value) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+      <mat-icon matPrefix>palette</mat-icon>
+      <mat-hint>{{ 'PROFILE_SETTINGS.THEME_HINT' | translate }}</mat-hint>
+    </mat-form-field>
+
+    <div class="form-actions">
+      <button mat-flat-button color="primary" type="submit"
+        [disabled]="form.invalid || isSaving()">
+        @if (isSaving()) { <mat-icon class="spin">autorenew</mat-icon> }
+        {{ 'PROFILE_SETTINGS.SAVE_CHANGES' | translate }}
+      </button>
+    </div>
+
+  </form>
+
+  <mat-divider class="divider" />
+
+  <!-- Sign out -->
+  <div class="danger-zone">
+    <h3>{{ 'PROFILE_SETTINGS.SESSION' | translate }}</h3>
+    <button mat-stroked-button color="warn" (click)="logout()" [disabled]="isLoggingOut()">
+      @if (isLoggingOut()) { <mat-icon class="spin">autorenew</mat-icon> }
+      @else { <mat-icon>logout</mat-icon> }
+      {{ 'PROFILE_SETTINGS.SIGN_OUT' | translate }}
+    </button>
+  </div>
+
+</div>

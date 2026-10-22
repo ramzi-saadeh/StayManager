@@ -1,0 +1,49 @@
+<main class="admin-page">
+  <section class="container">
+    <div class="header-row">
+      <div>
+        <p class="eyebrow">{{ 'SUPER_ADMIN_APPROVALS.EYEBROW' | translate }}</p>
+        <h1>{{ 'SUPER_ADMIN_APPROVALS.TITLE' | translate }}</h1>
+        <p class="subtitle">{{ 'SUPER_ADMIN_APPROVALS.SUBTITLE' | translate }}</p>
+      </div>
+      <a mat-stroked-button routerLink="/dashboard">{{ 'SUPER_ADMIN_APPROVALS.BACK_TO_APP' | translate }}</a>
+    </div>
+
+    @if (!pending().length) {
+      <mat-card class="empty-card">
+        <mat-icon>verified</mat-icon>
+        <h2>{{ 'SUPER_ADMIN_APPROVALS.EMPTY_TITLE' | translate }}</h2>
+        <p>{{ 'SUPER_ADMIN_APPROVALS.EMPTY_DESC' | translate }}</p>
+      </mat-card>
+    } @else {
+      <div class="grid">
+        @for (workspace of pending(); track workspace.workspaceId) {
+          <mat-card class="workspace-card">
+            <div class="card-top">
+              <h3>{{ workspace.name }}</h3>
+              <span class="status">{{ 'SUPER_ADMIN_APPROVALS.PENDING' | translate }}</span>
+            </div>
+
+            <div class="meta">
+              <p><strong>{{ 'SUPER_ADMIN_APPROVALS.WORKSPACE_ID' | translate }}:</strong> {{ workspace.workspaceId }}</p>
+              <p><strong>{{ 'SUPER_ADMIN_APPROVALS.OWNER_ID' | translate }}:</strong> {{ workspace.ownerId }}</p>
+              <p><strong>{{ 'SUPER_ADMIN_APPROVALS.PLAN' | translate }}:</strong> {{ workspace.plan }}</p>
+              <p><strong>{{ 'SUPER_ADMIN_APPROVALS.PAYMENT_SUBMITTED' | translate }}:</strong> {{ submittedAt(workspace.paymentSubmittedAt) }}</p>
+            </div>
+
+            <div class="actions">
+              <button mat-flat-button color="primary" type="button" (click)="approve(workspace.workspaceId)" [disabled]="isApproving(workspace.workspaceId)">
+                @if (isApproving(workspace.workspaceId)) {
+                  <mat-spinner diameter="18" />
+                } @else {
+                  <mat-icon>check_circle</mat-icon>
+                }
+                {{ 'SUPER_ADMIN_APPROVALS.APPROVE_ACCESS' | translate }}
+              </button>
+            </div>
+          </mat-card>
+        }
+      </div>
+    }
+  </section>
+</main>

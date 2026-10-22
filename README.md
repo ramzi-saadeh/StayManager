@@ -1,70 +1,137 @@
-# Kafar Banin Municipality Website
+# StayManager
 
-Welcome to the official repository for the Kafar Banin Municipality website. This is a modern, responsive web application built with Angular 21, designed to serve the community and showcase our village.
+StayManager is a multi-workspace booking and operations platform built with Angular and Firebase.
+It helps business owners manage resources, reservations, availability, members, public booking pages, and finance in one place.
 
-## 🚀 Getting Started
+## Product Scope
+
+### Public Experience
+- Public landing page
+- Public workspace directory (for workspaces with public access enabled)
+- Public booking flow with availability-aware request submission
+- Arabic and English language support
+
+### Owner / Team Experience
+- Workspace onboarding and configuration
+- Dashboard with operational KPIs
+- Calendar views for reservations and availability
+- Reservation management (create, confirm, complete, cancel, soft delete)
+- Resource management (types, status, pricing setup)
+- Members and roles management
+- Finance overview with income, unpaid amounts, and workspace expenses
+- Profile and theme preferences
+
+## Tech Stack
+
+- Angular 21 (standalone components + signals)
+- Angular Material
+- Firebase
+  - Authentication
+  - Firestore
+  - Storage
+- ngx-translate (English/Arabic localization)
+
+## Project Structure
+
+- `src/app/features/` : feature modules (dashboard, calendar, reservations, resources, finance, settings, public-home, public-booking)
+- `src/app/core/` : models, DTOs, repositories, shared services
+- `src/app/shell/` : main authenticated layout (sidebar/topnav)
+- `public/i18n/` : localization files
+- `firestore.rules` and `firestore.indexes.json` : Firestore security and indexes
+
+## Getting Started
 
 ### Prerequisites
-- Node.js (Latest LTS recommended)
-- Angular CLI (`npm install -g @angular/cli`)
+- Node.js LTS
+- npm
+- Angular CLI (optional globally)
 
-### Installation
-1. Clone the repository.
-2. Run `npm install` to install dependencies.
-3. Run `npm start` to launch the development server.
-4. Open `http://localhost:4200` in your browser.
+### Install
 
----
+```bash
+npm install
+```
 
-## 🛠 Content Management (How to update the website)
+### Run locally
 
-To ensure easy maintenance without redeploying code, several key areas of the website are powered by JSON files located in the `public/data/` directory.
+```bash
+npm run emulators
+```
 
-### 1. Hero Slider & Community Gallery
-Manage the images that appear in the top hero section and the scrolling gallery.
-- **File**: `public/data/hero-slider.json`
-- **Fields**:
-  - `heroSlides`: Background images for the hero section (carousel).
-  - `sliderThumbnails`: Small images shown in the infinite scroll gallery.
-  - `sliderFullImages`: The full-size images that open when a thumbnail is clicked.
+In a second terminal, serve the Angular app:
 
-### 2. Home Page Highlights & Contact Info
-Update the village highlights (cards) and the general municipality contact details at the bottom of the page.
-- **File**: `public/data/home-content.json`
-- **Fields**:
-  - `highlights`: Array of objects with `image`, `title`, and `description`.
-  - `contactInfo`: Address, phone, email, and office hours for the footer section.
+```bash
+npm start
+```
 
-### 3. Language & Translations
-The website supports English and Arabic. Every text piece can be updated here.
-- **English**: `public/i18n/en.json`
-- **Arabic**: `public/i18n/ar.json`
-- **Tip**: To update a label (e.g., "President's Number"), find the key in both files and change the value.
+Default local URL:
+- `http://localhost:4300`
 
-### 4. Direct CTA Contact Details
-The direct contact numbers for the President's Office and Developer are currently hardcoded in the HTML for immediate visibility.
-- **File**: `src/app/components/home/home.component.html`
-- **Search for**: `cta-contact-grid`
+The development environment uses the `demo-staymanager-local` Firebase project ID and connects Auth, Firestore, Functions, and Storage to local emulators. It does not connect to the configured production project.
 
----
+### Build
 
-## ⚙️ Development
+```bash
+npm run build
+npm run build:functions
+```
 
-### Scripts
-- `npm start`: Runs the dev server (`ng serve`).
-- `npm run build`: Generates production build in `dist/`.
-- `npm test`: Runs unit tests with Vitest.
+### Tests
 
-### Tech Stack
-- **Framework**: Angular 21 (Signals, Standalone Components).
-- **Styling**: Vanilla CSS (Custom properties for theming).
-- **Backend**: Firebase Firestore (for dynamic news, tickers, and community members).
-- **Translations**: ngx-translate.
+```bash
+npm test
+npm run test:functions
+npm run test:rules
+```
 
-### Firebase Configuration
-The project is linked to the `kafar-banin-2025` project. Config is located in `src/app/app.config.ts`.
+`npm run test:functions` starts local Auth, Firestore, and Functions emulators, runs callable integration tests, and shuts them down. FCM delivery is intentionally skipped in the emulator.
 
----
+## Environment Configuration
 
-## 📅 Maintenance History
-This README was enhanced in February 2026 to include detailed management instructions.
+Environment files are in `src/environments/`.
+
+- `environment.ts` : local/dev environment
+- `environment.production.ts` : production environment
+- `environment.example.ts` : template
+
+Set Firebase project config values before running or deploying.
+
+## Firestore and Security
+
+- Firestore rules are defined in `firestore.rules`.
+- Indexes are defined in `firestore.indexes.json`.
+- Deploy with:
+
+```bash
+firebase deploy --only firestore:rules,firestore:indexes
+```
+
+## Hosting Deployment
+
+Build and deploy:
+
+```bash
+npm run build
+firebase deploy --only hosting
+```
+
+## Localization
+
+- Main dictionaries:
+  - `public/i18n/en.json`
+  - `public/i18n/ar.json`
+- Public-home specific keys are under `PUBLIC_HOME`.
+- Keep keys synchronized between both languages when adding new UI labels.
+
+## Notes for Contributors
+
+- Preserve workspace scoping in all Firestore reads/writes.
+- Keep role-based access checks consistent with rules.
+- Prefer repositories in `src/app/core/services/` for data access.
+- Add both English and Arabic translations for all new user-facing text.
+- Validate changes with `npm run build` before committing.
+
+## Current Status
+
+This repository is actively evolving toward a full business-owner operations suite.
+Core booking and workspace management are implemented; advanced finance automation, communications, and deeper analytics are planned next.

@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /calendar
+Disallow: /reservations
+Disallow: /resources
+Disallow: /finance
+Disallow: /settings
+Disallow: /onboarding
+Disallow: /login
+Disallow: /accept-invite
+
+Sitemap: https://staymanager-15f31.web.app/sitemap.xml

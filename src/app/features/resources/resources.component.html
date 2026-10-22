@@ -1,0 +1,131 @@
+<div class="page-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ 'RESOURCES.TITLE' | translate }}</h1>
+      <p class="page-subtitle">{{ 'RESOURCES.SUBTITLE' | translate }}</p>
+    </div>
+    <div class="header-actions">
+      <span
+        [matTooltip]="isNewResourceDisabled() ? ('RESOURCES.FREE_LIMIT_REACHED_HINT' | translate) : ''"
+        [matTooltipDisabled]="!isNewResourceDisabled()"
+      >
+        <button
+          mat-flat-button
+          color="primary"
+          [disabled]="isNewResourceDisabled()"
+          (click)="onNewResource()"
+        >
+          <mat-icon>add</mat-icon> {{ 'RESOURCES.NEW_RESOURCE' | translate }}
+        </button>
+      </span>
+
+      @if (isNewResourceDisabled()) {
+      <button mat-stroked-button color="primary" type="button" (click)="showUpgradeHint()">
+        {{ 'RESOURCES.UPGRADE_CTA' | translate }}
+      </button>
+      }
+    </div>
+  </div>
+
+  <!-- Loading -->
+  @if (resources() === null) {
+  <div class="loading-center">
+    <mat-spinner diameter="40" />
+  </div>
+  }
+
+  <!-- Empty -->
+  @else if (resources()!.length === 0) {
+  <app-empty-state icon="home_work" [title]="'RESOURCES.NO_RESOURCES_YET' | translate"
+    [description]="'RESOURCES.NO_RESOURCES_DESC' | translate" [actionLabel]="'RESOURCES.ADD_RESOURCE' | translate" actionIcon="add"
+    actionLink="/resources/new" />
+  }
+
+  <!-- Table -->
+  @else {
+  <div class="table-card">
+    <table mat-table [dataSource]="resources()!" class="full-width">
+
+      <!-- Type column -->
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>{{ 'RESOURCES.TYPE' | translate }}</th>
+        <td mat-cell *matCellDef="let r">
+          <div class="type-cell">
+            <div class="type-icon type-icon--{{ r.type | lowercase }}">
+              <mat-icon>{{ typeIcon(r.type) }}</mat-icon>
+            </div>
+            <span class="type-label">{{ typeLabel(r.type) }}</span>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Name column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>{{ 'RESOURCES.NAME' | translate }}</th>
+        <td mat-cell *matCellDef="let r">
+          <span class="resource-name">{{ r.name }}</span>
+          @if (r.capacity) {
+          <span class="resource-capacity">
+            <mat-icon>group</mat-icon>{{ r.capacity }}
+          </span>
+          }
+        </td>
+      </ng-container>
+
+      <!-- Booking mode -->
+      <ng-container matColumnDef="bookingMode">
+        <th mat-header-cell *matHeaderCellDef>{{ 'RESOURCES.MODE' | translate }}</th>
+        <td mat-cell *matCellDef="let r">
+          <mat-chip-set>
+            <mat-chip [class]="r.bookingMode === 'DATE_RANGE' ? 'chip-date' : 'chip-time'">
+              <mat-icon matChipAvatar>
+                {{ r.bookingMode === 'DATE_RANGE' ? 'calendar_month' : 'schedule' }}
+              </mat-icon>
+              {{ r.bookingMode === 'DATE_RANGE' ? ('RESOURCES.MODE_NIGHTLY' | translate) : ('RESOURCES.MODE_HOURLY' | translate) }}
+            </mat-chip>
+          </mat-chip-set>
+        </td>
+      </ng-container>
+
+      <!-- Price -->
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef>{{ 'RESOURCES.BASE_PRICE' | translate }}</th>
+        <td mat-cell *matCellDef="let r">{{ priceLabel(r) }}</td>
+      </ng-container>
+
+      <!-- Status -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>{{ 'RESOURCES.STATUS' | translate }}</th>
+        <td mat-cell *matCellDef="let r">
+          <app-status-badge [status]="r.isActive ? 'CONFIRMED' : 'CANCELLED'" />
+        </td>
+      </ng-container>
+
+      <!-- Actions -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let r" (click)="$event.stopPropagation()">
+          <button mat-icon-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu (click)="$event.stopPropagation()">
+            <button mat-menu-item (click)="$event.stopPropagation(); edit(r)">
+              <mat-icon>edit</mat-icon> {{ 'COMMON.EDIT' | translate }}
+            </button>
+            <button mat-menu-item (click)="$event.stopPropagation(); toggleActive(r)">
+              <mat-icon>{{ r.isActive ? 'visibility_off' : 'visibility' }}</mat-icon>
+              {{ r.isActive ? ('RESOURCES.DEACTIVATE' | translate) : ('RESOURCES.ACTIVATE' | translate) }}
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="resource-row" (click)="edit(row)"></tr>
+    </table>
+  </div>
+  }
+
+</div>

@@ -1,0 +1,477 @@
+<div class="settings-page">
+  <div class="settings-header">
+    <h1>{{ 'WORKSPACE_SETTINGS.HEADER_TITLE' | translate }}</h1>
+    <p>{{ 'WORKSPACE_SETTINGS.HEADER_SUBTITLE' | translate }}</p>
+  </div>
+
+  @if (!ws.workspace$()) {
+  <div class="loading-center"><mat-spinner diameter="36" /></div>
+  } @else {
+
+  <form [formGroup]="form" (ngSubmit)="onSave()" novalidate class="settings-form">
+
+    <!-- <nav class="settings-quick-nav" aria-label="Settings sections">
+      <a href="#section-identity">{{ 'WORKSPACE_SETTINGS.SECTION_IDENTITY' | translate }}</a>
+      <a href="#section-localization">{{ 'WORKSPACE_SETTINGS.SECTION_LOCALIZATION' | translate }}</a>
+      <a href="#section-experience">{{ 'WORKSPACE_SETTINGS.SECTION_EXPERIENCE' | translate }}</a>
+      <a href="#section-operating">{{ 'WORKSPACE_SETTINGS.SECTION_OPERATING' | translate }}</a>
+      <a href="#section-payment">{{ 'WORKSPACE_SETTINGS.SECTION_PAYMENT' | translate }}</a>
+    </nav> -->
+
+    <details id="section-identity" class="form-section card-section settings-panel" open>
+      <summary class="section-summary">
+        <h2 class="section-title">{{ 'WORKSPACE_SETTINGS.SECTION_IDENTITY' | translate }}</h2>
+      </summary>
+      <div class="section-body">
+
+      <!-- <div class="brand-editor-card">
+        <div class="brand-preview">
+          @if (currentWorkspaceLogoUrl()) {
+            <img [src]="currentWorkspaceLogoUrl()" alt="Workspace brand logo" />
+          } @else {
+            <div class="brand-preview-fallback"><mat-icon>hotel</mat-icon></div>
+          }
+        </div>
+
+        <div class="brand-editor-actions">
+          <input #logoInput hidden type="file" accept="image/*" (change)="onLogoSelected($event)" />
+          <button type="button" mat-stroked-button color="primary" (click)="logoInput.click()" [disabled]="isUploadingLogo()">
+            <mat-icon>upload</mat-icon>
+            {{ isUploadingLogo() ? ('WORKSPACE_SETTINGS.SAVING' | translate) : ('WORKSPACE_SETTINGS.UPLOAD_LOGO' | translate) }}
+          </button>
+
+          @if (currentWorkspaceLogoUrl()) {
+            <button type="button" mat-button color="warn" (click)="removeWorkspaceLogo()" [disabled]="isUploadingLogo()">
+              <mat-icon>delete</mat-icon>
+              {{ 'WORKSPACE_SETTINGS.REMOVE_LOGO' | translate }}
+            </button>
+          }
+        </div>
+      </div> -->
+
+      <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+        <mat-label>{{ 'WORKSPACE_SETTINGS.WORKSPACE_NAME_LABEL' | translate }}</mat-label>
+        <input matInput formControlName="name" />
+        <mat-icon matPrefix>business</mat-icon>
+        @if (form.controls.name.hasError('maxlength')) {
+        <mat-error>{{ 'WORKSPACE_SETTINGS.WORKSPACE_NAME_MAX' | translate }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+        <mat-label>{{ 'ONBOARDING.WORKSPACE_TYPE_LABEL' | translate }}</mat-label>
+        <mat-select formControlName="businessType">
+          @for (type of businessTypes; track type) {
+          <mat-option [value]="type">{{ type }}</mat-option>
+          }
+        </mat-select>
+        <mat-icon matPrefix>category</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+        <mat-label>{{ 'WORKSPACE_SETTINGS.WEBSITE_URL_LABEL' | translate }}</mat-label>
+        <input matInput formControlName="websiteUrl" [placeholder]="'WORKSPACE_SETTINGS.WEBSITE_URL_PLACEHOLDER' | translate" />
+        <mat-icon matPrefix>language</mat-icon>
+      </mat-form-field>
+
+      <div class="social-links-grid two-col">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ 'WORKSPACE_SETTINGS.PHONE_LABEL' | translate }}</mat-label>
+          <input matInput formControlName="phone" [placeholder]="'WORKSPACE_SETTINGS.PHONE_PLACEHOLDER' | translate" />
+          <mat-icon matPrefix>call</mat-icon>
+          <mat-hint>{{ 'WORKSPACE_SETTINGS.PHONE_WHATSAPP_HINT' | translate }}</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ 'WORKSPACE_SETTINGS.WHISH_NUMBER_LABEL' | translate }}</mat-label>
+          <input matInput formControlName="whishNumber" [placeholder]="'WORKSPACE_SETTINGS.WHISH_NUMBER_PLACEHOLDER' | translate" />
+          <mat-icon matPrefix>payments</mat-icon>
+          <mat-hint>{{ 'WORKSPACE_SETTINGS.WHISH_NUMBER_HINT' | translate }}</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <div class="social-links-grid two-col">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ 'WORKSPACE_SETTINGS.ADDRESS_LABEL' | translate }}</mat-label>
+          <input matInput formControlName="address" [placeholder]="'WORKSPACE_SETTINGS.ADDRESS_PLACEHOLDER' | translate" />
+          <mat-icon matPrefix>location_on</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="social-links-grid two-col">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ 'WORKSPACE_SETTINGS.LATITUDE_LABEL' | translate }}</mat-label>
+          <input matInput formControlName="latitude" [placeholder]="'WORKSPACE_SETTINGS.LATITUDE_PLACEHOLDER' | translate" />
+          <mat-icon matPrefix>my_location</mat-icon>
+          <mat-hint>{{ 'WORKSPACE_SETTINGS.COORDINATES_HINT' | translate }}</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ 'WORKSPACE_SETTINGS.LONGITUDE_LABEL' | translate }}</mat-label>
+          <input matInput formControlName="longitude" [placeholder]="'WORKSPACE_SETTINGS.LONGITUDE_PLACEHOLDER' | translate" />
+          <mat-icon matPrefix>explore</mat-icon>
+          <mat-hint>{{ 'WORKSPACE_SETTINGS.COORDINATES_HINT' | translate }}</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <div class="social-links-grid">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ 'WORKSPACE_SETTINGS.INSTAGRAM_URL_LABEL' | translate }}</mat-label>
+          <input matInput formControlName="instagramUrl" [placeholder]="'WORKSPACE_SETTINGS.INSTAGRAM_URL_PLACEHOLDER' | translate" />
+          <mat-icon matPrefix>photo_camera</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ 'WORKSPACE_SETTINGS.FACEBOOK_URL_LABEL' | translate }}</mat-label>
+          <input matInput formControlName="facebookUrl" [placeholder]="'WORKSPACE_SETTINGS.FACEBOOK_URL_PLACEHOLDER' | translate" />
+          <mat-icon matPrefix>groups</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ 'WORKSPACE_SETTINGS.TIKTOK_URL_LABEL' | translate }}</mat-label>
+          <input matInput formControlName="tiktokUrl" [placeholder]="'WORKSPACE_SETTINGS.TIKTOK_URL_PLACEHOLDER' | translate" />
+          <mat-icon matPrefix>smart_display</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="owner-link-actions">
+        <p class="mini-note">{{ 'WORKSPACE_SETTINGS.OPEN_LINKS_HINT' | translate }}</p>
+        <div class="link-action-list">
+          @if (form.controls.websiteUrl.value.trim()) {
+            <button mat-stroked-button type="button" (click)="openExternalLink(form.controls.websiteUrl.value)">
+              <mat-icon>open_in_new</mat-icon>
+              {{ 'WORKSPACE_SETTINGS.OPEN_WEBSITE' | translate }}
+            </button>
+          }
+          @if (form.controls.instagramUrl.value.trim()) {
+            <button mat-stroked-button type="button" (click)="openExternalLink(form.controls.instagramUrl.value)">
+              <mat-icon>open_in_new</mat-icon>
+              {{ 'WORKSPACE_SETTINGS.OPEN_INSTAGRAM' | translate }}
+            </button>
+          }
+          @if (form.controls.facebookUrl.value.trim()) {
+            <button mat-stroked-button type="button" (click)="openExternalLink(form.controls.facebookUrl.value)">
+              <mat-icon>open_in_new</mat-icon>
+              {{ 'WORKSPACE_SETTINGS.OPEN_FACEBOOK' | translate }}
+            </button>
+          }
+          @if (form.controls.tiktokUrl.value.trim()) {
+            <button mat-stroked-button type="button" (click)="openExternalLink(form.controls.tiktokUrl.value)">
+              <mat-icon>open_in_new</mat-icon>
+              {{ 'WORKSPACE_SETTINGS.OPEN_TIKTOK' | translate }}
+            </button>
+          }
+        </div>
+      </div>
+      </div>
+    </details>
+
+    <mat-divider />
+
+    <details id="section-localization" class="form-section card-section settings-panel">
+      <summary class="section-summary">
+        <h2 class="section-title">{{ 'WORKSPACE_SETTINGS.SECTION_LOCALIZATION' | translate }}</h2>
+      </summary>
+      <div class="section-body">
+
+      <div class="form-grid two-col">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'WORKSPACE_SETTINGS.APP_LANGUAGE_LABEL' | translate }}</mat-label>
+        <mat-select
+          [value]="languageService.language()"
+          (valueChange)="onLanguageChange($event)">
+          @for (lang of languageOptions; track lang.code) {
+          <mat-option [value]="lang.code">{{ lang.label }}</mat-option>
+          }
+        </mat-select>
+        <mat-icon matPrefix>translate</mat-icon>
+        <mat-hint>{{ 'WORKSPACE_SETTINGS.APP_LANGUAGE_HINT' | translate }}</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'WORKSPACE_SETTINGS.TIMEZONE_LABEL' | translate }}</mat-label>
+        <mat-select formControlName="timezone">
+          @for (tz of timezones; track tz) {
+          <mat-option [value]="tz">{{ tz }}</mat-option>
+          }
+        </mat-select>
+        <mat-icon matPrefix>schedule</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'WORKSPACE_SETTINGS.PRIMARY_CURRENCY_LABEL' | translate }}</mat-label>
+        <mat-select formControlName="currency" (valueChange)="onPrimaryCurrencyChange($event)">
+          @for (c of currencies; track c.code) {
+          <mat-option [value]="c.code">{{ c.label }} ({{ c.symbol }})</mat-option>
+          }
+        </mat-select>
+        <mat-icon matPrefix>payments</mat-icon>
+        <mat-hint>{{ 'WORKSPACE_SETTINGS.PRIMARY_CURRENCY_HINT' | translate }}</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'WORKSPACE_SETTINGS.SUPPORTED_CURRENCIES_LABEL' | translate }}</mat-label>
+        <mat-select
+          formControlName="supportedCurrencies"
+          multiple
+          (selectionChange)="onSupportedCurrenciesChange($event.value)">
+          @for (c of currencies; track c.code) {
+          <mat-option [value]="c.code">{{ c.label }} ({{ c.symbol }})</mat-option>
+          }
+        </mat-select>
+        <mat-icon matPrefix>currency_exchange</mat-icon>
+        <mat-hint>{{ 'WORKSPACE_SETTINGS.SUPPORTED_CURRENCIES_HINT' | translate }}</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'WORKSPACE_SETTINGS.CALENDAR_VIEW_LABEL' | translate }}</mat-label>
+        <mat-select formControlName="calendarView">
+          <mat-option [value]="CalendarViewMode.MONTH">
+            {{ 'WORKSPACE_SETTINGS.CALENDAR_VIEW_MONTH' | translate }}
+          </mat-option>
+          <mat-option [value]="CalendarViewMode.WEEK">
+            {{ 'WORKSPACE_SETTINGS.CALENDAR_VIEW_WEEK' | translate }}
+          </mat-option>
+          <mat-option [value]="CalendarViewMode.TIMELINE">
+            {{ 'WORKSPACE_SETTINGS.CALENDAR_VIEW_TIMELINE' | translate }}
+          </mat-option>
+        </mat-select>
+        <mat-icon matPrefix>calendar_view_month</mat-icon>
+        <mat-hint>{{ 'WORKSPACE_SETTINGS.CALENDAR_VIEW_HINT' | translate }}</mat-hint>
+      </mat-form-field>
+      </div>
+
+      @if (form.controls.calendarView.value === CalendarViewMode.WEEK) {
+      <div class="form-row">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ 'WORKSPACE_SETTINGS.WEEK_VIEW_START_LABEL' | translate }}</mat-label>
+          <mat-select formControlName="weekViewStartHour">
+            @for (h of HOURS; track h) {
+            <mat-option [value]="h">{{ h | number:'2.0' }}:00</mat-option>
+            }
+          </mat-select>
+          <mat-icon matPrefix>schedule</mat-icon>
+          <mat-hint>{{ 'WORKSPACE_SETTINGS.WEEK_VIEW_START_HINT' | translate }}</mat-hint>
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ 'WORKSPACE_SETTINGS.WEEK_VIEW_END_LABEL' | translate }}</mat-label>
+          <mat-select formControlName="weekViewEndHour">
+            @for (h of HOURS.slice(1); track h) {
+            <mat-option [value]="h">{{ h | number:'2.0' }}:00</mat-option>
+            }
+            <mat-option [value]="24">24:00</mat-option>
+          </mat-select>
+          <mat-icon matPrefix>schedule</mat-icon>
+          <mat-hint>{{ 'WORKSPACE_SETTINGS.WEEK_VIEW_END_HINT' | translate }}</mat-hint>
+        </mat-form-field>
+      </div>
+      }
+      </div>
+    </details>
+
+    <mat-divider />
+
+    <details id="section-experience" class="form-section card-section settings-panel" open>
+      <summary class="section-summary">
+        <h2 class="section-title">{{ 'WORKSPACE_SETTINGS.SECTION_EXPERIENCE' | translate }}</h2>
+      </summary>
+      <div class="section-body">
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'WORKSPACE_SETTINGS.PLAN_LABEL' | translate }}</mat-label>
+        <mat-select formControlName="plan">
+          @for (plan of planOptions; track plan.value) {
+          <mat-option [value]="plan.value" [disabled]="isPlanLocked(plan.value)">{{ plan.labelKey | translate }}</mat-option>
+          }
+        </mat-select>
+        <mat-icon matPrefix>workspace_premium</mat-icon>
+        <mat-hint>{{ 'WORKSPACE_SETTINGS.PLAN_HINT' | translate }}</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'WORKSPACE_SETTINGS.WORKSPACE_THEME_LABEL' | translate }}</mat-label>
+        <mat-select formControlName="theme">
+          @for (theme of themes; track theme.value) {
+          <mat-option [value]="theme.value">{{ theme.labelKey | translate }}</mat-option>
+          }
+        </mat-select>
+        <mat-icon matPrefix>palette</mat-icon>
+        <mat-hint>{{ 'WORKSPACE_SETTINGS.WORKSPACE_THEME_HINT' | translate }}</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+        <mat-label>{{ 'WORKSPACE_SETTINGS.PUBLIC_ACCESS_LABEL' | translate }}</mat-label>
+        <mat-select formControlName="publicCalendarAccess">
+          @for (option of publicCalendarOptions; track option.value) {
+          <mat-option [value]="option.value">
+            {{ option.labelKey | translate }}
+          </mat-option>
+          }
+        </mat-select>
+        <mat-icon matPrefix>public</mat-icon>
+        <mat-hint>
+          @for (option of publicCalendarOptions; track option.value) {
+          @if (option.value === form.controls.publicCalendarAccess.value) {
+          {{ option.descriptionKey | translate }}
+          }
+          }
+        </mat-hint>
+      </mat-form-field>
+
+      <div class="public-link-box">
+        <p class="group-label">{{ 'WORKSPACE_SETTINGS.PUBLIC_BOOKING_LINK_GROUP' | translate }}</p>
+        <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+          <mat-label>{{ 'WORKSPACE_SETTINGS.SHAREABLE_LINK_LABEL' | translate }}</mat-label>
+          <input matInput [value]="publicBookingLink()" readonly />
+          <mat-icon matPrefix>link</mat-icon>
+          <mat-hint>
+            @if (form.controls.publicCalendarAccess.value === 'PRIVATE') {
+            {{ 'WORKSPACE_SETTINGS.PUBLIC_BOOKING_DISABLED_HINT' | translate }}
+            } @else {
+            {{ 'WORKSPACE_SETTINGS.PUBLIC_BOOKING_ENABLED_HINT' | translate }}
+            }
+          </mat-hint>
+        </mat-form-field>
+
+        <div class="public-link-actions">
+          <button mat-stroked-button type="button" (click)="openExternalLink(publicBookingLink())" [disabled]="!publicBookingPath()">
+            <mat-icon>open_in_new</mat-icon>
+            {{ 'WORKSPACE_SETTINGS.OPEN_PUBLIC_LINK' | translate }}
+          </button>
+
+          <button mat-stroked-button type="button" (click)="copyPublicBookingLink()" [disabled]="!publicBookingPath()">
+            <mat-icon>content_copy</mat-icon>
+            {{ 'WORKSPACE_SETTINGS.COPY_PUBLIC_LINK' | translate }}
+          </button>
+
+          <button
+            mat-stroked-button
+            type="button"
+            (click)="republishPublicCatalog()"
+            [disabled]="isRepublishingCatalog()">
+            @if (isRepublishingCatalog()) { <mat-icon class="spin">autorenew</mat-icon> } @else { <mat-icon>sync</mat-icon> }
+            {{ 'WORKSPACE_SETTINGS.REPUBLISH_PUBLIC_RESOURCES' | translate }}
+          </button>
+        </div>
+
+        <details class="inline-panel">
+          <summary>{{ 'WORKSPACE_SETTINGS.PUBLIC_LINK_QR' | translate }}</summary>
+          <div class="public-qr-box">
+            @if (isQrGenerating()) {
+              <div class="loading-center"><mat-spinner diameter="28" /></div>
+            } @else if (publicBookingQrCode()) {
+              <img class="public-qr-image" [src]="publicBookingQrCode()" [alt]="'WORKSPACE_SETTINGS.PUBLIC_LINK_QR' | translate" />
+            } @else {
+              <p class="mini-note">{{ 'WORKSPACE_SETTINGS.PUBLIC_LINK_QR_UNAVAILABLE' | translate }}</p>
+            }
+
+            <button
+              mat-stroked-button
+              type="button"
+              (click)="downloadPublicBookingQrCode()"
+              [disabled]="!publicBookingQrCode()">
+              <mat-icon>download</mat-icon>
+              {{ 'WORKSPACE_SETTINGS.DOWNLOAD_PUBLIC_QR' | translate }}
+            </button>
+          </div>
+        </details>
+      </div>
+      </div>
+    </details>
+
+    <mat-divider />
+
+    <details id="section-operating" class="form-section card-section settings-panel">
+      <summary class="section-summary">
+        <h2 class="section-title">{{ 'WORKSPACE_SETTINGS.SECTION_OPERATING' | translate }}</h2>
+      </summary>
+      <div class="section-body">
+      <p class="section-description">{{ 'WORKSPACE_SETTINGS.SECTION_OPERATING_DESC' | translate }}</p>
+
+      <div class="chip-group-wrap">
+        <p class="group-label">{{ 'WORKSPACE_SETTINGS.WORKING_DAYS_LABEL' | translate }}</p>
+        <div class="chip-group">
+          @for (day of days; track day.value) {
+          <button type="button" mat-stroked-button class="day-chip"
+            [class.active-chip]="isDaySelected('workingDays', day.value)" (click)="toggleDay('workingDays', day.value)">
+            {{ day.shortKey | translate }}
+          </button>
+          }
+        </div>
+      </div>
+
+      <div class="chip-group-wrap">
+        <p class="group-label">{{ 'WORKSPACE_SETTINGS.BLOCKED_DAYS_LABEL' | translate }}</p>
+        <div class="chip-group">
+          @for (day of days; track day.value) {
+          <button type="button" mat-stroked-button class="day-chip"
+            [class.block-chip]="isDaySelected('blockedDays', day.value)" (click)="toggleDay('blockedDays', day.value)">
+            {{ day.shortKey | translate }}
+          </button>
+          }
+        </div>
+        <p class="mini-note">{{ 'WORKSPACE_SETTINGS.BLOCKED_DAYS_NOTE' | translate }}</p>
+      </div>
+
+      <div class="chip-group-wrap">
+        <p class="group-label">{{ 'WORKSPACE_SETTINGS.BLOCKED_HOURS_LABEL' | translate }}</p>
+        <div class="hour-grid">
+          @for (hour of HOURS; track hour) {
+          <button type="button" mat-stroked-button class="hour-chip" [class.block-chip]="isHourBlocked(hour)"
+            (click)="toggleBlockedHour(hour)">
+            {{ hour | number:'2.0' }}:00
+          </button>
+          }
+        </div>
+        <p class="mini-note">{{ 'WORKSPACE_SETTINGS.BLOCKED_HOURS_NOTE' | translate }}</p>
+      </div>
+      </div>
+    </details>
+
+    <mat-divider />
+
+    <details id="section-payment" class="form-section card-section settings-panel">
+      <summary class="section-summary">
+        <h2 class="section-title">{{ 'WORKSPACE_SETTINGS.SECTION_PAYMENT' | translate }}</h2>
+      </summary>
+      <div class="section-body">
+      <p class="section-description">{{ 'WORKSPACE_SETTINGS.SECTION_PAYMENT_DESC' | translate }}</p>
+
+      <div class="payment-method-form">
+        <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+          <mat-label>{{ 'WORKSPACE_SETTINGS.NEW_PAYMENT_METHOD_LABEL' | translate }}</mat-label>
+          <input matInput [value]="newPaymentMethod()" (input)="onNewPaymentMethodInput($event)"
+            [placeholder]="'WORKSPACE_SETTINGS.NEW_PAYMENT_METHOD_PLACEHOLDER' | translate" />
+          <mat-icon matPrefix>add_card</mat-icon>
+        </mat-form-field>
+
+        <button mat-stroked-button type="button" (click)="addPaymentMethod()">
+          <mat-icon>add</mat-icon>
+          {{ 'WORKSPACE_SETTINGS.ADD_METHOD' | translate }}
+        </button>
+      </div>
+
+      <div class="payment-method-list">
+        @for (method of paymentMethods(); track method) {
+        <div class="payment-method-row">
+          <span>{{ method }}</span>
+          <button mat-icon-button type="button" (click)="removePaymentMethod(method)"
+            [attr.aria-label]="'WORKSPACE_SETTINGS.REMOVE_PAYMENT_METHOD' | translate">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        }
+      </div>
+      </div>
+    </details>
+
+    <div class="form-actions">
+      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || isLoading()">
+        @if (isLoading()) { <mat-icon class="spin">autorenew</mat-icon> }
+        {{ 'WORKSPACE_SETTINGS.SAVE_CHANGES' | translate }}
+      </button>
+    </div>
+
+  </form>
+  }
+</div>

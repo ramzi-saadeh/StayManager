@@ -1,0 +1,102 @@
+<div class="page-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ 'RESERVATIONS.TITLE' | translate }}</h1>
+      <p class="page-subtitle">{{ 'RESERVATIONS.SUBTITLE' | translate }}</p>
+    </div>
+    @if (isOwner()) {
+      <a mat-flat-button color="primary" routerLink="/reservations/new">
+        <mat-icon>add</mat-icon> {{ 'RESERVATIONS.NEW_BOOKING' | translate }}
+      </a>
+    }
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-row">
+    <!-- Search -->
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>{{ 'RESERVATIONS.SEARCH' | translate }}</mat-label>
+      <input matInput (input)="onSearch($event)" [placeholder]="'RESERVATIONS.SEARCH_PLACEHOLDER' | translate" />
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+
+    <!-- Status filter chips -->
+    <mat-chip-listbox class="status-chips">
+      <mat-chip-option
+        [selected]="statusFilter() === null"
+        (click)="setStatus(null)">
+        {{ 'RESERVATIONS.ALL' | translate }}
+      </mat-chip-option>
+      @for (s of statuses; track s) {
+        <mat-chip-option
+          [selected]="statusFilter() === s"
+          (click)="setStatus(s)">
+          {{ statusLabel(s) }}
+        </mat-chip-option>
+      }
+    </mat-chip-listbox>
+  </div>
+
+  <!-- Loading -->
+  @if (filteredReservations() === null) {
+    <div class="loading-center">
+      <mat-spinner diameter="40" />
+    </div>
+  }
+
+  <!-- Empty -->
+  @else if (filteredReservations()!.length === 0) {
+    <app-empty-state
+      icon="event_busy"
+      [title]="emptyTitle()"
+      [description]="'RESERVATIONS.EMPTY_DESCRIPTION' | translate"
+      [actionLabel]="isOwner() ? ('RESERVATIONS.NEW_BOOKING' | translate) : ''"
+      [actionLink]="isOwner() ? '/reservations/new' : ''"
+      actionIcon="add"
+    />
+  }
+
+  <!-- List -->
+  @else {
+    <div class="reservation-list">
+      @for (r of filteredReservations(); track r.reservationId) {
+        <div class="reservation-card" (click)="open(r)">
+          <div class="res-icon">
+            <mat-icon>{{ typeIcon(r.resourceType) }}</mat-icon>
+          </div>
+
+          <div class="res-body">
+            <div class="res-top">
+              <span class="res-resource">{{ r.resourceName }}</span>
+              <app-status-badge [status]="r.status" />
+            </div>
+            <div class="res-guest">
+              <mat-icon>person</mat-icon>
+              {{ r.customer.name }}
+              @if (r.customer.phone) {
+                <span class="res-phone">· {{ r.customer.phone }}</span>
+              }
+            </div>
+            <div class="res-dates">
+              <mat-icon>calendar_today</mat-icon>
+              @if (r.startDate) {
+                {{ r.startDate }} → {{ r.endDate }}
+              } @else {
+                {{ r.start?.toDate() | date:'d MMM y, HH:mm' }}
+                → {{ r.end?.toDate() | date:'d MMM y, HH:mm' }}
+              }
+            </div>
+          </div>
+
+          <div class="res-amount">
+            <span class="res-price">{{ r.price.currency }} {{ r.price.amount | number:'1.0-0' }}</span>
+            <span class="res-nights">{{ r.price.quantity }} × {{ unitLabel(r.price.unit) }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+</div>

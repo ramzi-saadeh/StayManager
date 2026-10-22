@@ -1,0 +1,44 @@
+<main class="pending-page">
+  <section class="pending-wrap">
+    <mat-card class="pending-card">
+      <div class="icon-wrap" aria-hidden="true">
+        <mat-icon>pending_actions</mat-icon>
+      </div>
+
+      <p class="eyebrow">{{ 'ACTIVATION_PENDING.EYEBROW' | translate }}</p>
+      <h1>{{ 'ACTIVATION_PENDING.TITLE' | translate }}</h1>
+      <p class="subtitle">{{ 'ACTIVATION_PENDING.SUBTITLE' | translate }}</p>
+
+      <div class="workspace-box">
+        <p><strong>{{ 'ACTIVATION_PENDING.WORKSPACE' | translate }}:</strong> {{ workspace()?.name || '-' }}</p>
+      </div>
+
+      <div class="payment-box">
+        <p class="payment-label">{{ 'ACTIVATION_PENDING.WHISH_LABEL' | translate }}</p>
+        <div class="payment-row">
+          <strong>{{ whishNumber }}</strong>
+          <button mat-stroked-button type="button" (click)="copyWhishNumber()">
+            <mat-icon>content_copy</mat-icon>
+            {{ 'ACTIVATION_PENDING.COPY_WHISH' | translate }}
+          </button>
+        </div>
+      </div>
+
+      <ul>
+        <li>{{ 'ACTIVATION_PENDING.STEP_1' | translate }}</li>
+        <li>{{ 'ACTIVATION_PENDING.STEP_2' | translate }}</li>
+        <li>{{ 'ACTIVATION_PENDING.STEP_3' | translate }}</li>
+      </ul>
+
+      <div class="actions">
+        <button mat-flat-button color="primary" type="button" (click)="onPaymentSent()" [disabled]="isSubmitting()">
+          {{ 'ACTIVATION_PENDING.PAYMENT_SENT' | translate }}
+        </button>
+        <button mat-stroked-button type="button" (click)="retryAccess()">
+          {{ 'ACTIVATION_PENDING.RETRY_ACCESS' | translate }}
+        </button>
+        <a mat-button routerLink="/login">{{ 'COMMON.LOGOUT' | translate }}</a>
+      </div>
+    </mat-card>
+  </section>
+</main>

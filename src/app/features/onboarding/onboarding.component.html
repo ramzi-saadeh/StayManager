@@ -1,0 +1,203 @@
+<div class="onboarding-page">
+
+  <div class="onboarding-language">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ 'ONBOARDING.LANGUAGE_LABEL' | translate }}</mat-label>
+      <mat-select
+        [value]="languageService.language()"
+        (valueChange)="onLanguageChange($event)">
+        @for (lang of languageOptions; track lang.code) {
+          <mat-option [value]="lang.code">{{ lang.label }}</mat-option>
+        }
+      </mat-select>
+      <mat-icon matPrefix>translate</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div class="onboarding-header">
+    <div class="onboarding-logo"><mat-icon>hotel</mat-icon></div>
+    <h1>{{ 'ONBOARDING.HEADER_TITLE' | translate }}</h1>
+    <p>{{ 'ONBOARDING.HEADER_SUBTITLE' | translate }}</p>
+  </div>
+
+  <mat-card class="onboarding-card">
+    <mat-stepper orientation="vertical" #stepper [linear]="true">
+
+      <mat-step [stepControl]="nameForm" [label]="'ONBOARDING.STEP_NAME' | translate">
+        <form [formGroup]="nameForm" class="step-form" novalidate>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'ONBOARDING.WORKSPACE_NAME_LABEL' | translate }}</mat-label>
+            <input matInput formControlName="name" (input)="onNameInput()"
+              [placeholder]="'ONBOARDING.WORKSPACE_NAME_PLACEHOLDER' | translate" />
+            <mat-icon matPrefix>business</mat-icon>
+            @if (nameForm.controls.name.hasError('minlength')) {
+              <mat-error>{{ 'ONBOARDING.ERROR_NAME_MIN' | translate }}</mat-error>
+            }
+            @if (nameForm.controls.name.hasError('maxlength')) {
+              <mat-error>{{ 'ONBOARDING.ERROR_NAME_MAX' | translate }}</mat-error>
+            }
+          </mat-form-field>
+
+          <div class="step-actions">
+            <button mat-flat-button matStepperNext color="primary"
+              [disabled]="nameForm.invalid">
+                {{ 'ONBOARDING.CONTINUE' | translate }}
+              <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </form>
+      </mat-step>
+
+      <mat-step [stepControl]="typeForm" [label]="'ONBOARDING.STEP_TYPE' | translate">
+        <form [formGroup]="typeForm" class="step-form" novalidate>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'ONBOARDING.WORKSPACE_TYPE_LABEL' | translate }}</mat-label>
+            <mat-select formControlName="workspaceType">
+              @for (type of workspaceTypes; track type) {
+                <mat-option [value]="type">{{ type }}</mat-option>
+              }
+            </mat-select>
+            <mat-icon matPrefix>category</mat-icon>
+          </mat-form-field>
+          <div class="step-actions">
+            <button mat-stroked-button matStepperPrevious>{{ 'COMMON.BACK' | translate }}</button>
+            <button mat-flat-button matStepperNext color="primary" [disabled]="typeForm.invalid">
+              {{ 'ONBOARDING.CONTINUE' | translate }}
+              <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </form>
+      </mat-step>
+
+      <mat-step [stepControl]="accessForm" [label]="'ONBOARDING.STEP_ACCESS' | translate">
+        <form [formGroup]="accessForm" class="step-form" novalidate>
+          <div class="access-cards" role="radiogroup" [attr.aria-label]="'ONBOARDING.WORKSPACE_VISIBILITY_ARIA' | translate">
+            @for (option of accessOptions; track option.mode) {
+              <button
+                type="button"
+                class="access-card"
+                [class.selected]="accessForm.controls.accessMode.value === option.mode"
+                (click)="accessForm.controls.accessMode.setValue(option.mode)">
+                <h3>{{ option.mode === 'PUBLIC' ? '🌎 ' : '🔒 ' }}{{ option.titleKey | translate }}</h3>
+                <p>{{ option.subtitleKey | translate }}</p>
+              </button>
+            }
+          </div>
+          <div class="step-actions">
+            <button mat-stroked-button matStepperPrevious>{{ 'COMMON.BACK' | translate }}</button>
+            <button mat-flat-button matStepperNext color="primary" [disabled]="accessForm.invalid">
+              {{ 'ONBOARDING.CONTINUE' | translate }}
+              <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </form>
+      </mat-step>
+
+      <mat-step [stepControl]="settingsForm" [label]="'ONBOARDING.STEP_AVAILABILITY' | translate">
+        <form [formGroup]="settingsForm" class="step-form" novalidate>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'ONBOARDING.TIMEZONE_LABEL' | translate }}</mat-label>
+            <mat-select formControlName="timezone">
+              @for (tz of timezones; track tz) {
+                <mat-option [value]="tz">{{ tz }}</mat-option>
+              }
+            </mat-select>
+            <mat-icon matPrefix>schedule</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'ONBOARDING.CURRENCY_LABEL' | translate }}</mat-label>
+            <mat-select formControlName="currency">
+              @for (c of currencies; track c.code) {
+                <mat-option [value]="c.code">{{ c.label }} ({{ c.symbol }})</mat-option>
+              }
+            </mat-select>
+            <mat-icon matPrefix>payments</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'ONBOARDING.PLAN_LABEL' | translate }}</mat-label>
+            <mat-select formControlName="plan">
+              @for (plan of planOptions; track plan.value) {
+                <mat-option [value]="plan.value">{{ plan.labelKey | translate }}</mat-option>
+              }
+            </mat-select>
+            <mat-icon matPrefix>workspace_premium</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'ONBOARDING.CALENDAR_DEFAULT_VIEW_LABEL' | translate }}</mat-label>
+            <mat-select formControlName="calendarView">
+              <mat-option [value]="CalendarViewMode.MONTH">
+                {{ 'ONBOARDING.CALENDAR_VIEW_MONTH' | translate }}
+              </mat-option>
+              <mat-option [value]="CalendarViewMode.WEEK">
+                {{ 'ONBOARDING.CALENDAR_VIEW_WEEK' | translate }}
+              </mat-option>
+              <mat-option [value]="CalendarViewMode.TIMELINE">
+                {{ 'ONBOARDING.CALENDAR_VIEW_TIMELINE' | translate }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matPrefix>calendar_view_month</mat-icon>
+          </mat-form-field>
+
+          @if (settingsForm.controls.calendarView.value === CalendarViewMode.WEEK) {
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'ONBOARDING.WEEK_VIEW_START_LABEL' | translate }}</mat-label>
+                <mat-select formControlName="weekViewStartHour">
+                  @for (h of HOURS; track h) {
+                    <mat-option [value]="h">{{ h | number:'2.0' }}:00</mat-option>
+                  }
+                </mat-select>
+                <mat-icon matPrefix>schedule</mat-icon>
+                <mat-hint>{{ 'ONBOARDING.WEEK_VIEW_START_HINT' | translate }}</mat-hint>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'ONBOARDING.WEEK_VIEW_END_LABEL' | translate }}</mat-label>
+                <mat-select formControlName="weekViewEndHour">
+                  @for (h of HOURS.slice(1); track h) {
+                    <mat-option [value]="h">{{ h | number:'2.0' }}:00</mat-option>
+                  }
+                  <mat-option [value]="24">24:00</mat-option>
+                </mat-select>
+                <mat-icon matPrefix>schedule</mat-icon>
+                <mat-hint>{{ 'ONBOARDING.WEEK_VIEW_END_HINT' | translate }}</mat-hint>
+              </mat-form-field>
+            </div>
+          }
+
+          <div class="step-actions">
+            <button mat-stroked-button matStepperPrevious>{{ 'COMMON.BACK' | translate }}</button>
+            <button mat-flat-button matStepperNext color="primary" [disabled]="settingsForm.invalid">
+              {{ 'ONBOARDING.CONTINUE' | translate }}
+              <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </form>
+      </mat-step>
+
+      <mat-step [label]="'ONBOARDING.STEP_READY' | translate">
+        <div class="ready-state">
+          <h3>{{ 'ONBOARDING.READY_TITLE' | translate }}</h3>
+          <p>
+            {{ 'ONBOARDING.READY_DESCRIPTION' | translate:{ workspaceName: (createdWorkspaceName() || nameForm.controls.name.value) } }}
+          </p>
+          <div class="step-actions">
+            <button mat-stroked-button matStepperPrevious>{{ 'COMMON.BACK' | translate }}</button>
+            <button mat-flat-button color="primary" type="button"
+              [disabled]="settingsForm.invalid || isLoading()"
+              (click)="onCreate()">
+              @if (isLoading()) { <mat-icon class="spin">autorenew</mat-icon> }
+              {{ 'ONBOARDING.OPEN_DASHBOARD' | translate }}
+            </button>
+          </div>
+        </div>
+      </mat-step>
+
+    </mat-stepper>
+  </mat-card>
+
+</div>

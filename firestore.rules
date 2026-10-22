@@ -1,0 +1,307 @@
+// =============================================================================
+// StayManager — Firestore Security Rules
+// No Cloud Functions — membership is checked via workspaceMembers documents.
+// =============================================================================
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function workspaceOwnerId(workspaceId) {
+      return get(/databases/$(database)/documents/workspaces/$(workspaceId)).data.ownerId;
+    }
+
+    /// True when the caller has an active workspaceMember record for this workspace.
+    function isMember(workspaceId) {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/workspaceMembers/$(request.auth.uid + '_' + workspaceId)) &&
+        get(/databases/$(database)/documents/workspaceMembers/$(request.auth.uid + '_' + workspaceId)).data.isActive == true;
+    }
+
+    function isStaff(workspaceId) {
+      return isMember(workspaceId) &&
+        get(/databases/$(database)/documents/workspaceMembers/$(request.auth.uid + '_' + workspaceId)).data.role == 'STAFF';
+    }
+
+    function isWorkspaceOwner(workspaceId) {
+      return isSignedIn() && workspaceOwnerId(workspaceId) == request.auth.uid;
+    }
+
+    function canManageWorkspaceData(workspaceId) {
+      return isWorkspaceOwner(workspaceId) || isStaff(workspaceId);
+    }
+
+    function isReservationCustomer(data) {
+      // Must be provable from query constraints, so no `in`/get() guards here.
+      return isSignedIn() && (
+        data.requesterUid == request.auth.uid
+        || (
+          request.auth.token.email_verified == true
+          && request.auth.token.email != null
+          && data.customer.email == request.auth.token.email
+        )
+      );
+    }
+
+    function isPlatformAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/platformAdmins/$(request.auth.uid));
+    }
+
+    function isPublicBusyOnly(workspaceId) {
+      let ws = get(/databases/$(database)/documents/workspaces/$(workspaceId)).data;
+      let settings = ws.workspaceSettings;
+      return settings != null
+        && settings.publicCalendarAccess != null
+        && settings.publicCalendarAccess == 'BUSY_ONLY';
+    }
+
+    // ── /users/{userId} ────────────────────────────────────────────────────────
+    match /users/{userId} {
+      // Profiles are only read by their owner. The one exception is the add-member-by-email
+      // lookup, which is capped at a single result so the collection cannot be dumped.
+      allow get:    if isSignedIn() && request.auth.uid == userId;
+      allow list:   if isSignedIn() && request.query.limit <= 1;
+      allow create: if isSignedIn()
+        && request.auth.uid == userId
+        && request.resource.data.uid == userId;
+      allow update: if isSignedIn()
+        && request.auth.uid == userId
+        && request.resource.data.uid == userId;
+      allow delete: if false;
+
+      // Push tokens and other data that must never be visible to other users.
+      match /private/{docId} {
+        allow read, write: if isSignedIn() && request.auth.uid == userId;
+      }
+    }
+
+    // ── /workspaces/{workspaceId} ──────────────────────────────────────────────
+    match /workspaces/{workspaceId} {
+      function approvalFieldsChanged() {
+        return request.resource.data.diff(resource.data).affectedKeys().hasAny([
+          'accessApprovalStatus',
+          'onboardingCompleted',
+          'accessApprovedAt'
+        ]);
+      }
+
+      // Identity and lifecycle fields that only a platform admin may touch.
+      function lockedFieldsChanged() {
+        return request.resource.data.diff(resource.data).affectedKeys().hasAny([
+          'workspaceId',
+          'ownerId',
+          'status',
+          'createdAt'
+        ]);
+      }
+
+      // Owners may keep their plan or drop to FREE. Upgrades are activated by a platform admin
+      // once payment is confirmed.
+      function planNotUpgraded() {
+        return request.resource.data.get('plan', 'FREE') == resource.data.get('plan', 'FREE')
+          || request.resource.data.get('plan', 'FREE') == 'FREE';
+      }
+
+      // A new workspace starts either on FREE with no approval needed, or on a paid plan
+      // waiting for payment. It can never start approved.
+      function isValidNewWorkspace(workspaceId) {
+        let data = request.resource.data;
+        return data.ownerId == request.auth.uid
+          && data.workspaceId == workspaceId
+          && data.status == 'ACTIVE'
+          && data.accessApprovedAt == null
+          && (
+            (
+              data.plan == 'FREE'
+              && data.accessApprovalStatus == 'NOT_REQUIRED'
+              && data.onboardingCompleted == true
+            ) || (
+              data.plan in ['PRO', 'ENTERPRISE']
+              && data.accessApprovalStatus == 'PENDING_PAYMENT'
+              && data.onboardingCompleted == false
+            )
+          );
+      }
+
+      // Read: owner by ownerId field OR active member
+      allow read: if isSignedIn() && (
+        resource.data.ownerId == request.auth.uid
+        || isMember(workspaceId)
+        || isPlatformAdmin()
+      );
+
+      allow create: if isSignedIn() && isValidNewWorkspace(workspaceId);
+
+      // Update: the owner for settings, a platform admin for approval and plan changes.
+      allow update: if (
+        isSignedIn()
+        && resource.data.ownerId == request.auth.uid
+        && !approvalFieldsChanged()
+        && !lockedFieldsChanged()
+        && planNotUpgraded()
+      ) || (
+        isPlatformAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'accessApprovalStatus',
+          'onboardingCompleted',
+          'accessApprovedAt',
+          'plan',
+          'updatedAt'
+        ])
+      );
+
+      allow delete: if false;
+
+      // ── resources ────────────────────────────────────────────────────────────
+      match /resources/{resourceId} {
+        allow read: if isWorkspaceOwner(workspaceId) || isMember(workspaceId);
+        allow create, update: if canManageWorkspaceData(workspaceId);
+        allow delete: if false;
+
+        // ── availability ────────────────────────────────────────────────────────
+        match /availability/{availabilityId} {
+          allow read: if isWorkspaceOwner(workspaceId) || isMember(workspaceId);
+          allow create, update, delete: if canManageWorkspaceData(workspaceId);
+        }
+      }
+
+      // ── public resources projection (safe fields only) ─────────────────────
+      match /publicResources/{resourceId} {
+        allow read: if isPublicBusyOnly(workspaceId);
+        allow write: if canManageWorkspaceData(workspaceId);
+      }
+
+      // ── public busy slots projection (safe fields only) ────────────────────
+      match /publicBusySlots/{reservationId} {
+        allow read: if isPublicBusyOnly(workspaceId);
+        allow write: if canManageWorkspaceData(workspaceId);
+      }
+
+      // ── reservations ─────────────────────────────────────────────────────────
+      match /reservations/{reservationId} {
+        allow read: if isWorkspaceOwner(workspaceId)
+          || isMember(workspaceId)
+          || isReservationCustomer(resource.data);
+        allow create: if false;
+        allow update: if canManageWorkspaceData(workspaceId)
+          && request.resource.data.reservationId == resource.data.reservationId
+          && request.resource.data.createdBy == resource.data.createdBy
+          && request.resource.data.createdAt == resource.data.createdAt
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'customer',
+            'notes',
+            'price',
+            'attachmentUrls',
+            'updatedBy',
+            'updatedAt'
+          ]);
+        allow delete: if false;
+
+        match /auditLog/{logId} {
+          allow read: if isWorkspaceOwner(workspaceId) || isStaff(workspaceId);
+          allow write: if false;
+        }
+      }
+
+      // ── customers (owner/member guest registry) ────────────────────────────
+      match /customers/{customerId} {
+        allow read: if isWorkspaceOwner(workspaceId) || isMember(workspaceId);
+        allow create, update, delete: if canManageWorkspaceData(workspaceId);
+      }
+
+      // ── summaries (read-only for members) ─────────────────────────────────
+      match /summaries/{month} {
+        allow read: if isWorkspaceOwner(workspaceId) || isMember(workspaceId);
+        allow write: if false;
+      }
+
+      // ── expenses (owner-only financial data) ──────────────────────────────
+      match /expenses/{expenseId} {
+        allow read, write: if isWorkspaceOwner(workspaceId);
+      }
+
+      // ── invitations (locked — no email flow without CF) ───────────────────
+      match /invitations/{invitationId} {
+        allow read, write: if false;
+      }
+    }
+
+    // Collection-group reads for customer reservations must prove ownership in the query.
+    match /{path=**}/reservations/{reservationId} {
+      allow read: if isReservationCustomer(resource.data);
+    }
+
+    // ── /workspaceMembers/{memberDocId} ───────────────────────────────────────
+    match /workspaceMembers/{memberDocId} {
+      // Read own membership, or memberships of workspaces where caller is active member/owner.
+      allow read: if isSignedIn() && (
+        resource.data.userId == request.auth.uid
+        || isWorkspaceOwner(resource.data.workspaceId)
+        || isMember(resource.data.workspaceId)
+      );
+
+      // Create founding OWNER membership or let owner add STAFF/VIEWER members.
+      allow create: if isSignedIn() && (
+        (
+          request.resource.data.userId == request.auth.uid
+          && isWorkspaceOwner(request.resource.data.workspaceId)
+          && request.resource.data.role == 'OWNER'
+          && request.resource.data.isActive == true
+        )
+        || (
+          isWorkspaceOwner(request.resource.data.workspaceId)
+          && request.resource.data.role in ['STAFF', 'VIEWER']
+        )
+      );
+
+      // Only workspace owner can update member role/activity.
+      // Owner's own membership cannot be revoked or downgraded.
+      allow update: if isSignedIn()
+        && isWorkspaceOwner(resource.data.workspaceId)
+        && request.resource.data.workspaceId == resource.data.workspaceId
+        && request.resource.data.userId == resource.data.userId
+        && (
+          (
+            resource.data.userId == workspaceOwnerId(resource.data.workspaceId)
+            && request.resource.data.role == 'OWNER'
+            && request.resource.data.isActive == true
+          )
+          || (
+            resource.data.userId != workspaceOwnerId(resource.data.workspaceId)
+            && request.resource.data.role in ['STAFF', 'VIEWER']
+          )
+        );
+      allow delete: if false;
+    }
+
+    // ── /slugs ────────────────────────────────────────────────────────────────
+    match /slugs/{slug} {
+      allow read, write: if false;
+    }
+
+    // ── /platformAdmins (managed manually from Firebase Console/Admin SDK) ───
+    match /platformAdmins/{uid} {
+      allow read: if isSignedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // ── /publicWorkspaces (public directory for landing page) ────────────────
+    match /publicWorkspaces/{workspaceId} {
+      allow read: if true;
+      allow write: if isWorkspaceOwner(workspaceId);
+    }
+
+    // ── catch-all ─────────────────────────────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

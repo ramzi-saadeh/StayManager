@@ -1,0 +1,22 @@
+<div class="empty-state">
+  <div class="empty-icon-wrap">
+    <mat-icon class="empty-icon">{{ icon() }}</mat-icon>
+  </div>
+  <h3 class="empty-title">{{ title() }}</h3>
+  @if (description()) {
+    <p class="empty-desc">{{ description() }}</p>
+  }
+  @if (actionLabel()) {
+    @if (actionLink()) {
+      <a mat-flat-button color="primary" [routerLink]="actionLink()">
+        <mat-icon>{{ actionIcon() }}</mat-icon>
+        {{ actionLabel() }}
+      </a>
+    } @else {
+      <button mat-flat-button color="primary" (click)="actionClick.emit()">
+        <mat-icon>{{ actionIcon() }}</mat-icon>
+        {{ actionLabel() }}
+      </button>
+    }
+  }
+</div>

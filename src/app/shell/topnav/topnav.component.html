@@ -1,0 +1,126 @@
+<header class="topnav" role="banner">
+
+  <!-- Left: menu toggle + breadcrumb/title -->
+  <div class="topnav-start">
+    <button mat-icon-button class="menu-toggle" (click)="onMenuClick()" [attr.aria-label]="'TOPNAV.TOGGLE_NAV_ARIA' | translate">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <div class="topnav-brand">
+      <span class="brand-text">{{ 'TOPNAV.BRAND_NAME' | translate }}</span>
+    </div>
+  </div>
+
+  <!-- Center: global search -->
+  <div class="topnav-search">
+    <button mat-button class="search-trigger" [attr.aria-label]="'TOPNAV.OPEN_SEARCH_ARIA' | translate" (click)="openPalette()">
+      <mat-icon>search</mat-icon>
+      <span>{{ 'TOPNAV.SEARCH_PLACEHOLDER' | translate }}</span>
+      <kbd>⌘K</kbd>
+    </button>
+  </div>
+
+  <!-- Right: actions + avatar -->
+  <div class="topnav-end">
+
+    @if (isOwner()) {
+      <button mat-icon-button [matTooltip]="'TOPNAV.QUICK_ADD' | translate" [attr.aria-label]="'TOPNAV.CREATE_RESERVATION_ARIA' | translate" routerLink="/reservations/new">
+        <mat-icon>add_circle</mat-icon>
+      </button>
+    }
+
+    @if (isOwner()) {
+      <div class="notifications-anchor">
+        <button mat-icon-button class="notification-trigger"
+          [matTooltip]="'TOPNAV.NOTIFICATIONS' | translate"
+          [attr.aria-label]="'TOPNAV.NOTIFICATIONS_COUNT' | translate: { count: pendingRequestCount() }"
+          [attr.aria-expanded]="notificationsOpen()"
+          aria-controls="notifications-panel"
+          (click)="toggleNotifications()">
+          <mat-icon>notifications</mat-icon>
+          @if (pendingRequestCount() > 0) {
+            <span class="notification-count" aria-hidden="true">
+              {{ pendingRequestCount() > 99 ? '99+' : pendingRequestCount() }}
+            </span>
+          }
+        </button>
+        @if (notificationsOpen()) {
+          <section id="notifications-panel" class="notifications-panel" role="dialog"
+            [attr.aria-label]="'TOPNAV.PENDING_BOOKING_REQUESTS' | translate">
+            <div class="notification-menu-heading">
+              {{ 'TOPNAV.PENDING_BOOKING_REQUESTS' | translate }}
+            </div>
+            @if (notificationLoadError()) {
+              <p class="notification-state">{{ 'TOPNAV.NOTIFICATIONS_LOAD_ERROR' | translate }}</p>
+            } @else if (latestPendingRequests().length === 0) {
+              <p class="notification-state">{{ 'TOPNAV.NO_PENDING_BOOKING_REQUESTS' | translate }}</p>
+            } @else {
+              @for (reservation of latestPendingRequests(); track reservation.reservationId) {
+                <button type="button" class="notification-menu-item"
+                  (click)="openReservationNotification(reservation.reservationId)">
+                  <mat-icon>event</mat-icon>
+                  <span class="notification-menu-copy">
+                    <span class="notification-menu-primary">{{ reservation.customer.name }}</span>
+                    <span class="notification-menu-secondary">{{ reservation.resourceName }}</span>
+                    <span class="notification-menu-period">
+                      <mat-icon>schedule</mat-icon>
+                      @if (reservation.startDate && reservation.endDate) {
+                        {{ reservation.startDate }} – {{ reservation.endDate }}
+                      } @else {
+                        {{ reservation.start.toDate() | date:'MMM d, y, h:mm a' }} – {{ reservation.end.toDate() | date:'MMM d, y, h:mm a' }}
+                      }
+                    </span>
+                    <span class="notification-menu-price">
+                      {{ reservation.price.currency }} {{ reservation.price.amount | number:'1.0-2' }}
+                    </span>
+                  </span>
+                </button>
+              }
+            }
+            <button type="button" class="notification-menu-footer" routerLink="/reservations"
+              (click)="notificationsOpen.set(false)">
+              <mat-icon>list_alt</mat-icon>{{ 'TOPNAV.VIEW_ALL_RESERVATIONS' | translate }}
+            </button>
+          </section>
+        }
+      </div>
+    }
+
+    <!-- User menu -->
+    <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-avatar-btn" [attr.aria-label]="'TOPNAV.USER_MENU_ARIA' | translate"
+      aria-haspopup="true">
+      <div class="user-avatar">
+        <mat-icon>person</mat-icon>
+      </div>
+    </button>
+
+  </div>
+
+</header>
+
+<!-- User dropdown menu -->
+<mat-menu #userMenu="matMenu" xPosition="before">
+  <div class="user-menu-header" mat-menu-item disabled>
+    <mat-icon>account_circle</mat-icon>
+    <div class="user-menu-info">
+      <p class="user-name">{{ 'TOPNAV.MY_ACCOUNT' | translate }}</p>
+      <p class="user-email">{{ authService.getCurrentUser()?.email ?? '—' }}</p>
+    </div>
+  </div>
+  <mat-divider />
+  <button mat-menu-item routerLink="/settings/profile">
+    <mat-icon>manage_accounts</mat-icon>{{ 'TOPNAV.PROFILE' | translate }}
+  </button>
+  <button mat-menu-item routerLink="/settings">
+    <mat-icon>settings</mat-icon>{{ 'TOPNAV.SETTINGS' | translate }}
+  </button>
+  @if (platformAdmin.isSuperAdmin()) {
+    <button mat-menu-item routerLink="/super-admin/approvals">
+      <mat-icon>admin_panel_settings</mat-icon>{{ 'TOPNAV.SUPER_ADMIN_APPROVALS' | translate }}
+    </button>
+  }
+  <mat-divider />
+  <button mat-menu-item (click)="onLogout()">
+    <mat-icon>logout</mat-icon>{{ 'TOPNAV.SIGN_OUT' | translate }}
+  </button>
+</mat-menu>

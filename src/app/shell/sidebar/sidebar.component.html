@@ -1,0 +1,103 @@
+<nav class="sidebar" [class.collapsed]="collapsed()" [attr.aria-label]="'SIDEBAR.APPLICATION_NAV_ARIA' | translate">
+
+  <!-- Brand ────────────────────────────────────────────────────────── -->
+  <div class="sidebar-brand">
+    <div class="brand-icon" [class.has-logo]="!!workspaceBrandLogo()">
+      @if (workspaceBrandLogo()) {
+        <img [src]="workspaceBrandLogo()" [alt]="workspaceBrandName() || ('SIDEBAR.BRAND_NAME' | translate)" />
+      } @else {
+        <mat-icon>hotel</mat-icon>
+      }
+    </div>
+    @if (!collapsed()) {
+      <span class="brand-name">{{ workspaceBrandName() || ('SIDEBAR.BRAND_NAME' | translate) }}</span>
+    }
+  </div>
+
+  <!-- Nav groups ───────────────────────────────────────────────────── -->
+  <div class="sidebar-nav">
+    @for (group of navGroups(); track group.headingKey ?? group.items[0]?.route) {
+
+      @if (group.headingKey && !collapsed()) {
+        <p class="nav-group-heading">{{ group.headingKey | translate }}</p>
+      } @else if (group.headingKey && collapsed()) {
+        <div class="nav-group-divider"></div>
+      }
+
+      @for (item of group.items; track item.route) {
+        <a
+          class="nav-item"
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          (click)="onNavClick()"
+          [matTooltip]="collapsed() ? (item.labelKey | translate) : ''"
+          [matTooltipPosition]="tooltipPosition()">
+          <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+          @if (!collapsed()) {
+            <span class="nav-label">{{ item.labelKey | translate }}</span>
+            @if (item.badge) {
+              <span class="nav-badge">{{ item.badge }}</span>
+            }
+          }
+        </a>
+      }
+
+    }
+  </div>
+
+  @if (isOwner()) {
+    <!-- Sidebar footer ───────────────────────────────────────────────── -->
+    <div class="sidebar-footer">
+      <button
+        type="button"
+        class="workspace-card"
+        [class.collapsed]="collapsed()"
+        [matMenuTriggerFor]="workspaceMenu"
+        [matTooltip]="collapsed() ? ('SIDEBAR.SWITCH_WORKSPACE' | translate) : ''"
+        [matTooltipPosition]="tooltipPosition()">
+        <div class="workspace-avatar">
+          <mat-icon>apartment</mat-icon>
+        </div>
+        @if (!collapsed()) {
+          <div class="workspace-info">
+            <p class="workspace-name">{{ 'SIDEBAR.MY_WORKSPACE' | translate }}</p>
+            <span class="workspace-plan">{{ currentPlanLabelKey() | translate }}</span>
+          </div>
+          <mat-icon class="workspace-chevron">unfold_more</mat-icon>
+        }
+      </button>
+
+      <mat-menu #workspaceMenu="matMenu" xPosition="before">
+        <div class="workspace-menu-title" mat-menu-item disabled>
+          <mat-icon>apartment</mat-icon>
+          <span>{{ 'SIDEBAR.SWITCH_WORKSPACE' | translate }}</span>
+        </div>
+
+        @for (workspace of workspaces(); track workspace.workspaceId) {
+          <button mat-menu-item (click)="selectWorkspace(workspace.workspaceId)">
+            <mat-icon>{{ isActiveWorkspace(workspace.workspaceId) ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+            <span>{{ workspace.name }}</span>
+          </button>
+        }
+
+        <mat-divider></mat-divider>
+
+        <button mat-menu-item [disabled]="!canCreateWorkspace()" (click)="createWorkspace()">
+          <mat-icon>add_business</mat-icon>
+          <span>{{ 'SIDEBAR.NEW_WORKSPACE' | translate }}</span>
+        </button>
+
+        @if (!canCreateWorkspace()) {
+          <div class="workspace-limit-note">
+            @if (currentWorkspacePlan() === 'FREE') {
+              {{ 'SIDEBAR.CREATE_WORKSPACE_DISABLED_FREE' | translate }}
+            } @else {
+              {{ 'SIDEBAR.CREATE_WORKSPACE_DISABLED_LIMIT' | translate:{ current: ownedWorkspaceCount(), max: maxWorkspacesForPlan() } }}
+            }
+          </div>
+        }
+      </mat-menu>
+    </div>
+  }
+
+</nav>

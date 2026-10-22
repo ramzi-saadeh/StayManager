@@ -8,6 +8,8 @@
 
 # Node
 /node_modules
+/functions/node_modules/
+/functions/lib/
 npm-debug.log
 yarn-error.log
 
@@ -41,3 +43,26 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Environment — only the example template is committed
+# Copy environment.example.ts → environment.ts (dev) or environment.production.ts (prod)
+# and fill in real values. Never commit the filled-in files.
+src/environments/environment.ts
+src/environments/environment.production.ts
+
+# Firebase — service account keys (if ever downloaded for admin SDK local use)
+*-service-account.json
+*-firebase-adminsdk-*.json
+serviceAccountKey.json
+
+# Firebase emulator debug logs
+firebase-debug.log
+firestore-debug.log
+database-debug.log
+pubsub-debug.log
+storage-debug.log
+ui-debug.log
+.runtimeconfig.json
+
+functions/.env
+functions/.env.*

@@ -1,0 +1,90 @@
+/* ── Shell container ────────────────────────────────────────────────── */
+.shell-container {
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* ── Sidebar sidenav ────────────────────────────────────────────────── */
+.app-sidenav {
+  width: var(--sm-sidebar-width);
+  border-inline-end: none;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+
+  &.collapsed {
+    width: var(--sm-sidebar-collapsed-width);
+  }
+}
+
+/* ── Main content area ──────────────────────────────────────────────── */
+.shell-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--sm-page-bg);
+}
+
+.page-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ── Mobile bottom nav ──────────────────────────────────────────────── */
+.bottom-nav {
+  display: flex;
+  align-items: stretch;
+  height: var(--sm-bottom-nav-height);
+  background: #fff;
+  border-top: 1px solid var(--sm-border-color);
+  box-shadow: 0 -2px 8px rgb(0 0 0 / 0.06);
+  z-index: var(--sm-z-sidebar);
+  flex-shrink: 0;
+}
+
+html[dir='rtl'] .bottom-nav {
+  flex-direction: row-reverse;
+}
+
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  text-decoration: none;
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 4px 0;
+  transition: color 0.15s ease;
+  border-radius: 0;
+  -webkit-tap-highlight-color: transparent;
+
+  mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+
+  &.active {
+    color: var(--mat-sys-primary);
+
+    mat-icon {
+      font-variation-settings: 'FILL' 1;
+    }
+  }
+
+  &:active {
+    background: rgb(0 0 0 / 0.04);
+  }
+}
+
+/* ── Responsive adjustments ─────────────────────────────────────────── */
+@media (max-width: 599px) {
+  .page-area {
+    padding-bottom: var(--sm-bottom-nav-height);
+  }
+}

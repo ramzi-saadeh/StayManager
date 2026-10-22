@@ -1,0 +1,105 @@
+<section class="recurrence" [formGroup]="form">
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>{{ 'RESERVATION_FORM.RECURRENCE.REPEAT' | translate }}</mat-label>
+    <mat-select formControlName="frequency">
+      <mat-option value="NONE">{{ 'RESERVATION_FORM.RECURRENCE.NONE' | translate }}</mat-option>
+      <mat-option [value]="Frequency.DAILY">{{ 'RESERVATION_FORM.RECURRENCE.DAILY' | translate }}</mat-option>
+      <mat-option [value]="Frequency.WEEKLY">{{ 'RESERVATION_FORM.RECURRENCE.WEEKLY' | translate }}</mat-option>
+      <mat-option [value]="Frequency.MONTHLY">{{ 'RESERVATION_FORM.RECURRENCE.MONTHLY' | translate }}</mat-option>
+    </mat-select>
+    <mat-icon matPrefix>repeat</mat-icon>
+  </mat-form-field>
+
+  @if (repeats()) {
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'RESERVATION_FORM.RECURRENCE.EVERY' | translate }}</mat-label>
+        <input matInput type="number" formControlName="interval" min="1" [max]="maxInterval" />
+        <span matTextSuffix>&nbsp;{{ 'RESERVATION_FORM.RECURRENCE.UNIT_' + form.controls.frequency.value | translate }}</span>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'RESERVATION_FORM.RECURRENCE.ENDS' | translate }}</mat-label>
+        <mat-select formControlName="endType">
+          <mat-option value="COUNT">{{ 'RESERVATION_FORM.RECURRENCE.END_AFTER' | translate }}</mat-option>
+          <mat-option value="UNTIL">{{ 'RESERVATION_FORM.RECURRENCE.END_ON' | translate }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      @if (form.controls.endType.value === 'COUNT') {
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'RESERVATION_FORM.RECURRENCE.OCCURRENCES' | translate }}</mat-label>
+          <input matInput type="number" formControlName="count" min="2" [max]="maxCount" />
+          <mat-hint>{{ 'RESERVATION_FORM.RECURRENCE.MAX_HINT' | translate:{ max: maxCount } }}</mat-hint>
+        </mat-form-field>
+      } @else {
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'RESERVATION_FORM.RECURRENCE.LAST_DATE' | translate }}</mat-label>
+          <input matInput [matDatepicker]="untilPicker" formControlName="until" [min]="minUntil()" readonly />
+          <mat-datepicker-toggle matIconSuffix [for]="untilPicker" />
+          <mat-datepicker #untilPicker />
+          <mat-hint>{{ 'RESERVATION_FORM.RECURRENCE.MAX_HINT' | translate:{ max: maxCount } }}</mat-hint>
+        </mat-form-field>
+      }
+    </div>
+
+    @if (form.controls.frequency.value === Frequency.WEEKLY) {
+      <div class="weekdays" role="group" [attr.aria-label]="'RESERVATION_FORM.RECURRENCE.REPEAT_ON' | translate">
+        <span class="weekdays-label">{{ 'RESERVATION_FORM.RECURRENCE.REPEAT_ON' | translate }}</span>
+        @for (day of weekdays; track day) {
+          <button type="button" class="weekday"
+            [class.weekday--active]="isWeekdaySelected(day)"
+            [disabled]="day === startWeekday()"
+            [attr.aria-pressed]="isWeekdaySelected(day)"
+            (click)="toggleWeekday(day)">
+            {{ 'RESERVATION_FORM.RECURRENCE.DAY_' + day | translate }}
+          </button>
+        }
+      </div>
+    }
+
+    @if (!valid()) {
+      <p class="hint">{{ 'RESERVATION_FORM.RECURRENCE.INCOMPLETE' | translate }}</p>
+    } @else {
+      <div class="preview" aria-live="polite">
+        @if (previewLoading() && !preview()) {
+          <mat-spinner diameter="20" />
+        }
+
+        @if (preview(); as items) {
+          <p class="preview-summary">
+            {{ 'RESERVATION_FORM.RECURRENCE.PREVIEW_SUMMARY' | translate:{ total: items.length, unavailable: unavailableCount() } }}
+          </p>
+
+          <ol class="preview-list">
+            @for (item of items; track item.index) {
+              <li class="preview-item" [class]="'preview-item--' + item.status.toLowerCase()" [attr.title]="item.reason ?? null">
+                <span class="preview-index">{{ item.index }}</span>
+                <span class="preview-date">
+                  @if (isDateRange()) {
+                    {{ item.start | date:'EEE, d MMM y' }} &rarr; {{ item.end | date:'EEE, d MMM' }}
+                  } @else {
+                    {{ item.start | date:'EEE, d MMM y, HH:mm' }} &ndash; {{ item.end | date:'HH:mm' }}
+                  }
+                </span>
+                @if (item.status !== 'OK') {
+                  <span class="preview-status">
+                    <mat-icon>{{ item.status === 'CONFLICT' ? 'event_busy' : 'block' }}</mat-icon>
+                    {{ 'RESERVATION_FORM.RECURRENCE.STATUS_' + item.status | translate }}
+                  </span>
+                }
+              </li>
+            }
+          </ol>
+
+          @if (unavailableCount() > 0) {
+            <mat-checkbox [checked]="skipConflicts()" (change)="skipConflicts.set($event.checked)">
+              {{ 'RESERVATION_FORM.RECURRENCE.SKIP_UNAVAILABLE' | translate }}
+            </mat-checkbox>
+          }
+        }
+      </div>
+    }
+  }
+</section>

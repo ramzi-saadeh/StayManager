@@ -1,0 +1,80 @@
+<div class="settings-page">
+  <div class="settings-header">
+    <div>
+      <h1>{{ 'SETTINGS_MEMBERS.TITLE' | translate }}</h1>
+      <p>{{ 'SETTINGS_MEMBERS.SUBTITLE' | translate }}</p>
+    </div>
+    <button mat-flat-button color="primary" (click)="showInviteForm.set(!showInviteForm())">
+      <mat-icon>{{ showInviteForm() ? 'close' : 'person_add' }}</mat-icon>
+      {{ showInviteForm() ? ('COMMON.CANCEL' | translate) : ('SETTINGS_MEMBERS.INVITE_MEMBER' | translate) }}
+    </button>
+  </div>
+
+  <!-- Invite form -->
+  @if (showInviteForm()) {
+    <div class="invite-card">
+      <h3>{{ 'SETTINGS_MEMBERS.SEND_INVITATION' | translate }}</h3>
+      <form [formGroup]="inviteForm" (ngSubmit)="invite()" class="invite-form" novalidate>
+        <mat-form-field appearance="outline" class="invite-email">
+          <mat-label>{{ 'SETTINGS_MEMBERS.EMAIL_ADDRESS' | translate }}</mat-label>
+          <input matInput formControlName="email" type="email" [placeholder]="'SETTINGS_MEMBERS.EMAIL_PLACEHOLDER' | translate" />
+          <mat-icon matPrefix>email</mat-icon>
+          @if (inviteForm.controls.email.hasError('email')) {
+            <mat-error>{{ 'SETTINGS_MEMBERS.ERROR_VALID_EMAIL' | translate }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'SETTINGS_MEMBERS.ROLE' | translate }}</mat-label>
+          <mat-select formControlName="role">
+            @for (r of roles; track r) {
+              <mat-option [value]="r">{{ roleLabel(r) }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" type="submit"
+          [disabled]="inviteForm.invalid || inviting()">
+          @if (inviting()) { <mat-icon class="spin">autorenew</mat-icon> }
+          {{ 'SETTINGS_MEMBERS.SEND_INVITE' | translate }}
+        </button>
+      </form>
+    </div>
+  }
+
+  <!-- Members list -->
+  <div class="member-list">
+    @for (m of members(); track m.userId) {
+      <div class="member-row">
+        <div class="member-avatar">{{ initials(m.displayName) }}</div>
+        <div class="member-info">
+          <span class="member-name">{{ m.displayName || ('SETTINGS_MEMBERS.UNKNOWN' | translate) }}</span>
+          <span class="member-email">{{ m.email }}</span>
+        </div>
+        <mat-chip-listbox class="role-chip-list">
+          <mat-chip [class]="'role-chip role-chip--' + m.role.toLowerCase()">{{ roleLabel(m.role) }}</mat-chip>
+        </mat-chip-listbox>
+        @if (m.role !== WorkspaceRole.OWNER) {
+          <button mat-icon-button [matMenuTriggerFor]="memberMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #memberMenu>
+            @for (r of roles; track r) {
+              <button mat-menu-item (click)="changeRole(m, r)">
+                <mat-icon>swap_horiz</mat-icon> {{ 'SETTINGS_MEMBERS.CHANGE_TO' | translate:{ role: roleLabel(r) } }}
+              </button>
+            }
+            <button mat-menu-item class="danger-item" (click)="revoke(m)">
+              @if (revoking() === m.userId) {
+                <mat-icon class="spin">autorenew</mat-icon>
+              } @else {
+                <mat-icon>person_remove</mat-icon>
+              }
+              {{ 'SETTINGS_MEMBERS.REMOVE' | translate }}
+            </button>
+          </mat-menu>
+        }
+      </div>
+    }
+  </div>
+</div>

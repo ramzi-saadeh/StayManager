@@ -1,0 +1,240 @@
+<main class="container public-booking-main">
+    <section class="booking-hero">
+      <div class="booking-hero-copy">
+        <p class="eyebrow">{{ 'PUBLIC_BOOKING.TITLE' | translate }}</p>
+        <h1>{{ workspacePublicLabel() }}</h1>
+        <p class="subheadline">{{ 'PUBLIC_BOOKING.HERO_DESCRIPTION' | translate }}</p>
+        <div class="workspace-meta">
+          <span><mat-icon>location_on</mat-icon> {{ publicWorkspace()?.address || ('PUBLIC_HOME.ADDRESS_NOT_PROVIDED' | translate) }}</span>
+          <span><mat-icon>schedule</mat-icon> {{ publicWorkspace()?.timezone || 'UTC' }}</span>
+          <span><mat-icon>public</mat-icon> {{ publicWorkspace()?.currency || 'USD' }}</span>
+        </div>
+      </div>
+
+      <aside class="booking-summary-card">
+        <p class="summary-label">Public booking request</p>
+        <h2>{{ workspacePublicLabel() }}</h2>
+        <ul>
+          <li>Live availability and pricing</li>
+          <li>Instant request to the workspace owner</li>
+          <li>Approval or decline sent back to you</li>
+        </ul>
+        <a mat-stroked-button class="ghost-btn" routerLink="/">Back to public home</a>
+      </aside>
+    </section>
+
+    <section class="content-grid">
+      <mat-card class="busy-card">
+        @if (publicAccessError()) {
+          <div class="public-error-banner">
+            <mat-icon>error</mat-icon>
+            <span>{{ publicAccessError() }}</span>
+          </div>
+        }
+
+        <div class="busy-header">
+          <h2>{{ 'PUBLIC_BOOKING.AVAILABILITY' | translate }}</h2>
+          <div class="month-nav">
+            <button mat-icon-button type="button" (click)="prevMonth()" [attr.aria-label]="'PUBLIC_BOOKING.PREVIOUS_MONTH' | translate">
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+            <span>{{ monthLabel() }}</span>
+            <button mat-icon-button type="button" (click)="nextMonth()" [attr.aria-label]="'PUBLIC_BOOKING.NEXT_MONTH' | translate">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        @if (!selectedResource()) {
+          @if (resources().length === 0) {
+            <p class="empty">{{ 'PUBLIC_BOOKING.NO_PUBLIC_RESOURCES' | translate }}</p>
+          } @else {
+            <p class="empty">{{ 'PUBLIC_BOOKING.CHOOSE_RESOURCE_HINT' | translate }}</p>
+          }
+        } @else {
+          @if (isDateRangeMode()) {
+            <div class="legend-row">
+              <span class="legend-item"><i class="dot reserved"></i> {{ 'PUBLIC_BOOKING.RESERVED' | translate }}</span>
+              <span class="legend-item"><i class="dot available"></i> {{ 'PUBLIC_BOOKING.AVAILABLE' | translate }}</span>
+              <span class="legend-item"><i class="dot selected"></i> {{ 'PUBLIC_BOOKING.SELECTED' | translate }}</span>
+            </div>
+
+            <div class="calendar-grid">
+              @for (day of weekDays; track day) {
+                <div class="week-day">{{ day | translate }}</div>
+              }
+
+              @for (day of monthDays(); track day.date.toISOString()) {
+                <button
+                  type="button"
+                  class="day-cell"
+                  [class.other-month]="!day.isCurrentMonth"
+                  [class.reserved]="day.isReserved"
+                  [class.past]="day.isPast"
+                  [class.selected]="day.isInSelection"
+                  [class.selected-start]="day.isSelectedStart"
+                  [class.selected-end]="day.isSelectedEnd"
+                  (click)="selectDateCell(day)">
+                  {{ day.date.getDate() }}
+                </button>
+              }
+            </div>
+
+            <p class="selection-summary">{{ selectedDateRangeLabel() }}</p>
+          } @else {
+            <div class="hour-date-toolbar">
+              <button mat-icon-button type="button" (click)="prevHourDate()" [attr.aria-label]="'PUBLIC_BOOKING.PREVIOUS_DAY' | translate">
+                <mat-icon>chevron_left</mat-icon>
+              </button>
+              <span>{{ hourDateLabel() }}</span>
+              <button mat-icon-button type="button" (click)="nextHourDate()" [attr.aria-label]="'PUBLIC_BOOKING.NEXT_DAY' | translate">
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+            </div>
+
+            <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+              <mat-label>{{ 'PUBLIC_BOOKING.PICK_DAY' | translate }}</mat-label>
+              <input matInput [matDatepicker]="hourDatePicker" [value]="selectedHourDate()" (dateChange)="onHourDatePicked($event.value)" readonly />
+              <mat-datepicker-toggle matIconSuffix [for]="hourDatePicker" />
+              <mat-datepicker #hourDatePicker />
+            </mat-form-field>
+
+            <div class="legend-row">
+              <span class="legend-item"><i class="dot reserved"></i> {{ 'PUBLIC_BOOKING.RESERVED_HOUR' | translate }}</span>
+              <span class="legend-item"><i class="dot available"></i> {{ 'PUBLIC_BOOKING.AVAILABLE_HOUR' | translate }}</span>
+              <span class="legend-item"><i class="dot selected"></i> {{ 'PUBLIC_BOOKING.SELECTED_RANGE' | translate }}</span>
+            </div>
+
+            <div class="hours-grid">
+              @for (slot of hourSlots(); track slot.hour) {
+                <button
+                  type="button"
+                  class="hour-cell"
+                  [class.reserved]="slot.isReserved"
+                  [class.past]="slot.isPast"
+                  [class.selected]="slot.isInSelection"
+                  [class.selected-start]="slot.isSelectedStart"
+                  [class.selected-end]="slot.isSelectedEnd"
+                  (click)="selectHour(slot.hour)">
+                  {{ slot.label }}
+                </button>
+              }
+            </div>
+
+            <p class="selection-summary">{{ selectedDateTimeLabel() }}</p>
+          }
+
+          @if (busySlots().length > 0) {
+            <div class="slot-list">
+              @for (slot of busySlots(); track slot.reservationId) {
+                <div class="slot-row">
+                  <div>
+                    <p class="slot-resource">{{ slot.resourceName }}</p>
+                    @if (slot.startDate && slot.endDate) {
+                      <p class="slot-time">{{ slot.startDate }} → {{ slot.endDate }}</p>
+                    } @else {
+                      <p class="slot-time">{{ slot.start.toDate() | date:'d MMM y, HH:mm' }} → {{ slot.end.toDate() | date:'d MMM y, HH:mm' }}</p>
+                    }
+                  </div>
+                  <span class="slot-pill">{{ 'PUBLIC_BOOKING.RESERVED' | translate }}</span>
+                </div>
+              }
+            </div>
+          }
+        }
+      </mat-card>
+
+      <mat-card class="request-card">
+        <div class="request-header">
+          <h2>{{ 'PUBLIC_BOOKING.REQUEST_BOOKING' | translate }}</h2>
+          <span class="request-chip">Secure request</span>
+        </div>
+
+        @if (selectedResource()) {
+          <div class="selected-resource-price">
+            <span>Selected resource price</span>
+            <strong>{{ selectedResourcePrice() }}</strong>
+          </div>
+        }
+
+        @if (currentUser()) {
+          <div class="account-summary">
+            <p class="account-summary-title">{{ 'PUBLIC_BOOKING.ACCOUNT_DETAILS' | translate }}</p>
+            <p><strong>{{ 'PUBLIC_BOOKING.YOUR_NAME' | translate }}:</strong> {{ currentUser()?.displayName || '-' }}</p>
+            @if (currentUser()?.phoneNumber) {
+              <p><strong>{{ 'PUBLIC_BOOKING.PHONE' | translate }}:</strong> {{ currentUser()?.phoneNumber }}</p>
+            }
+            <p><strong>{{ 'PUBLIC_BOOKING.EMAIL' | translate }}:</strong> {{ currentUser()?.email || '-' }}</p>
+          </div>
+        }
+
+        <form [formGroup]="requestForm" (ngSubmit)="submitRequest()" novalidate>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'PUBLIC_BOOKING.RESOURCE' | translate }}</mat-label>
+            <mat-select formControlName="resourceId">
+              @for (r of resources(); track r.resourceId) {
+                <mat-option [value]="r.resourceId">{{ r.name }}</mat-option>
+              }
+            </mat-select>
+            <mat-icon matPrefix>home_work</mat-icon>
+          </mat-form-field>
+
+          @if (selectedResource()) {
+            @if (isDateRangeMode()) {
+              <div class="row">
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'PUBLIC_BOOKING.CHECKIN' | translate }}</mat-label>
+                  <input matInput [matDatepicker]="inPicker" formControlName="startDate" readonly />
+                  <mat-datepicker-toggle matIconSuffix [for]="inPicker" />
+                  <mat-datepicker #inPicker />
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'PUBLIC_BOOKING.CHECKOUT' | translate }}</mat-label>
+                  <input matInput [matDatepicker]="outPicker" formControlName="endDate" [min]="minPublicCheckoutDate()" readonly />
+                  <mat-datepicker-toggle matIconSuffix [for]="outPicker" />
+                  <mat-datepicker #outPicker />
+                </mat-form-field>
+              </div>
+            } @else {
+              <div class="row">
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'PUBLIC_BOOKING.START' | translate }}</mat-label>
+                  <input matInput formControlName="startDatetime" type="datetime-local" />
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'PUBLIC_BOOKING.END' | translate }}</mat-label>
+                  <input matInput formControlName="endDatetime" type="datetime-local" />
+                </mat-form-field>
+              </div>
+            }
+          }
+
+          <div class="row">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'PUBLIC_BOOKING.YOUR_NAME' | translate }}</mat-label>
+              <input matInput formControlName="guestName" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'PUBLIC_BOOKING.PHONE' | translate }}</mat-label>
+              <input matInput formControlName="guestPhone" />
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'PUBLIC_BOOKING.EMAIL_OPTIONAL' | translate }}</mat-label>
+            <input matInput formControlName="guestEmail" type="email" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'PUBLIC_BOOKING.NOTE_OPTIONAL' | translate }}</mat-label>
+            <textarea matInput formControlName="notes" rows="2"></textarea>
+          </mat-form-field>
+
+          <button mat-flat-button color="primary" type="submit" [disabled]="requestForm.invalid || isSubmitting()" class="submit-btn">
+            @if (isSubmitting()) { <mat-icon class="spin">autorenew</mat-icon> }
+            {{ 'PUBLIC_BOOKING.SUBMIT_REQUEST' | translate }}
+          </button>
+        </form>
+      </mat-card>
+    </section>
+  </main>

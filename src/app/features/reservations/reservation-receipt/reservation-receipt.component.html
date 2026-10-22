@@ -1,0 +1,90 @@
+<div class="receipt-page page-container">
+  <div class="receipt-actions no-print">
+    <a mat-stroked-button [routerLink]="['/reservations', reservation()?.reservationId]">
+      <mat-icon>arrow_back</mat-icon>
+      {{ 'RESERVATION_RECEIPT.BACK_TO_RESERVATION' | translate }}
+    </a>
+    <button mat-flat-button color="primary" type="button" (click)="printReceipt()">
+      <mat-icon>print</mat-icon>
+      {{ 'RESERVATION_RECEIPT.PRINT' | translate }}
+    </button>
+  </div>
+
+  @if (!reservation()) {
+    <div class="loading-center">
+      <mat-spinner diameter="38" />
+    </div>
+  } @else {
+    <article class="receipt-card">
+      <header class="receipt-header">
+        <div>
+          <h1>{{ 'RESERVATION_RECEIPT.TITLE' | translate }}</h1>
+          <p>{{ workspace()?.name || 'WorkSpace' }}</p>
+        </div>
+        <div class="receipt-meta">
+          <p><strong>{{ 'RESERVATION_RECEIPT.RECEIPT_NO' | translate }}:</strong> {{ receiptNumber() }}</p>
+          <p><strong>{{ 'RESERVATION_RECEIPT.ISSUED_AT' | translate }}:</strong> {{ reservation()!.createdAt.toDate() | date:'medium':undefined:localeCode() }}</p>
+        </div>
+      </header>
+
+      <div class="receipt-details-grid">
+        <section class="receipt-section">
+          <h2>{{ 'RESERVATION_RECEIPT.BUSINESS_DETAILS' | translate }}</h2>
+          <p>{{ workspace()?.name || '-' }}</p>
+          <p>{{ workspace()?.address || '-' }}</p>
+          <p>{{ workspace()?.phone || '-' }}</p>
+        </section>
+
+        <section class="receipt-section">
+          <h2>{{ 'RESERVATION_RECEIPT.GUEST_DETAILS' | translate }}</h2>
+          <p><strong>{{ 'RESERVATION_DETAIL.NAME' | translate }}:</strong> {{ reservation()!.customer.name }}</p>
+          <p><strong>{{ 'RESERVATION_DETAIL.PHONE' | translate }}:</strong> {{ reservation()!.customer.phone }}</p>
+          <p><strong>{{ 'RESERVATION_DETAIL.EMAIL' | translate }}:</strong> {{ reservation()!.customer.email || '-' }}</p>
+        </section>
+      </div>
+
+      <section class="receipt-section">
+        <h2>{{ 'RESERVATION_RECEIPT.BOOKING_DETAILS' | translate }}</h2>
+        <p><strong>{{ 'RESERVATION_RECEIPT.RESOURCE' | translate }}:</strong> {{ reservation()!.resourceName }}</p>
+        @if (reservation()!.startDate) {
+          <p><strong>{{ 'RESERVATION_DETAIL.CHECKIN' | translate }}:</strong> {{ reservation()!.startDate }}</p>
+          <p><strong>{{ 'RESERVATION_DETAIL.CHECKOUT' | translate }}:</strong> {{ reservation()!.endDate }}</p>
+        } @else {
+          <p><strong>{{ 'RESERVATION_DETAIL.START' | translate }}:</strong> {{ reservation()!.start.toDate() | date:'medium':undefined:localeCode() }}</p>
+          <p><strong>{{ 'RESERVATION_DETAIL.END' | translate }}:</strong> {{ reservation()!.end.toDate() | date:'medium':undefined:localeCode() }}</p>
+        }
+        <p><strong>{{ 'RESERVATION_DETAIL.STATUS' | translate }}:</strong> {{ reservationStatusLabel(reservation()!.status) }}</p>
+      </section>
+
+      <section class="receipt-section">
+        <h2>{{ 'RESERVATION_RECEIPT.PAYMENT_SUMMARY' | translate }}</h2>
+        <table class="receipt-table">
+          <tr>
+            <th>{{ 'RESERVATION_RECEIPT.DESCRIPTION' | translate }}</th>
+            <th>{{ 'RESERVATION_RECEIPT.AMOUNT' | translate }}</th>
+          </tr>
+          <tr>
+            <td>{{ 'RESERVATION_RECEIPT.BOOKING_TOTAL' | translate }}</td>
+            <td>{{ reservation()!.price.currency }} {{ reservation()!.price.amount | number:'1.2-2' }}</td>
+          </tr>
+          @if (reservation()!.deposit) {
+            <tr>
+              <td>{{ 'RESERVATION_DETAIL.DEPOSIT' | translate }}</td>
+              <td>{{ reservation()!.price.currency }} {{ reservation()!.deposit!.amount | number:'1.2-2' }}</td>
+            </tr>
+          }
+          <tr class="grand-total">
+            <td>{{ 'RESERVATION_RECEIPT.TOTAL_DUE' | translate }}</td>
+            <td>{{ reservation()!.price.currency }} {{ reservation()!.price.amount | number:'1.2-2' }}</td>
+          </tr>
+        </table>
+        <p><strong>{{ 'RESERVATION_DETAIL.PAYMENT' | translate }}:</strong> {{ paymentStatusLabel(reservation()!.paymentStatus) }}</p>
+        <p><strong>{{ 'RESERVATION_FORM.PAYMENT_METHOD' | translate }}:</strong> {{ reservation()!.paymentMethod || 'Cash' }}</p>
+      </section>
+
+      <footer class="receipt-footer">
+        {{ 'RESERVATION_RECEIPT.FOOTER_NOTE' | translate }}
+      </footer>
+    </article>
+  }
+</div>

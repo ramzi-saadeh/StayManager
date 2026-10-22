@@ -1,66 +1,195 @@
-.login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 100px);
-    padding: 24px;
-    background-color: #f5f5f5;
+.auth-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  padding: 1.2rem;
+  background:
+    radial-gradient(900px 480px at 0% 0%, rgba(15, 118, 110, 0.2), transparent 52%),
+    #f6f5f1;
 }
 
-.login-card {
-    width: 100%;
-    max-width: 400px;
-    padding: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.auth-hero,
+.auth-card {
+  border-radius: 1.2rem !important;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 18px 40px rgba(9, 28, 25, 0.1) !important;
 }
 
-mat-card-header {
-    margin-bottom: 24px;
-    display: flex;
-    justify-content: center;
+.auth-hero {
+  padding: 1.3rem;
 }
 
-mat-card-title {
-    font-size: 24px;
-    color: #1976d2;
-    font-weight: 500;
+.brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: #123e37;
+  text-decoration: none;
+  font-weight: 700;
 }
 
-.login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.brand-link span {
+  width: 1.95rem;
+  height: 1.95rem;
+  border-radius: 0.65rem;
+  background: #123e37;
+  color: #e7fff8;
+  display: inline-grid;
+  place-items: center;
+}
+
+.hero-label {
+  margin: 1.4rem 0 0;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-size: 0.73rem;
+  color: #0f766e;
+  font-weight: 700;
+}
+
+.auth-hero h1 {
+  margin: 0.5rem 0;
+  font-size: clamp(1.7rem, 3vw, 2.8rem);
+  line-height: 1.08;
+}
+
+.auth-hero p {
+  margin: 0;
+  color: #40605a;
+  line-height: 1.6;
+  max-width: 45ch;
+}
+
+.auth-hero ul {
+  margin: 1rem 0 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.45rem;
+  color: #36534e;
+}
+
+.auth-form {
+  padding: 1.2rem;
+  display: grid;
+  gap: 0.3rem;
 }
 
 mat-form-field {
-    width: 100%;
+  width: 100%;
 }
 
-.submit-button {
-    margin-top: 16px;
-    height: 48px;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+.auth-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin: 0.35rem 0;
 }
 
-.loading-icon {
-    animation: spin 1s linear infinite;
+.remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  color: #3f5b56;
+  font-size: 0.85rem;
+}
+
+.auth-row a {
+  text-decoration: none;
+  color: #0f766e;
+  font-size: 0.83rem;
+}
+
+.auth-submit,
+.auth-google {
+  width: 100%;
+  min-height: 2.75rem;
+  border-radius: 0.8rem !important;
+  font-weight: 600 !important;
+}
+
+.auth-google {
+  margin-top: 0.5rem;
+}
+
+.switch-copy {
+  margin: 0.8rem 0 0;
+  color: #4a6762;
+  font-size: 0.85rem;
+}
+
+.switch-copy button {
+  border: 0;
+  background: transparent;
+  color: #0f766e;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.role-picker {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0.75rem 0 1rem;
+}
+
+.role-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 88px;
+  padding: 0.9rem 0.7rem;
+  border: 1px solid rgba(15, 118, 110, 0.2);
+  border-radius: 0.9rem;
+  background: #f7faf9;
+  color: #123e37;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.role-option:hover {
+  border-color: rgba(15, 118, 110, 0.6);
+  transform: translateY(-1px);
+}
+
+.role-option.selected {
+  background: rgba(15, 118, 110, 0.1);
+  border-color: #0f766e;
+  box-shadow: inset 0 0 0 1px rgba(15, 118, 110, 0.35);
+}
+
+.role-option mat-icon {
+  font-size: 1.4rem;
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.role-option span {
+  font-size: 0.82rem;
+  line-height: 1.35;
 }
 
 @keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-[dir="rtl"] mat-icon[matPrefix] {
-    margin-right: 0;
-    margin-left: 8px;
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+
+@media (max-width: 960px) {
+  .auth-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-card {
+    order: -1;
+  }
 }

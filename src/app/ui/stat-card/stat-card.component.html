@@ -1,0 +1,26 @@
+<div class="stat-card sm-card" [class]="'accent-' + accent()">
+
+  @if (loading()) {
+    <!-- Skeleton state -->
+    <div class="skeleton-icon"></div>
+    <div class="skeleton-value"></div>
+    <div class="skeleton-label"></div>
+  } @else {
+    <div class="stat-header">
+      <div class="stat-icon-wrap">
+        <mat-icon class="stat-icon">{{ icon() }}</mat-icon>
+      </div>
+    </div>
+
+    <p class="stat-value">{{ value() }}</p>
+    <p class="stat-label">{{ label() }}</p>
+
+    @if (trend() !== null) {
+      <div class="stat-trend" [class.positive]="trend()! > 0" [class.negative]="trend()! < 0">
+        <mat-icon>{{ trend()! > 0 ? 'trending_up' : trend()! < 0 ? 'trending_down' : 'trending_flat' }}</mat-icon>
+        <span>{{ trend()! > 0 ? '+' : '' }}{{ trend() }}% {{ trendLabel() }}</span>
+      </div>
+    }
+  }
+
+</div>

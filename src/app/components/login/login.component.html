@@ -1,34 +1,139 @@
-<div class="login-container">
-    <mat-card class="login-card">
-        <mat-card-header>
-            <mat-card-title>{{ 'LOGIN.TITLE' | translate }}</mat-card-title>
-        </mat-card-header>
+<div class="auth-shell">
+  <section class="auth-hero">
+    <a class="brand-link" routerLink="/">
+      <span>W</span>
+      {{ 'LOGIN_PAGE.BRAND_NAME' | translate }}
+    </a>
 
-        <mat-card-content>
-            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
-                <mat-form-field appearance="outline">
-                    <mat-label>{{ 'LOGIN.EMAIL' | translate }}</mat-label>
-                    <input matInput formControlName="email" type="email" placeholder="email@example.com">
-                    <mat-icon matPrefix>email</mat-icon>
-                </mat-form-field>
+    <p class="hero-label">{{ 'LOGIN_PAGE.HERO_LABEL' | translate }}</p>
+    <h1>{{ 'LOGIN_PAGE.HERO_TITLE' | translate }}</h1>
+    <p>
+      {{ 'LOGIN_PAGE.HERO_DESCRIPTION' | translate }}
+    </p>
 
-                <mat-form-field appearance="outline">
-                    <mat-label>{{ 'LOGIN.PASSWORD' | translate }}</mat-label>
-                    <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password">
-                    <mat-icon matPrefix>lock</mat-icon>
-                    <button mat-icon-button matSuffix (click)="hidePassword.set(!hidePassword())" type="button">
-                        <mat-icon>{{hidePassword() ? 'visibility_off' : 'visibility'}}</mat-icon>
-                    </button>
-                </mat-form-field>
+    <ul>
+      <li>{{ 'LOGIN_PAGE.FEATURE_1' | translate }}</li>
+      <li>{{ 'LOGIN_PAGE.FEATURE_2' | translate }}</li>
+      <li>{{ 'LOGIN_PAGE.FEATURE_3' | translate }}</li>
+    </ul>
+  </section>
 
-                <button mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid || isLoading()"
-                    class="submit-button">
-                    @if (isLoading()) {
-                    <mat-icon class="loading-icon">autorenew</mat-icon>
-                    }
-                    {{ 'LOGIN.SUBMIT' | translate }}
-                </button>
-            </form>
-        </mat-card-content>
-    </mat-card>
+  <mat-card class="auth-card">
+    <mat-tab-group
+      animationDuration="200ms"
+      [selectedIndex]="activeTab() === 'login' ? 0 : 1"
+      (selectedIndexChange)="activeTab.set($event === 0 ? 'login' : 'register')">
+      <mat-tab [label]="'LOGIN_PAGE.TAB_LOGIN' | translate">
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="auth-form" novalidate>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'LOGIN_PAGE.EMAIL_LABEL' | translate }}</mat-label>
+            <input matInput formControlName="email" type="email" autocomplete="email" />
+            <mat-icon matPrefix>email</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'LOGIN_PAGE.PASSWORD_LABEL' | translate }}</mat-label>
+            <input
+              matInput
+              formControlName="password"
+              [type]="hidePassword() ? 'password' : 'text'"
+              autocomplete="current-password" />
+            <mat-icon matPrefix>lock</mat-icon>
+            <button mat-icon-button matSuffix type="button" (click)="hidePassword.set(!hidePassword())">
+              <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </mat-form-field>
+
+          <div class="auth-row">
+            <label class="remember">
+              <input type="checkbox" />
+              {{ 'LOGIN_PAGE.REMEMBER_ME' | translate }}
+            </label>
+            <a routerLink="/login">{{ 'LOGIN_PAGE.FORGOT_PASSWORD' | translate }}</a>
+          </div>
+
+          <button mat-flat-button color="primary" type="submit" class="auth-submit" [disabled]="loginForm.invalid || isLoading()">
+            @if (isLoading()) {
+              <mat-icon class="spin">autorenew</mat-icon>
+            }
+            {{ 'LOGIN_PAGE.TAB_LOGIN' | translate }}
+          </button>
+
+          <button mat-stroked-button type="button" class="auth-google" (click)="continueWithGoogle()">
+            <mat-icon>account_circle</mat-icon>
+            {{ 'LOGIN_PAGE.CONTINUE_GOOGLE' | translate }}
+          </button>
+
+          <p class="switch-copy">{{ 'LOGIN_PAGE.NO_ACCOUNT' | translate }} <button type="button" (click)="activeTab.set('register')">{{ 'LOGIN_PAGE.CREATE_ONE' | translate }}</button></p>
+        </form>
+      </mat-tab>
+
+      <mat-tab [label]="'LOGIN_PAGE.TAB_REGISTER' | translate">
+        <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="auth-form" novalidate>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'LOGIN_PAGE.FULL_NAME_LABEL' | translate }}</mat-label>
+            <input matInput formControlName="name" type="text" autocomplete="name" />
+            <mat-icon matPrefix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'LOGIN_PAGE.EMAIL_LABEL' | translate }}</mat-label>
+            <input matInput formControlName="email" type="email" autocomplete="email" />
+            <mat-icon matPrefix>email</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'LOGIN_PAGE.PASSWORD_LABEL' | translate }}</mat-label>
+            <input
+              matInput
+              formControlName="password"
+              [type]="hidePassword() ? 'password' : 'text'"
+              autocomplete="new-password" />
+            <mat-icon matPrefix>lock</mat-icon>
+            <button mat-icon-button matSuffix type="button" (click)="hidePassword.set(!hidePassword())">
+              <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'LOGIN_PAGE.CONFIRM_PASSWORD_LABEL' | translate }}</mat-label>
+            <input
+              matInput
+              formControlName="confirmPassword"
+              [type]="hidePassword() ? 'password' : 'text'"
+              autocomplete="new-password" />
+            <mat-icon matPrefix>lock</mat-icon>
+          </mat-form-field>
+
+          <div class="role-picker" aria-label="Choose how you want to use StayManager">
+            <button
+              type="button"
+              class="role-option"
+              [class.selected]="accountRole() === 'customer'"
+              (click)="accountRole.set('customer')">
+              <mat-icon>event_available</mat-icon>
+              <span>I want to book spaces</span>
+            </button>
+            <button
+              type="button"
+              class="role-option"
+              [class.selected]="accountRole() === 'owner'"
+              (click)="accountRole.set('owner')">
+              <mat-icon>storefront</mat-icon>
+              <span>I want to manage a workspace</span>
+            </button>
+          </div>
+
+          <button mat-flat-button color="primary" type="submit" class="auth-submit" [disabled]="registerForm.invalid || isLoading()">
+            @if (isLoading()) {
+              <mat-icon class="spin">autorenew</mat-icon>
+            }
+            {{ 'LOGIN_PAGE.CREATE_ACCOUNT' | translate }}
+          </button>
+
+          <p class="switch-copy">{{ 'LOGIN_PAGE.REGISTER_FOOTER' | translate }}</p>
+        </form>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
 </div>

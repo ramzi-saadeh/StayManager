@@ -1,0 +1,79 @@
+<div class="cmd-palette">
+
+  <!-- Search input row -->
+  <div class="cmd-header">
+    <mat-icon class="cmd-search-icon">search</mat-icon>
+    <input
+      #searchInput
+      class="cmd-input"
+      type="text"
+      [formControl]="searchCtrl"
+      placeholder="Search reservations, guests, resources…"
+      autocomplete="off"
+      spellcheck="false"
+      aria-label="Global search"
+      aria-autocomplete="list"
+      [attr.aria-activedescendant]="activeItemId()"
+    />
+    @if (isLoading()) {
+      <mat-spinner diameter="18" class="cmd-spinner" />
+    } @else if (searchCtrl.value) {
+      <button mat-icon-button class="cmd-clear-btn" (click)="clearSearch()" aria-label="Clear search">
+        <mat-icon>close</mat-icon>
+      </button>
+    } @else {
+      <kbd class="cmd-esc-hint">esc</kbd>
+    }
+  </div>
+
+  <!-- Results -->
+  <div class="cmd-body" role="listbox" [attr.aria-label]="'Search results'">
+
+    @if (isEmpty()) {
+      <div class="cmd-empty">
+        <mat-icon>search_off</mat-icon>
+        <span>No results for <strong>{{ searchCtrl.value }}</strong></span>
+      </div>
+    }
+
+    @for (group of groups(); track group.title) {
+      <div class="cmd-group">
+        <div class="cmd-group-title">{{ group.title }}</div>
+        @for (item of group.items; track item.key) {
+          <button
+            class="cmd-item"
+            [class.cmd-item--active]="item.key === activeItemId()"
+            [id]="item.key"
+            role="option"
+            [attr.aria-selected]="item.key === activeItemId()"
+            (click)="select(item)"
+            (mouseenter)="activeIndex.set(flatItems().indexOf(item))"
+          >
+            <mat-icon class="cmd-item-icon" [class]="'cmd-icon--' + item.type">
+              {{ item.icon }}
+            </mat-icon>
+            <span class="cmd-item-text">
+              <span class="cmd-item-label">{{ item.label }}</span>
+              <span class="cmd-item-subtitle">{{ item.subtitle }}</span>
+            </span>
+            @if (item.badge) {
+              <app-status-badge [status]="item.badge" size="sm" />
+            }
+            @if (item.type === 'action') {
+              <mat-icon class="cmd-item-arrow">chevron_right</mat-icon>
+            }
+          </button>
+        }
+      </div>
+    }
+
+  </div>
+
+  <!-- Footer hints -->
+  <div class="cmd-footer">
+    <span class="cmd-hint"><kbd>↑</kbd><kbd>↓</kbd> Navigate</span>
+    <span class="cmd-hint"><kbd>↵</kbd> Open</span>
+    <span class="cmd-hint"><kbd>esc</kbd> Close</span>
+  </div>
+
+</div>

@@ -1,0 +1,73 @@
+// =============================================================================
+// StayManager — Cloud Storage Security Rules
+// Paths mirror StorageService: workspaces/{workspaceId}/{logos|resources|reservations}/...
+// Membership is looked up in Firestore, so the Storage service agent needs Firestore access
+// (Firebase grants it automatically the first time these rules are deployed).
+// =============================================================================
+
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function firestoreDoc(path) {
+      return firestore.get(path);
+    }
+
+    function isWorkspaceOwner(workspaceId) {
+      return request.auth != null
+        && firestoreDoc(/databases/(default)/documents/workspaces/$(workspaceId)).data.ownerId == request.auth.uid;
+    }
+
+    function isActiveMember(workspaceId) {
+      let memberPath = /databases/(default)/documents/workspaceMembers/$(request.auth.uid + '_' + workspaceId);
+      return request.auth != null
+        && firestore.exists(memberPath)
+        && firestoreDoc(memberPath).data.isActive == true;
+    }
+
+    function isStaff(workspaceId) {
+      return isActiveMember(workspaceId)
+        && firestoreDoc(/databases/(default)/documents/workspaceMembers/$(request.auth.uid + '_' + workspaceId)).data.role == 'STAFF';
+    }
+
+    function canManage(workspaceId) {
+      return isWorkspaceOwner(workspaceId) || isStaff(workspaceId);
+    }
+
+    function isImageUnder(maxBytes) {
+      return request.resource.contentType.matches('image/.*')
+        && request.resource.size < maxBytes;
+    }
+
+    function isImageOrPdfUnder(maxBytes) {
+      return (request.resource.contentType.matches('image/.*') || request.resource.contentType == 'application/pdf')
+        && request.resource.size < maxBytes;
+    }
+
+    match /workspaces/{workspaceId} {
+
+      match /logos/{fileName} {
+        allow read: if isWorkspaceOwner(workspaceId) || isActiveMember(workspaceId);
+        allow write: if isWorkspaceOwner(workspaceId) && isImageUnder(5 * 1024 * 1024);
+        allow delete: if isWorkspaceOwner(workspaceId);
+      }
+
+      match /resources/{resourceId}/{fileName} {
+        allow read: if isWorkspaceOwner(workspaceId) || isActiveMember(workspaceId);
+        allow write: if canManage(workspaceId) && isImageUnder(5 * 1024 * 1024);
+        allow delete: if canManage(workspaceId);
+      }
+
+      match /reservations/{reservationId}/{fileName} {
+        allow read: if isWorkspaceOwner(workspaceId) || isActiveMember(workspaceId);
+        allow write: if canManage(workspaceId) && isImageOrPdfUnder(10 * 1024 * 1024);
+        allow delete: if canManage(workspaceId);
+      }
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
