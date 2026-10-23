@@ -1,4 +1,5 @@
 import { Component, signal, inject, effect } from '@angular/core';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -33,6 +34,7 @@ import { ThemeMode } from '../../../core/models/enums';
     MatSnackBarModule,
     MatProgressSpinnerModule,
     TranslatePipe,
+    MatCheckboxModule,
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
@@ -63,6 +65,8 @@ export class ProfileComponent {
     displayName: ['', [Validators.required, Validators.minLength(2)]],
     email:       [{ value: '', disabled: true }],
     theme:       [ThemeMode.LIGHT, Validators.required],
+    customerSearchConsent: [false],
+    phoneNumber: [{ value: '', disabled: true }],
   });
 
   constructor() {
@@ -79,6 +83,8 @@ export class ProfileComponent {
           displayName: profile?.displayName ?? currentUser.displayName ?? '',
           email: profile?.email ?? currentUser.email ?? '',
           theme: profile?.theme ?? ThemeMode.LIGHT,
+          customerSearchConsent: profile?.customerSearchConsent ?? false,
+          phoneNumber: profile?.phoneNumber ?? currentUser.phoneNumber ?? '',
         },
         { emitEvent: false },
       );
@@ -97,8 +103,8 @@ export class ProfileComponent {
     if (!uid) return;
     this.isSaving.set(true);
     try {
-      const { displayName, theme } = this.form.getRawValue();
-      await this.userRepo.update(uid, { displayName, theme });
+      const { displayName, theme, customerSearchConsent } = this.form.getRawValue();
+      await this.userRepo.update(uid, { displayName, theme, customerSearchConsent });
       this.theme.applyTheme(theme);
       this.snack.open(this.t('PROFILE_SETTINGS.PROFILE_UPDATED'), this.t('COMMON.CLOSE'), { duration: 3000 });
     } catch {

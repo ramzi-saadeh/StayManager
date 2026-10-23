@@ -14,12 +14,14 @@ import {
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
-import { UpsertWorkspaceCustomerInput, WorkspaceCustomer } from '../models/customer.model';
+import { CustomerLookupOption, UpsertWorkspaceCustomerInput, WorkspaceCustomer } from '../models/customer.model';
+import { CloudFunctionService } from './cloud-function.service';
 
 @Injectable({ providedIn: 'root' })
 export class CustomerRepository {
   private firestore = inject(Firestore);
   private auth = inject(AuthService);
+  private functions = inject(CloudFunctionService);
 
   listRecent(workspaceId: string, maxItems = 100): Observable<WorkspaceCustomer[]> {
     const col = collection(this.firestore, this.colPath(workspaceId));
@@ -27,6 +29,15 @@ export class CustomerRepository {
       query(col, orderBy('lastUsedAt', 'desc'), limit(maxItems)) as any,
       { idField: 'customerId' },
     );
+  }
+
+  async searchRegistered(workspaceId: string, search: string): Promise<CustomerLookupOption[]> {
+    const result = await this.functions.call<CustomerLookupOption[]>('searchRegisteredCustomers', {
+      workspaceId,
+      query: search,
+    });
+    if (!result.success) throw new Error(result.message);
+    return result.data;
   }
 
   async upsertFromBooking(workspaceId: string, input: UpsertWorkspaceCustomerInput): Promise<void> {

@@ -2,18 +2,20 @@
 
   @if (loading()) {
     <!-- Skeleton state -->
-    <div class="skeleton-icon"></div>
+    <div class="stat-heading">
+      <div class="skeleton-label"></div>
+      <div class="skeleton-icon"></div>
+    </div>
     <div class="skeleton-value"></div>
-    <div class="skeleton-label"></div>
   } @else {
-    <div class="stat-header">
+    <div class="stat-heading">
+      <p class="stat-label">{{ label() }}</p>
       <div class="stat-icon-wrap">
         <mat-icon class="stat-icon">{{ icon() }}</mat-icon>
       </div>
     </div>
 
     <p class="stat-value">{{ value() }}</p>
-    <p class="stat-label">{{ label() }}</p>
 
     @if (trend() !== null) {
       <div class="stat-trend" [class.positive]="trend()! > 0" [class.negative]="trend()! < 0">

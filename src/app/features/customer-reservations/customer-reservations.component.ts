@@ -11,6 +11,7 @@ import { AuthService } from '../../services/auth.service';
 import { ReservationRepository } from '../../core/services/reservation.repository';
 import { Reservation } from '../../core/models/reservation.model';
 import { StatusBadgeComponent } from '../../ui/status-badge/status-badge.component';
+import { REQUIRE_EMAIL_VERIFICATION } from '../../core/auth-policy';
 
 @Component({
   selector: 'app-customer-reservations',
@@ -29,6 +30,7 @@ import { StatusBadgeComponent } from '../../ui/status-badge/status-badge.compone
   styleUrl: './customer-reservations.component.scss',
 })
 export class CustomerReservationsComponent {
+  readonly emailVerificationRequired = REQUIRE_EMAIL_VERIFICATION;
   private readonly auth = inject(AuthService);
   private readonly reservationsRepo = inject(ReservationRepository);
   readonly loadFailed = signal(false);
@@ -56,7 +58,7 @@ export class CustomerReservationsComponent {
   );
 
   async resendVerificationEmail(): Promise<void> {
-    if (this.verificationSending()) return;
+    if (!REQUIRE_EMAIL_VERIFICATION || this.verificationSending()) return;
     this.verificationSending.set(true);
     this.verificationSendFailed.set(false);
     try {

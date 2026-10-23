@@ -1,24 +1,22 @@
-.settings-page { padding: 28px 24px 36px; max-width: 1080px; width: 100%; margin-inline: auto; }
+.settings-page { padding: var(--sm-sp-6); max-width: 1080px; width: 100%; margin-inline: auto; }
 .settings-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 18px;
-  padding: 18px 20px;
-  border-radius: 16px;
-  border: 1px solid #dbe7f5;
-  background: linear-gradient(180deg, #f8fbff 0%, #f2f7ff 100%);
+  gap: var(--sm-sp-3);
+  margin-bottom: var(--sm-sp-5);
+  padding: 0 0 var(--sm-sp-5);
+  border-bottom: 1px solid var(--sm-border);
 
-  h1 { font-size: 1.35rem; font-weight: 800; color: #0f172a; margin: 0 0 6px; }
-  p  { font-size: 0.93rem; color: #506279; margin: 0; max-width: 72ch; }
+  h1 { font-size: var(--sm-text-2xl); font-weight: 800; color: var(--sm-ink); margin: 0 0 var(--sm-sp-1); }
+  p  { font-size: var(--sm-text-base); color: var(--sm-ink-secondary); margin: 0; max-width: 72ch; }
 }
 
 .invite-card {
-  background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
-  padding: 20px 24px; margin-bottom: 24px;
-  h3 { font-size: 14px; font-weight: 600; color: #0f172a; margin: 0 0 16px; }
+  background: var(--sm-surface); border: 1px solid var(--sm-border); border-radius: var(--sm-r-md);
+  padding: var(--sm-sp-5); margin-bottom: var(--sm-sp-6);
+  h3 { font-size: var(--sm-text-base); font-weight: 700; color: var(--sm-ink); margin: 0 0 var(--sm-sp-4); }
 }
 .invite-form { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
 .invite-email { flex: 1; min-width: 220px; }
@@ -26,34 +24,35 @@
 .member-list { display: flex; flex-direction: column; gap: 4px; }
 .member-row {
   display: flex; align-items: center; gap: 14px; padding: 12px 16px;
-  border-radius: 10px; background: #fff; border: 1px solid #f1f5f9;
-  &:hover { background: #f8fafc; }
+  border-radius: var(--sm-r-md); background: var(--sm-surface); border: 1px solid var(--sm-border);
+  transition: background-color var(--sm-motion-fast), border-color var(--sm-motion-fast);
+  &:hover { background: var(--sm-surface-subtle); border-color: var(--sm-border-strong); }
 }
 .member-avatar {
   flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%;
-  background: #eff6ff; color: #2563eb; font-size: 14px; font-weight: 700;
+  background: var(--sm-primary-soft); color: var(--sm-primary); font-size: var(--sm-text-base); font-weight: 700;
   display: flex; align-items: center; justify-content: center;
 }
 .member-info { flex: 1; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.member-name  { font-weight: 500; color: #0f172a; font-size: 14px; }
-.member-email { font-size: 12px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.member-name  { font-weight: 700; color: var(--sm-ink); font-size: var(--sm-text-base); }
+.member-email { font-size: var(--sm-text-xs); color: var(--sm-ink-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .role-chip-list { pointer-events: none; }
 .role-chip { font-size: 11px !important; font-weight: 600 !important; }
-.role-chip--owner  { background: #fef9c3 !important; color: #854d0e !important; }
-.role-chip--staff  { background: #eff6ff !important; color: #1d4ed8 !important; }
-.role-chip--viewer { background: #f0fdf4 !important; color: #166534 !important; }
+.role-chip--owner  { background: var(--sm-pending-bg) !important; color: var(--sm-pending-fg) !important; }
+.role-chip--staff  { background: var(--sm-checked-in-bg) !important; color: var(--sm-checked-in-fg) !important; }
+.role-chip--viewer { background: var(--sm-confirmed-bg) !important; color: var(--sm-confirmed-fg) !important; }
 
-.danger-item { color: #dc2626 !important; }
+.danger-item { color: var(--sm-cancelled) !important; }
 
 html[dir='rtl'] .settings-page {
-  text-align: right;
+  text-align: start;
 }
 
 @media (max-width: 900px) {
   .settings-page {
     max-width: none;
-    padding: 20px 16px;
+    padding: var(--sm-sp-5) var(--sm-sp-4);
   }
 
   .settings-header {

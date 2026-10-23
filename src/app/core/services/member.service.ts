@@ -5,12 +5,10 @@ import {
   collectionData,
   doc,
   getDoc,
-  getDocs,
   setDoc,
   updateDoc,
   query,
   where,
-  limit,
   serverTimestamp,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
@@ -26,11 +24,13 @@ import {
 } from '../dtos/member.dto';
 import { InvitableRole } from '../models/invitation.model';
 import { UserProfile } from '../models/user.model';
+import { CloudFunctionService } from './cloud-function.service';
 
 @Injectable({ providedIn: 'root' })
 export class MemberService {
   private firestore = inject(Firestore);
   private auth      = inject(AuthService);
+  private functions = inject(CloudFunctionService);
 
   // ── Reads ───────────────────────────────────────────────────────────────────
 
@@ -94,7 +94,7 @@ export class MemberService {
         };
       }
 
-      const profile = await this.findUserByEmail(email);
+      const profile = await this.findUserByEmail(dto.workspaceId, email);
       if (!profile) {
         return {
           success: false,
@@ -252,27 +252,9 @@ export class MemberService {
     return 0;
   }
 
-  private async findUserByEmail(email: string): Promise<UserProfile | null> {
-    const usersCol = collection(this.firestore, 'users');
-    const normalizedEmail = email.trim().toLowerCase();
-    const candidates = [email.trim()];
-    if (normalizedEmail !== email.trim()) {
-      candidates.push(normalizedEmail);
-    }
-
-    for (const candidate of candidates) {
-      // limit(1) is required by the security rules for user lookups.
-      const snapshot = await getDocs(query(usersCol, where('email', '==', candidate), limit(1)) as any);
-      if (snapshot.empty) {
-        continue;
-      }
-
-      const found = snapshot.docs[0]?.data() as UserProfile | undefined;
-      if (found?.uid) {
-        return found;
-      }
-    }
-
-    return null;
+  private async findUserByEmail(workspaceId: string, email: string): Promise<Pick<UserProfile, 'uid' | 'displayName' | 'email'> | null> {
+    const result = await this.functions.call<Pick<UserProfile, 'uid' | 'displayName' | 'email'> | null>('lookupMemberByEmail', { workspaceId, email });
+    if (!result.success) throw new Error(result.message);
+    return result.data;
   }
 }

@@ -22,7 +22,7 @@ import {
 
 let env: RulesTestEnvironment;
 
-const asUser = (uid: string) => env.authenticatedContext(uid).firestore();
+const asUser = (uid: string) => env.authenticatedContext(uid, { email_verified: true }).firestore();
 
 const newWorkspace = (ownerId: string, overrides: Record<string, unknown> = {}) => ({
   workspaceId: 'ws-new',
@@ -92,6 +92,10 @@ beforeEach(async () => {
 });
 
 describe('workspace creation', () => {
+  it('allows authenticated MVP users to create workspaces without email verification', async () => {
+    const db = env.authenticatedContext('unverified', { email_verified: false }).firestore();
+    await assertSucceeds(setDoc(doc(db, 'workspaces/ws-new'), newWorkspace('unverified')));
+  });
   it('allows a free workspace that needs no approval', async () => {
     await assertSucceeds(setDoc(doc(asUser('alice'), 'workspaces/ws-new'), newWorkspace('alice')));
   });
@@ -181,14 +185,42 @@ describe('workspace updates', () => {
 });
 
 describe('user profiles', () => {
+  it('keeps contact-phone uniqueness records server-only', async () => {
+    await env.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), 'accountPhones/test-contact'), { uid: 'alice' });
+    });
+    await assertFails(getDoc(doc(asUser('alice'), 'accountPhones/test-contact')));
+    await assertFails(setDoc(doc(asUser('alice'), 'accountPhones/new-contact'), { uid: 'alice' }));
+  });
+
+  it('requires server-side profile creation even with matching Auth contacts', async () => {
+    const db = env.authenticatedContext('new-account', {
+      email: 'new@example.com', phone_number: '+15555550123',
+    }).firestore();
+    const ref = doc(db, 'users/new-account');
+    await assertFails(setDoc(ref, { uid: 'new-account', email: 'new@example.com' }));
+    await assertFails(setDoc(ref, { uid: 'new-account', email: 'new@example.com', phoneNumber: '+15555550456' }));
+    await assertFails(setDoc(ref, { uid: 'new-account', email: 'other@example.com', phoneNumber: '+15555550123' }));
+    await assertFails(setDoc(ref, { uid: 'new-account', email: 'new@example.com', phoneNumber: '+15555550123' }));
+  });
+
+  it('allows display-name edits but keeps email and phone server-managed', async () => {
+    const ref = doc(asUser('alice'), 'users/alice');
+    await assertSucceeds(updateDoc(ref, { displayName: 'Alice Updated', nameLower: 'alice updated' }));
+    await assertFails(updateDoc(ref, { email: 'bob@example.com' }));
+    await assertFails(updateDoc(ref, { phoneNumber: '+15555550123' }));
+    await assertFails(updateDoc(ref, { role: 'owner' }));
+    await assertSucceeds(updateDoc(ref, { customerSearchConsent: true }));
+  });
+
   it('lets users read their own profile only', async () => {
     await assertSucceeds(getDoc(doc(asUser('alice'), 'users/alice')));
     await assertFails(getDoc(doc(asUser('alice'), 'users/bob')));
   });
 
-  it('allows the capped email lookup but not unbounded listing', async () => {
+  it('rejects directory queries even when capped to one result', async () => {
     const users = collection(asUser('alice'), 'users');
-    await assertSucceeds(getDocs(query(users, where('email', '==', 'bob@example.com'), limit(1))));
+    await assertFails(getDocs(query(users, where('email', '==', 'bob@example.com'), limit(1))));
     await assertFails(getDocs(query(users, where('email', '==', 'bob@example.com'))));
     await assertFails(getDocs(users));
   });

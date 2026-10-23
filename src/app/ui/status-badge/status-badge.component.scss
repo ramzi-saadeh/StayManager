@@ -1,23 +1,23 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  border-radius: var(--sm-r-full);
+  font-weight: 700;
+  letter-spacing: 0;
+  border: 1px solid transparent;
+  border-radius: var(--sm-r-sm);
   line-height: 1;
   white-space: nowrap;
 
-  &.size-md { font-size: 10px; padding: 3px 8px; }
-  &.size-sm { font-size: 9px;  padding: 2px 6px; }
+  &.size-md { font-size: var(--sm-text-xs); padding: 5px 8px; }
+  &.size-sm { font-size: 10px; padding: 4px 6px; }
 
   /* Status variants */
   &.confirmed   { background: var(--sm-confirmed-bg);   color: var(--sm-confirmed-fg); }
   &.pending     { background: var(--sm-pending-bg);     color: var(--sm-pending-fg); }
-  &.completed   { background: #f0fdf4;                  color: #166534; }
+  &.completed   { background: var(--sm-confirmed-bg);   color: var(--sm-confirmed-fg); }
   &.cancelled   { background: var(--sm-cancelled-bg);   color: var(--sm-cancelled-fg); }
   &.error       { background: var(--sm-cancelled-bg);   color: var(--sm-cancelled-fg); }
-  &.primary     { background: #dbeafe;                  color: #1e40af; }
+  &.primary     { background: var(--sm-checked-in-bg);  color: var(--sm-checked-in-fg); }
   &.purple      { background: var(--sm-no-show-bg);     color: var(--sm-no-show-fg); }
   &.neutral     { background: var(--sm-checked-out-bg); color: var(--sm-checked-out-fg); }
 }

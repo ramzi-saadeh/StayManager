@@ -1,21 +1,19 @@
-.settings-page { padding: 28px 24px 36px; max-width: 920px; width: 100%; margin-inline: auto; }
+.settings-page { padding: var(--sm-sp-6); max-width: 920px; width: 100%; margin-inline: auto; }
 .settings-header {
-  margin-bottom: 18px;
-  padding: 18px 20px;
-  border-radius: 16px;
-  border: 1px solid #dbe7f5;
-  background: linear-gradient(180deg, #f8fbff 0%, #f2f7ff 100%);
+  margin-bottom: var(--sm-sp-5);
+  padding: 0 0 var(--sm-sp-5);
+  border-bottom: 1px solid var(--sm-border);
 
-  h1 { font-size: 1.35rem; font-weight: 800; color: var(--sm-text-primary); margin: 0 0 6px; }
-  p { font-size: 0.93rem; color: #506279; margin: 0; max-width: 72ch; }
+  h1 { font-size: var(--sm-text-2xl); font-weight: 800; color: var(--sm-ink); margin: 0 0 var(--sm-sp-1); }
+  p { font-size: var(--sm-text-base); color: var(--sm-ink-secondary); margin: 0; max-width: 72ch; }
 }
 
 .avatar-section { display: flex; align-items: center; gap: 20px; margin-bottom: 24px; }
 .avatar {
   width: 64px; height: 64px; border-radius: 50%;
-  background: var(--mat-sys-primary-container, #eff6ff); color: var(--mat-sys-primary, #2563eb);
+  background: var(--sm-primary-soft); color: var(--sm-primary);
   display: flex; align-items: center; justify-content: center;
-  font-size: 22px; font-weight: 700;
+  font-size: var(--sm-text-xl); font-weight: 700;
 }
 .avatar-name  { font-weight: 600; color: var(--sm-text-primary); margin: 0 0 2px; }
 .avatar-email { font-size: 13px; color: var(--sm-text-secondary); margin: 0; }
@@ -31,17 +29,13 @@
 }
 
 html[dir='rtl'] .settings-page {
-  text-align: right;
+  text-align: start;
 }
 
 @media (max-width: 900px) {
   .settings-page {
     max-width: none;
-    padding: 20px 16px;
-  }
-
-  .settings-header {
-    padding: 16px;
+    padding: var(--sm-sp-5) var(--sm-sp-4);
   }
 }
 

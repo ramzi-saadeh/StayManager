@@ -6,6 +6,7 @@ import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import * as logger from 'firebase-functions/logger';
 import { setGlobalOptions } from 'firebase-functions/v2/options';
 import { z } from 'zod';
+import { REQUIRE_EMAIL_VERIFICATION } from './auth-policy.js';
 
 setGlobalOptions({ region: 'us-central1', maxInstances: 10 });
 
@@ -375,6 +376,7 @@ function recipientIds(members: FirebaseFirestore.QueryDocumentSnapshot[]): strin
 export const createReservation = onCall(async (request) => {
   const uid = request.auth?.uid;
   if (!uid) fail('unauthenticated', 'Sign in to create a reservation.');
+  if (REQUIRE_EMAIL_VERIFICATION && !request.auth?.token.email_verified) fail('failed-precondition', 'Verify your email before creating a reservation.', 'EMAIL_NOT_VERIFIED');
 
   const parsed = createSchema.safeParse(request.data);
   if (!parsed.success) fail('invalid-argument', 'Reservation details are invalid.');
@@ -587,6 +589,7 @@ export const createReservation = onCall(async (request) => {
 export const updateReservationStatus = onCall(async (request) => {
   const uid = request.auth?.uid;
   if (!uid) fail('unauthenticated', 'Sign in to update a reservation.');
+  if (REQUIRE_EMAIL_VERIFICATION && !request.auth?.token.email_verified) fail('failed-precondition', 'Verify your email before updating a reservation.', 'EMAIL_NOT_VERIFIED');
   const parsed = statusSchema.safeParse(request.data);
   if (!parsed.success) {
     const issue = parsed.error.issues[0];
@@ -704,6 +707,7 @@ export const updateReservationStatus = onCall(async (request) => {
 export const updateReservationPayment = onCall(async (request) => {
   const uid = request.auth?.uid;
   if (!uid) fail('unauthenticated', 'Sign in to update payment status.');
+  if (REQUIRE_EMAIL_VERIFICATION && !request.auth?.token.email_verified) fail('failed-precondition', 'Verify your email before updating payment status.', 'EMAIL_NOT_VERIFIED');
   const parsed = paymentSchema.safeParse(request.data);
   if (!parsed.success) fail('invalid-argument', 'Payment update is invalid.');
   const input = parsed.data;

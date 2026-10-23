@@ -14,13 +14,19 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function isVerified() {
+      // MVP: set to true together with both auth-policy.ts switches when enabling email verification.
+      let requireEmailVerification = false;
+      return isSignedIn() && (!requireEmailVerification || request.auth.token.email_verified == true);
+    }
+
     function workspaceOwnerId(workspaceId) {
       return get(/databases/$(database)/documents/workspaces/$(workspaceId)).data.ownerId;
     }
 
     /// True when the caller has an active workspaceMember record for this workspace.
     function isMember(workspaceId) {
-      return isSignedIn() &&
+      return isVerified() &&
         exists(/databases/$(database)/documents/workspaceMembers/$(request.auth.uid + '_' + workspaceId)) &&
         get(/databases/$(database)/documents/workspaceMembers/$(request.auth.uid + '_' + workspaceId)).data.isActive == true;
     }
@@ -31,7 +37,7 @@ service cloud.firestore {
     }
 
     function isWorkspaceOwner(workspaceId) {
-      return isSignedIn() && workspaceOwnerId(workspaceId) == request.auth.uid;
+      return isVerified() && workspaceOwnerId(workspaceId) == request.auth.uid;
     }
 
     function canManageWorkspaceData(workspaceId) {
@@ -40,7 +46,7 @@ service cloud.firestore {
 
     function isReservationCustomer(data) {
       // Must be provable from query constraints, so no `in`/get() guards here.
-      return isSignedIn() && (
+      return isVerified() && (
         data.requesterUid == request.auth.uid
         || (
           request.auth.token.email_verified == true
@@ -51,7 +57,7 @@ service cloud.firestore {
     }
 
     function isPlatformAdmin() {
-      return isSignedIn()
+      return isVerified()
         && exists(/databases/$(database)/documents/platformAdmins/$(request.auth.uid));
     }
 
@@ -65,16 +71,13 @@ service cloud.firestore {
 
     // ── /users/{userId} ────────────────────────────────────────────────────────
     match /users/{userId} {
-      // Profiles are only read by their owner. The one exception is the add-member-by-email
-      // lookup, which is capped at a single result so the collection cannot be dumped.
       allow get:    if isSignedIn() && request.auth.uid == userId;
-      allow list:   if isSignedIn() && request.query.limit <= 1;
-      allow create: if isSignedIn()
-        && request.auth.uid == userId
-        && request.resource.data.uid == userId;
+      allow list:   if false;
+      allow create: if false;
       allow update: if isSignedIn()
         && request.auth.uid == userId
-        && request.resource.data.uid == userId;
+        && request.resource.data.uid == userId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'nameLower', 'photoUrl', 'theme', 'customerSearchConsent', 'updatedAt']);
       allow delete: if false;
 
       // Push tokens and other data that must never be visible to other users.
@@ -132,17 +135,17 @@ service cloud.firestore {
       }
 
       // Read: owner by ownerId field OR active member
-      allow read: if isSignedIn() && (
+      allow read: if isVerified() && (
         resource.data.ownerId == request.auth.uid
         || isMember(workspaceId)
         || isPlatformAdmin()
       );
 
-      allow create: if isSignedIn() && isValidNewWorkspace(workspaceId);
+      allow create: if isVerified() && isValidNewWorkspace(workspaceId);
 
       // Update: the owner for settings, a platform admin for approval and plan changes.
       allow update: if (
-        isSignedIn()
+        isVerified()
         && resource.data.ownerId == request.auth.uid
         && !approvalFieldsChanged()
         && !lockedFieldsChanged()

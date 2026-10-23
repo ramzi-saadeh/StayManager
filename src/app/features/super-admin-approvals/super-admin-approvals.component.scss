@@ -1,10 +1,8 @@
 .admin-page {
   min-height: 100dvh;
-  background:
-    radial-gradient(1000px 440px at 10% -20%, rgba(16, 185, 129, 0.12), transparent 60%),
-    radial-gradient(800px 420px at 100% 0%, rgba(14, 165, 233, 0.12), transparent 58%),
-    #f5f8fa;
-  padding: 1.2rem;
+  background: var(--sm-page-bg);
+  color: var(--sm-ink);
+  padding: var(--sm-sp-5);
 }
 
 .container {
@@ -25,18 +23,18 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 0.75rem;
-  color: #0f766e;
+  color: var(--sm-primary);
   font-weight: 700;
 }
 
 h1 {
   margin: 0.4rem 0 0;
-  color: #0f2f2a;
+  color: var(--sm-ink);
 }
 
 .subtitle {
   margin: 0.45rem 0 0;
-  color: #496862;
+  color: var(--sm-ink-secondary);
 }
 
 .grid {
@@ -46,8 +44,8 @@ h1 {
 }
 
 .workspace-card {
-  border-radius: 0.95rem;
-  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: var(--sm-r-md);
+  border: 1px solid var(--sm-border);
 }
 
 .card-top {
@@ -62,11 +60,11 @@ h1 {
 }
 
 .status {
-  border-radius: 999px;
+  border-radius: var(--sm-r-sm);
   padding: 0.2rem 0.58rem;
   font-size: 0.72rem;
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--sm-pending-bg);
+  color: var(--sm-pending-fg);
   font-weight: 600;
 }
 
@@ -78,7 +76,7 @@ h1 {
 
 .meta p {
   margin: 0;
-  color: #2f4f49;
+  color: var(--sm-ink-secondary);
   font-size: 0.9rem;
 }
 
@@ -95,8 +93,8 @@ h1 {
 }
 
 .empty-card {
-  border-radius: 0.95rem;
-  border: 1px dashed rgba(15, 23, 42, 0.2);
+  border-radius: var(--sm-r-md);
+  border: 1px dashed var(--sm-border-strong);
   text-align: center;
   padding: 1.2rem;
 }
@@ -105,7 +103,7 @@ h1 {
   width: 28px;
   height: 28px;
   font-size: 28px;
-  color: #059669;
+  color: var(--sm-confirmed);
 }
 
 .empty-card h2 {
@@ -114,7 +112,7 @@ h1 {
 
 .empty-card p {
   margin: 0.45rem 0 0;
-  color: #4b6a64;
+  color: var(--sm-ink-secondary);
 }
 
 @media (max-width: 900px) {

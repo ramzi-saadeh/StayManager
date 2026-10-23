@@ -19,6 +19,68 @@
   </section>
 
   <mat-card class="auth-card">
+    @if (showGoogleCompletion()) {
+      <form [formGroup]="googleProfileForm" (ngSubmit)="completeGoogleRegistration()" class="auth-form" novalidate>
+        <h2>{{ 'LOGIN_PAGE.GOOGLE_PROFILE_TITLE' | translate }}</h2>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'LOGIN_PAGE.EMAIL_LABEL' | translate }}</mat-label>
+          <input matInput [value]="currentUser()?.email || ''" type="email" readonly />
+          <mat-icon matPrefix>email</mat-icon>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'LOGIN_PAGE.FULL_NAME_LABEL' | translate }}</mat-label>
+          <input matInput formControlName="name" autocomplete="name" />
+          <mat-icon matPrefix>person</mat-icon>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'LOGIN_PAGE.PHONE_LABEL' | translate }}</mat-label>
+          <input matInput formControlName="phone" type="tel" autocomplete="tel" dir="ltr" placeholder="+96171123456" />
+          <mat-icon matPrefix>phone</mat-icon>
+          @if (googleProfileForm.controls.phone.hasError('required')) {
+            <mat-error>{{ 'LOGIN_PAGE.ERROR_PHONE_REQUIRED' | translate }}</mat-error>
+          } @else if (googleProfileForm.controls.phone.hasError('pattern')) {
+            <mat-error>{{ 'LOGIN_PAGE.ERROR_PHONE_FORMAT' | translate }}</mat-error>
+          }
+        </mat-form-field>
+        <div class="role-picker" [attr.aria-label]="'LOGIN_PAGE.ACCOUNT_ROLE_LABEL' | translate">
+          <button type="button" class="role-option" [class.selected]="accountRole() === 'customer'" (click)="accountRole.set('customer')">
+            <mat-icon>event_available</mat-icon><span>{{ 'LOGIN_PAGE.ROLE_CUSTOMER' | translate }}</span>
+          </button>
+          <button type="button" class="role-option" [class.selected]="accountRole() === 'owner'" (click)="accountRole.set('owner')">
+            <mat-icon>storefront</mat-icon><span>{{ 'LOGIN_PAGE.ROLE_OWNER' | translate }}</span>
+          </button>
+        </div>
+        <mat-checkbox formControlName="customerSearchConsent">{{ 'LOGIN_PAGE.SEARCH_CONSENT' | translate }}</mat-checkbox>
+        <button mat-flat-button type="submit" class="auth-submit" [disabled]="googleProfileForm.invalid || isLoading()">
+          @if (isLoading()) { <mat-icon class="spin">autorenew</mat-icon> }
+          {{ 'LOGIN_PAGE.GOOGLE_PROFILE_CONTINUE' | translate }}
+        </button>
+        <button mat-button type="button" (click)="cancelGoogleRegistration()" [disabled]="isLoading()">{{ 'LOGIN_PAGE.GOOGLE_OTHER_ACCOUNT' | translate }}</button>
+      </form>
+    } @else if (emailVerificationRequired && showVerification() && currentUser()) {
+      <section class="auth-form" aria-live="polite">
+        <h2>{{ 'LOGIN_PAGE.VERIFY_EMAIL_TITLE' | translate }}</h2>
+        <p>{{ currentUser()?.email }}</p>
+        <button mat-flat-button type="button" (click)="checkVerification()" [disabled]="verificationBusy()">
+          <mat-icon>verified_user</mat-icon>{{ 'LOGIN_PAGE.CHECK_VERIFICATION' | translate }}
+        </button>
+        <button mat-stroked-button type="button" (click)="resendVerification()" [disabled]="verificationBusy() || verificationCooldown()">
+          <mat-icon>forward_to_inbox</mat-icon>{{ 'LOGIN_PAGE.RESEND_VERIFICATION' | translate }}
+        </button>
+        <button mat-button type="button" (click)="signOutVerification()">{{ 'PROFILE_SETTINGS.SIGN_OUT' | translate }}</button>
+      </section>
+    } @else if (showReset()) {
+      <form [formGroup]="resetForm" (ngSubmit)="resetPassword()" class="auth-form" novalidate>
+        <h2>{{ 'LOGIN_PAGE.RESET_TITLE' | translate }}</h2>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'LOGIN_PAGE.EMAIL_LABEL' | translate }}</mat-label>
+          <input matInput type="email" formControlName="email" autocomplete="email" />
+          <mat-icon matPrefix>email</mat-icon>
+        </mat-form-field>
+        <button mat-flat-button type="submit" [disabled]="resetForm.invalid || isLoading()">{{ 'LOGIN_PAGE.SEND_RESET' | translate }}</button>
+        <button mat-button type="button" (click)="showReset.set(false)">{{ 'LOGIN_PAGE.TAB_LOGIN' | translate }}</button>
+      </form>
+    } @else {
     <mat-tab-group
       animationDuration="200ms"
       [selectedIndex]="activeTab() === 'login' ? 0 : 1"
@@ -46,10 +108,10 @@
 
           <div class="auth-row">
             <label class="remember">
-              <input type="checkbox" />
+              <input type="checkbox" formControlName="rememberMe" />
               {{ 'LOGIN_PAGE.REMEMBER_ME' | translate }}
             </label>
-            <a routerLink="/login">{{ 'LOGIN_PAGE.FORGOT_PASSWORD' | translate }}</a>
+            <button mat-button type="button" (click)="showReset.set(true)">{{ 'LOGIN_PAGE.FORGOT_PASSWORD' | translate }}</button>
           </div>
 
           <button mat-flat-button color="primary" type="submit" class="auth-submit" [disabled]="loginForm.invalid || isLoading()">
@@ -59,7 +121,7 @@
             {{ 'LOGIN_PAGE.TAB_LOGIN' | translate }}
           </button>
 
-          <button mat-stroked-button type="button" class="auth-google" (click)="continueWithGoogle()">
+          <button mat-stroked-button type="button" class="auth-google" (click)="continueWithGoogle()" [disabled]="isLoading()">
             <mat-icon>account_circle</mat-icon>
             {{ 'LOGIN_PAGE.CONTINUE_GOOGLE' | translate }}
           </button>
@@ -70,6 +132,17 @@
 
       <mat-tab [label]="'LOGIN_PAGE.TAB_REGISTER' | translate">
         <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="auth-form" novalidate>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'LOGIN_PAGE.PHONE_LABEL' | translate }}</mat-label>
+            <input matInput formControlName="phone" type="tel" autocomplete="tel" dir="ltr" placeholder="+96171123456" />
+            <mat-icon matPrefix>phone</mat-icon>
+            @if (registerForm.controls.phone.hasError('required')) {
+              <mat-error>{{ 'LOGIN_PAGE.ERROR_PHONE_REQUIRED' | translate }}</mat-error>
+            } @else if (registerForm.controls.phone.hasError('pattern')) {
+              <mat-error>{{ 'LOGIN_PAGE.ERROR_PHONE_FORMAT' | translate }}</mat-error>
+            }
+          </mat-form-field>
+
           <mat-form-field appearance="outline">
             <mat-label>{{ 'LOGIN_PAGE.FULL_NAME_LABEL' | translate }}</mat-label>
             <input matInput formControlName="name" type="text" autocomplete="name" />
@@ -124,6 +197,7 @@
             </button>
           </div>
 
+          <mat-checkbox formControlName="customerSearchConsent">{{ 'LOGIN_PAGE.SEARCH_CONSENT' | translate }}</mat-checkbox>
           <button mat-flat-button color="primary" type="submit" class="auth-submit" [disabled]="registerForm.invalid || isLoading()">
             @if (isLoading()) {
               <mat-icon class="spin">autorenew</mat-icon>
@@ -132,8 +206,12 @@
           </button>
 
           <p class="switch-copy">{{ 'LOGIN_PAGE.REGISTER_FOOTER' | translate }}</p>
+          <button mat-stroked-button type="button" class="auth-google" (click)="continueWithGoogle()" [disabled]="isLoading()">
+            <mat-icon>account_circle</mat-icon>{{ 'LOGIN_PAGE.CONTINUE_GOOGLE' | translate }}
+          </button>
         </form>
       </mat-tab>
     </mat-tab-group>
+    }
   </mat-card>
 </div>

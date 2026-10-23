@@ -4,11 +4,11 @@
   align-items: center;
   gap: var(--sm-sp-3);
   height: var(--sm-topnav-height);
-  padding: 0 var(--sm-sp-4);
+  padding-inline: var(--sm-sp-5);
   background: var(--sm-topnav-bg);
   color: var(--sm-topnav-text);
   border-bottom: 1px solid var(--sm-border-color);
-  box-shadow: var(--sm-shadow-xs);
+  box-shadow: 0 2px 10px rgb(23 42 39 / 0.035);
   position: sticky;
   top: 0;
   z-index: var(--sm-z-topnav);
@@ -58,15 +58,15 @@
   align-items: center;
   gap: var(--sm-sp-2);
   width: 100%;
-  height: 38px;
-  padding: 0 12px;
+  height: 40px;
+  padding-inline: var(--sm-sp-3);
   border: 1px solid var(--sm-border-color);
-  border-radius: var(--sm-r-full);
+  border-radius: var(--sm-r-md);
   background: var(--sm-topnav-search-bg);
   color: var(--sm-text-secondary);
   font-size: 13px;
   text-align: start;
-  transition: all 0.15s ease;
+  transition: border-color var(--sm-motion-fast), background-color var(--sm-motion-fast), color var(--sm-motion-fast), box-shadow var(--sm-motion-fast);
   justify-content: flex-start;
   letter-spacing: 0;
 
@@ -84,18 +84,19 @@
   kbd {
     font-size: 10px;
     font-family: inherit;
-    background: #e2e8f0;
-    color: #64748b;
-    padding: 1px 5px;
-    border-radius: 4px;
-    border: 1px solid #cbd5e1;
+    background: var(--sm-surface-muted);
+    color: var(--sm-ink-secondary);
+    padding: 2px 6px;
+    border-radius: var(--sm-r-xs);
+    border: 1px solid var(--sm-border);
     margin-inline-start: auto;
   }
 
   &:hover {
-    border-color: var(--sm-text-secondary);
+    border-color: var(--sm-primary);
     background: var(--sm-topnav-bg);
-    color: var(--sm-text-secondary);
+    color: var(--sm-ink);
+    box-shadow: var(--sm-shadow-xs);
   }
 }
 
@@ -120,8 +121,8 @@ html[dir='rtl'] .topnav-end {
 /* ── User avatar button ─────────────────────────────────────────────── */
 .user-avatar-btn {
   padding: 0 !important;
-  width: 36px !important;
-  height: 36px !important;
+  width: 40px !important;
+  height: 40px !important;
 }
 
 .user-avatar {
@@ -189,9 +190,9 @@ html[dir='rtl'] .topnav-end {
   height: 19px;
   padding: 0 4px;
   color: #fff;
-  background: #c2413b;
+  background: var(--sm-cancelled);
   border: 2px solid var(--sm-topnav-bg);
-  border-radius: 999px;
+  border-radius: var(--sm-r-md);
   font-size: 10px;
   font-weight: 700;
   line-height: 1;
@@ -211,7 +212,7 @@ html[dir='rtl'] .topnav-end {
   color: var(--sm-text-primary);
   background: var(--sm-topnav-bg);
   border: 1px solid var(--sm-border-color);
-  border-radius: var(--sm-r-md);
+  border-radius: var(--sm-r-lg);
   box-shadow: var(--sm-shadow-lg);
 }
 
@@ -241,6 +242,7 @@ html[dir='rtl'] .topnav-end {
   color: inherit;
   text-align: start;
   cursor: pointer;
+  transition: background-color var(--sm-motion-fast);
 
   &:hover {
     background: var(--sm-page-bg);

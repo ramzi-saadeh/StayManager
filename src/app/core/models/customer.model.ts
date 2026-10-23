@@ -1,5 +1,8 @@
 import { Timestamp } from 'firebase/firestore';
 
+export type CustomerLookupOption = Pick<WorkspaceCustomer,
+  'customerId' | 'name' | 'phone' | 'email' | 'notes' | 'nameLower' | 'phoneNormalized'>;
+
 export interface WorkspaceCustomer {
   customerId: string;
   workspaceId: string;

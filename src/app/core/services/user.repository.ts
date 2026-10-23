@@ -55,6 +55,7 @@ export class UserRepository {
       {
         uid,
         ...profile,
+        nameLower: profile.displayName.trim().toLowerCase().replace(/\s+/g, ' '),
         role: profile.role ?? 'customer',
         theme: profile.theme ?? ThemeMode.LIGHT,
         updatedAt: serverTimestamp(),
@@ -66,7 +67,7 @@ export class UserRepository {
   /** Update only mutable profile fields (displayName, photoUrl). */
   async update(
     uid: string,
-    updates: Partial<Pick<UserProfile, 'displayName' | 'photoUrl' | 'theme'>>,
+    updates: Partial<Pick<UserProfile, 'displayName' | 'photoUrl' | 'theme' | 'customerSearchConsent'>>,
   ): Promise<void> {
     const ref = doc(this.firestore, `users/${uid}`);
     await setDoc(
@@ -74,6 +75,9 @@ export class UserRepository {
       {
         uid,
         ...updates,
+        ...(updates.displayName !== undefined ? {
+          nameLower: updates.displayName.trim().toLowerCase().replace(/\s+/g, ' '),
+        } : {}),
         updatedAt: serverTimestamp(),
       },
       { merge: true },

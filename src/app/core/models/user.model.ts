@@ -15,6 +15,9 @@ export type AccountRole = 'customer' | 'owner';
 export interface UserProfile extends FirestoreDocument {
   uid: string;
   displayName: string;
+  nameLower?: string;
+  phoneNumber?: string | null;
+  customerSearchConsent?: boolean;
   email: string;
   photoUrl: string | null;
   role?: AccountRole;

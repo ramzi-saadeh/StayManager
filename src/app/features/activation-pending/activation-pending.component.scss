@@ -2,11 +2,8 @@
   min-height: 100dvh;
   display: grid;
   place-items: center;
-  padding: 1.25rem;
-  background:
-    radial-gradient(900px 420px at 10% -10%, rgba(16, 185, 129, 0.14), transparent 60%),
-    radial-gradient(700px 380px at 100% 0%, rgba(20, 184, 166, 0.14), transparent 55%),
-    #f4f8f6;
+  padding: var(--sm-sp-5);
+  background: var(--sm-page-bg);
 }
 
 .pending-wrap {
@@ -14,19 +11,20 @@
 }
 
 .pending-card {
-  border-radius: 1rem;
-  padding: 1.2rem;
-  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: var(--sm-r-md);
+  padding: var(--sm-sp-5);
+  border: 1px solid var(--sm-border);
+  box-shadow: var(--sm-shadow-sm);
 }
 
 .icon-wrap {
   width: 3rem;
   height: 3rem;
-  border-radius: 0.8rem;
+  border-radius: var(--sm-r-md);
   display: grid;
   place-items: center;
-  background: #e3f7f1;
-  color: #0f766e;
+  background: var(--sm-primary-soft);
+  color: var(--sm-primary);
 }
 
 .icon-wrap mat-icon {
@@ -40,32 +38,32 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 0.74rem;
-  color: #0f766e;
+  color: var(--sm-primary);
   font-weight: 700;
 }
 
 h1 {
   margin: 0.5rem 0 0;
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  color: #0f2e2a;
+  font-size: var(--sm-text-2xl);
+  color: var(--sm-ink);
 }
 
 .subtitle {
   margin: 0.6rem 0 0;
-  color: #405f59;
+  color: var(--sm-ink-secondary);
 }
 
 .workspace-box {
   margin-top: 1rem;
-  border-radius: 0.8rem;
-  border: 1px solid rgba(15, 23, 42, 0.09);
-  background: #f9fcfb;
+  border-radius: var(--sm-r-md);
+  border: 1px solid var(--sm-border);
+  background: var(--sm-surface-subtle);
   padding: 0.8rem;
 }
 
 .workspace-box p {
   margin: 0;
-  color: #284540;
+  color: var(--sm-ink-secondary);
 }
 
 .workspace-box p + p {
@@ -74,15 +72,15 @@ h1 {
 
 .payment-box {
   margin-top: 0.85rem;
-  border-radius: 0.8rem;
-  border: 1px solid rgba(15, 118, 110, 0.25);
-  background: #ecfdf8;
+  border-radius: var(--sm-r-md);
+  border: 1px solid color-mix(in srgb, var(--sm-primary) 24%, var(--sm-border));
+  background: var(--sm-primary-soft);
   padding: 0.8rem;
 }
 
 .payment-label {
   margin: 0;
-  color: #14554d;
+  color: var(--sm-primary);
   font-size: 0.86rem;
 }
 
@@ -97,14 +95,14 @@ h1 {
 
 .payment-row strong {
   font-size: 1.05rem;
-  color: #0f3e37;
+  color: var(--sm-ink);
   letter-spacing: 0.03em;
 }
 
 ul {
   margin: 0.9rem 0 0;
-  padding-left: 1.2rem;
-  color: #314f4a;
+  padding-inline-start: 1.2rem;
+  color: var(--sm-ink-secondary);
   display: grid;
   gap: 0.35rem;
 }

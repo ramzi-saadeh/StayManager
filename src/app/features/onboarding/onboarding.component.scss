@@ -4,11 +4,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 24px;
-  padding: 40px 16px;
-  background:
-    radial-gradient(900px 400px at 0% 0%, rgba(15, 118, 110, 0.18), transparent 60%),
-    #f6f5f1;
+  gap: var(--sm-sp-6);
+  padding: var(--sm-sp-10) var(--sm-sp-4);
+  background: var(--sm-page-bg);
 }
 
 .onboarding-language {
@@ -26,22 +24,21 @@
   width: 100%;
   max-width: 560px;
   text-align: center;
-  padding: 18px 20px;
-  border-radius: 16px;
-  border: 1px solid #dbe7f5;
-  background: linear-gradient(180deg, #f8fbff 0%, #f2f7ff 100%);
+  padding: var(--sm-sp-4) 0;
+  border-bottom: 1px solid var(--sm-border);
+  background: transparent;
 
-  h1 { font-size: 1.65rem; font-weight: 800; color: #0f172a; margin: 12px 0 6px; }
-  p  { color: #506279; margin: 0; }
+  h1 { font-size: var(--sm-text-2xl); font-weight: 800; color: var(--sm-ink); margin: 12px 0 6px; }
+  p  { color: var(--sm-ink-secondary); margin: 0; }
 }
 
 .onboarding-logo {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 56px; height: 56px;
-  border-radius: 16px;
-  background: var(--mat-sys-primary, #2563eb);
+  width: 52px; height: 52px;
+  border-radius: var(--sm-r-md);
+  background: var(--sm-primary);
   color: #fff;
   mat-icon { font-size: 28px; width: 28px; height: 28px; }
 }
@@ -49,8 +46,8 @@
 .onboarding-card {
   width: 100%;
   max-width: 560px;
-  border-radius: 16px !important;
-  box-shadow: 0 18px 38px rgb(0 0 0 / 0.1) !important;
+  border-radius: var(--sm-r-md) !important;
+  box-shadow: var(--sm-shadow-md) !important;
   padding: 8px 0;
 }
 
@@ -77,28 +74,28 @@
 
 .access-card {
   text-align: start;
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  border-radius: 12px;
-  background: #fff;
-  padding: 14px;
+  border: 1px solid var(--sm-border);
+  border-radius: var(--sm-r-md);
+  background: var(--sm-surface);
+  padding: var(--sm-sp-4);
   cursor: pointer;
 
   h3 {
     margin: 0;
     font-size: 16px;
-    color: #143d37;
+    color: var(--sm-ink);
   }
 
   p {
     margin: 6px 0 0;
-    color: #4a6661;
+    color: var(--sm-ink-secondary);
     font-size: 13px;
   }
 }
 
 .access-card.selected {
-  border-color: #0f766e;
-  box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.15);
+  border-color: var(--sm-primary);
+  box-shadow: var(--sm-focus-ring);
 }
 
 .ready-state {
@@ -106,13 +103,13 @@
 
   h3 {
     margin: 0;
-    color: #0f172a;
+    color: var(--sm-ink);
     font-size: 20px;
   }
 
   p {
     margin: 8px 0 0;
-    color: #47635e;
+    color: var(--sm-ink-secondary);
   }
 }
 

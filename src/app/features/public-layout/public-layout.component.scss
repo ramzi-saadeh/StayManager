@@ -1,9 +1,6 @@
 .landing-shell {
-  background:
-    radial-gradient(1200px 500px at 95% -5%, rgba(14, 165, 142, 0.15), transparent 60%),
-    radial-gradient(800px 450px at 0% 0%, rgba(19, 78, 74, 0.15), transparent 55%),
-    #f6f5f1;
-  color: #101c1a;
+  background: var(--sm-page-bg);
+  color: var(--sm-ink);
   min-height: 100vh;
 }
 
@@ -16,17 +13,16 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid transparent;
-  transition: padding 220ms ease, border-color 220ms ease, background 220ms ease;
+  border-bottom: 1px solid var(--sm-border);
+  transition: padding var(--sm-motion-normal), background-color var(--sm-motion-normal);
   padding: 1rem 0;
-  background: rgba(246, 245, 241, 0.82);
+  background: var(--sm-surface);
 }
 
 .top-nav.compact {
   padding: 0.45rem 0;
-  border-color: rgba(15, 23, 42, 0.08);
-  background: rgba(246, 245, 241, 0.94);
+  background: var(--sm-surface);
+  box-shadow: var(--sm-shadow-sm);
 }
 
 .nav-inner {
@@ -46,18 +42,18 @@
 .brand-mark {
   width: 2rem;
   height: 2rem;
-  border-radius: 0.65rem;
-  background: #0f352e;
-  color: #effff8;
+  border-radius: var(--sm-r-md);
+  background: var(--sm-primary);
+  color: #ffffff;
   display: inline-grid;
   place-items: center;
   font-weight: 700;
 }
 
 .brand-text {
-  font-size: 1.1rem;
+  font-size: var(--sm-text-lg);
   font-weight: 650;
-  color: #112522;
+  color: var(--sm-ink);
 }
 
 .desktop-nav {
@@ -68,14 +64,14 @@
 
 .desktop-nav a,
 .text-link {
-  color: #1f3d38;
+  color: var(--sm-ink-secondary);
   text-decoration: none;
-  font-size: 0.92rem;
+  font-size: var(--sm-text-sm);
 }
 
 .desktop-nav a:hover,
 .text-link:hover {
-  color: #0d7366;
+  color: var(--sm-primary);
 }
 
 .desktop-actions {
@@ -102,25 +98,25 @@
   align-items: center;
   gap: 0.35rem;
   padding: 0.2rem;
-  border-radius: 999px;
-  border: 1px solid rgba(16, 28, 26, 0.18);
-  background: rgba(255, 255, 255, 0.76);
+  border-radius: var(--sm-r-md);
+  border: 1px solid var(--sm-border);
+  background: var(--sm-surface);
 }
 
 .lang-btn {
   border: 0;
   background: transparent;
-  color: #1f3d38;
-  border-radius: 999px;
-  font-size: 0.78rem;
+  color: var(--sm-ink-secondary);
+  border-radius: var(--sm-r-sm);
+  font-size: var(--sm-text-xs);
   font-weight: 650;
   padding: 0.22rem 0.65rem;
   cursor: pointer;
 }
 
 .lang-btn.active {
-  background: #123631;
-  color: #e6fff8;
+  background: var(--sm-primary);
+  color: #ffffff;
 }
 
 .mobile-lang-switch {
@@ -128,10 +124,12 @@
 }
 
 .cta-btn {
-  background: #0f352e !important;
-  color: #ecfff8 !important;
-  border-radius: 999px !important;
-  border: 1px solid rgba(5, 72, 60, 0.3) !important;
+  background: var(--sm-primary) !important;
+  color: #ffffff !important;
+  border-radius: var(--sm-r-md) !important;
+  border: 1px solid var(--sm-primary) !important;
+  transition: background-color var(--sm-motion-fast), box-shadow var(--sm-motion-fast) !important;
+  &:hover { background: var(--sm-primary-hover) !important; box-shadow: var(--sm-shadow-sm); }
 }
 
 .mobile-actions,
@@ -154,10 +152,10 @@
   .menu-btn {
     width: 2.5rem;
     height: 2.5rem;
-    border-radius: 0.75rem;
-    border: 1px solid rgba(15, 23, 42, 0.15);
-    background: rgba(255, 255, 255, 0.85);
-    color: #173530;
+    border-radius: var(--sm-r-md);
+    border: 1px solid var(--sm-border);
+    background: var(--sm-surface);
+    color: var(--sm-ink);
     display: grid;
     place-items: center;
   }
@@ -166,14 +164,14 @@
     display: grid;
     gap: 0.4rem;
     padding: 0.8rem 1.125rem 1rem;
-    border-top: 1px solid rgba(15, 23, 42, 0.1);
-    background: rgba(246, 245, 241, 0.97);
+    border-top: 1px solid var(--sm-border);
+    background: var(--sm-surface);
   }
 
   .mobile-panel a {
     text-decoration: none;
-    color: #1f3e39;
-    padding: 0.35rem 0;
+    color: var(--sm-ink-secondary);
+    padding: var(--sm-sp-2) 0;
   }
 
   .mobile-logout {
@@ -183,8 +181,8 @@
     width: fit-content;
     border: 0;
     background: transparent;
-    color: #1f3e39;
-    padding: 0.35rem 0;
+    color: var(--sm-ink-secondary);
+    padding: var(--sm-sp-2) 0;
     font: inherit;
     cursor: pointer;
   }

@@ -1,4 +1,4 @@
-<div class="page-container">
+<div class="page-container booking-page">
 
   <div class="breadcrumb">
     <a routerLink="/reservations" mat-button>
@@ -8,7 +8,7 @@
 
   <h1 class="page-title">{{ 'RESERVATION_FORM.NEW_BOOKING' | translate }}</h1>
 
-  <mat-stepper orientation="vertical" #stepper [linear]="true">
+  <mat-stepper class="booking-stepper" [orientation]="isCompactStepper() ? 'vertical' : 'horizontal'" #stepper [linear]="true">
 
     <!-- ── Step 1: Resource & Dates ─────────────────────────────────── -->
     <mat-step [stepControl]="bookingForm" [label]="'RESERVATION_FORM.STEP_RESOURCE_DATES' | translate">
@@ -117,16 +117,26 @@
                 <span class="customer-option-meta">
                   {{ customer.phone }}
                   @if (customer.email) {
-                    · {{ customer.email }}
+                    {{ customer.phone ? '· ' : '' }}{{ customer.email }}
                   }
                 </span>
+              </mat-option>
+            } @empty {
+              <mat-option disabled>
+                @if (customerAccountLookup().status === 'loading') {
+                  {{ 'RESERVATION_FORM.CUSTOMER_LOOKUP_SEARCHING' | translate }}
+                } @else if (customerAccountLookup().status === 'error') {
+                  {{ 'RESERVATION_FORM.CUSTOMER_LOOKUP_ERROR' | translate }}
+                } @else {
+                  {{ 'RESERVATION_FORM.CUSTOMER_LOOKUP_EMPTY' | translate }}
+                }
               </mat-option>
             }
           </mat-autocomplete>
           <mat-hint>{{ 'RESERVATION_FORM.CUSTOMER_LOOKUP_HINT' | translate }}</mat-hint>
         </mat-form-field>
 
-        <div class="form-row">
+        <div class="form-row guest-name-row">
           <mat-form-field appearance="outline" class="field-grow">
             <mat-label>{{ 'RESERVATION_FORM.GUEST_NAME' | translate }}</mat-label>
             <input matInput formControlName="name" />

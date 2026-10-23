@@ -1,20 +1,18 @@
 .auth-shell {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.2rem;
-  padding: 1.2rem;
-  background:
-    radial-gradient(900px 480px at 0% 0%, rgba(15, 118, 110, 0.2), transparent 52%),
-    #f6f5f1;
+  grid-template-columns: minmax(0, 1fr) minmax(400px, 0.8fr);
+  gap: var(--sm-sp-6);
+  padding: var(--sm-sp-6);
+  background: var(--sm-page-bg);
 }
 
 .auth-hero,
 .auth-card {
-  border-radius: 1.2rem !important;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  background: rgba(255, 255, 255, 0.82);
-  box-shadow: 0 18px 40px rgba(9, 28, 25, 0.1) !important;
+  border-radius: var(--sm-r-md) !important;
+  border: 1px solid var(--sm-border);
+  background: var(--sm-surface);
+  box-shadow: var(--sm-shadow-md) !important;
 }
 
 .auth-hero {
@@ -25,7 +23,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  color: #123e37;
+  color: var(--sm-ink);
   text-decoration: none;
   font-weight: 700;
 }
@@ -33,9 +31,9 @@
 .brand-link span {
   width: 1.95rem;
   height: 1.95rem;
-  border-radius: 0.65rem;
-  background: #123e37;
-  color: #e7fff8;
+  border-radius: var(--sm-r-md);
+  background: var(--sm-primary);
+  color: #ffffff;
   display: inline-grid;
   place-items: center;
 }
@@ -45,20 +43,21 @@
   text-transform: uppercase;
   letter-spacing: 0.09em;
   font-size: 0.73rem;
-  color: #0f766e;
+  color: var(--sm-primary);
   font-weight: 700;
 }
 
 .auth-hero h1 {
   margin: 0.5rem 0;
-  font-size: clamp(1.7rem, 3vw, 2.8rem);
-  line-height: 1.08;
+  font-size: var(--sm-text-3xl);
+  line-height: var(--sm-line-tight);
+  color: var(--sm-ink);
 }
 
 .auth-hero p {
   margin: 0;
-  color: #40605a;
-  line-height: 1.6;
+  color: var(--sm-ink-secondary);
+  line-height: var(--sm-line-relaxed);
   max-width: 45ch;
 }
 
@@ -67,13 +66,18 @@
   padding-left: 1.1rem;
   display: grid;
   gap: 0.45rem;
-  color: #36534e;
+  color: var(--sm-ink-secondary);
 }
 
 .auth-form {
   padding: 1.2rem;
   display: grid;
   gap: 0.3rem;
+}
+
+.auth-form h2 {
+  margin: 0 0 var(--sm-sp-3);
+  font-size: var(--sm-text-xl);
 }
 
 mat-form-field {
@@ -92,21 +96,21 @@ mat-form-field {
   display: inline-flex;
   align-items: center;
   gap: 0.38rem;
-  color: #3f5b56;
-  font-size: 0.85rem;
+  color: var(--sm-ink-secondary);
+  font-size: var(--sm-text-sm);
 }
 
 .auth-row a {
   text-decoration: none;
-  color: #0f766e;
-  font-size: 0.83rem;
+  color: var(--sm-primary);
+  font-size: var(--sm-text-sm);
 }
 
 .auth-submit,
 .auth-google {
   width: 100%;
   min-height: 2.75rem;
-  border-radius: 0.8rem !important;
+  border-radius: var(--sm-r-md) !important;
   font-weight: 600 !important;
 }
 
@@ -116,14 +120,14 @@ mat-form-field {
 
 .switch-copy {
   margin: 0.8rem 0 0;
-  color: #4a6762;
-  font-size: 0.85rem;
+  color: var(--sm-ink-secondary);
+  font-size: var(--sm-text-sm);
 }
 
 .switch-copy button {
   border: 0;
   background: transparent;
-  color: #0f766e;
+  color: var(--sm-primary);
   cursor: pointer;
   font-weight: 600;
 }
@@ -143,24 +147,24 @@ mat-form-field {
   gap: 0.5rem;
   min-height: 88px;
   padding: 0.9rem 0.7rem;
-  border: 1px solid rgba(15, 118, 110, 0.2);
-  border-radius: 0.9rem;
-  background: #f7faf9;
-  color: #123e37;
+  border: 1px solid var(--sm-border);
+  border-radius: var(--sm-r-md);
+  background: var(--sm-surface);
+  color: var(--sm-ink);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: border-color var(--sm-motion-fast), background-color var(--sm-motion-fast), transform var(--sm-motion-fast), box-shadow var(--sm-motion-fast);
   text-align: center;
 }
 
 .role-option:hover {
-  border-color: rgba(15, 118, 110, 0.6);
+  border-color: var(--sm-primary);
   transform: translateY(-1px);
 }
 
 .role-option.selected {
-  background: rgba(15, 118, 110, 0.1);
-  border-color: #0f766e;
-  box-shadow: inset 0 0 0 1px rgba(15, 118, 110, 0.35);
+  background: var(--sm-primary-soft);
+  border-color: var(--sm-primary);
+  box-shadow: inset 0 0 0 1px var(--sm-primary);
 }
 
 .role-option mat-icon {
@@ -170,7 +174,7 @@ mat-form-field {
 }
 
 .role-option span {
-  font-size: 0.82rem;
+  font-size: var(--sm-text-sm);
   line-height: 1.35;
 }
 

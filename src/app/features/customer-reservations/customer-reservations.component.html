@@ -26,7 +26,7 @@
       <mat-icon>event_available</mat-icon>
       <h2>{{ 'CUSTOMER_RESERVATIONS.EMPTY_TITLE' | translate }}</h2>
       <p>{{ 'CUSTOMER_RESERVATIONS.EMPTY_DESCRIPTION' | translate }}</p>
-      @if (currentUser() && !currentUser()!.emailVerified) {
+      @if (emailVerificationRequired && currentUser() && !currentUser()!.emailVerified) {
         <div class="verification-note">
           <p>{{ 'CUSTOMER_RESERVATIONS.VERIFY_EMAIL_HINT' | translate }}</p>
           <button mat-stroked-button type="button" [disabled]="verificationSending() || verificationSent()"

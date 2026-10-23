@@ -13,8 +13,8 @@
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 12px;
+  gap: var(--sm-sp-3);
+  padding-inline: var(--sm-sp-3);
   height: var(--sm-topnav-height);
   flex-shrink: 0;
   border-bottom: 1px solid var(--sm-sidebar-border);
@@ -26,8 +26,8 @@
   justify-content: center;
   width: 36px;
   height: 36px;
-  border-radius: 10px;
-  background: var(--mat-sys-primary);
+  border-radius: var(--sm-r-md);
+  background: var(--sm-primary);
   color: white;
   flex-shrink: 0;
   overflow: hidden;
@@ -52,11 +52,11 @@
 }
 
 .brand-name {
-  font-size: 16px;
+  font-size: var(--sm-text-md);
   font-weight: 700;
   color: var(--sm-sidebar-active-text);
   white-space: nowrap;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 /* ── Nav ─────────────────────────────────────────────────────────────── */
@@ -64,10 +64,10 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 12px 8px;
+  padding: var(--sm-sp-5) var(--sm-sp-2);
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--sm-sp-1);
 
   /* Thin scrollbar in sidebar */
   &::-webkit-scrollbar { width: 3px; }
@@ -75,12 +75,12 @@
 }
 
 .nav-group-heading {
-  font-size: 10px;
+  font-size: var(--sm-text-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--sm-sidebar-text-muted);
-  padding: 12px 10px 4px;
+  padding: var(--sm-sp-5) var(--sm-sp-3) var(--sm-sp-2);
   margin: 0;
   white-space: nowrap;
 }
@@ -94,14 +94,16 @@
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 9px 10px;
-  border-radius: 8px;
+  gap: var(--sm-sp-3);
+  min-height: 44px;
+  padding: var(--sm-sp-2) var(--sm-sp-3);
+  border-radius: var(--sm-r-md);
+  border: 1px solid transparent;
   text-decoration: none;
   color: var(--sm-sidebar-text);
-  font-size: 14px;
+  font-size: var(--sm-text-base);
   font-weight: 500;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: background-color var(--sm-motion-fast), color var(--sm-motion-fast);
   white-space: nowrap;
   position: relative;
   cursor: pointer;
@@ -109,15 +111,16 @@
 
   &:hover {
     background: var(--sm-sidebar-hover-bg);
-    color: #f8fafc;
+    color: var(--sm-sidebar-active-text);
   }
 
   &.active {
     background: var(--sm-sidebar-active-bg);
     color: var(--sm-sidebar-active-text);
+    border-color: var(--sm-sidebar-border);
 
     .nav-icon {
-      color: var(--mat-sys-primary);
+      color: var(--sm-primary);
       font-variation-settings: 'FILL' 1;
     }
 
@@ -128,9 +131,9 @@
       top: 50%;
       transform: translateY(-50%);
       width: 3px;
-      height: 20px;
-      background: var(--mat-sys-primary);
-      border-radius: 0 3px 3px 0;
+      height: 22px;
+      background: var(--sm-primary);
+      border-radius: var(--sm-r-xs);
     }
   }
 }
@@ -164,7 +167,7 @@ html[dir='rtl'] .nav-item.active::before {
   min-width: 18px;
   height: 18px;
   padding: 0 5px;
-  background: var(--mat-sys-primary);
+  background: var(--sm-primary);
   color: white;
   font-size: 10px;
   font-weight: 600;
@@ -174,18 +177,18 @@ html[dir='rtl'] .nav-item.active::before {
 /* ── Footer / Workspace card ────────────────────────────────────────── */
 .sidebar-footer {
   border-top: 1px solid var(--sm-sidebar-border);
-  padding: 8px;
+  padding: var(--sm-sp-2);
   flex-shrink: 0;
 }
 
 .workspace-card {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 8px;
-  border-radius: 8px;
+  gap: var(--sm-sp-3);
+  padding: var(--sm-sp-2);
+  border-radius: var(--sm-r-md);
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background-color var(--sm-motion-fast);
   width: 100%;
   border: 0;
   text-align: start;
@@ -198,7 +201,7 @@ html[dir='rtl'] .nav-item.active::before {
 
   &.collapsed {
     justify-content: center;
-    padding: 8px;
+    padding: var(--sm-sp-2);
   }
 }
 
@@ -208,7 +211,7 @@ html[dir='rtl'] .nav-item.active::before {
   justify-content: center;
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: var(--sm-r-md);
   background: rgba(148 163 184 / 0.15);
   flex-shrink: 0;
 
@@ -226,7 +229,7 @@ html[dir='rtl'] .nav-item.active::before {
 }
 
 .workspace-name {
-  font-size: 13px;
+  font-size: var(--sm-text-sm);
   font-weight: 600;
   color: var(--sm-sidebar-active-text);
   margin: 0;
@@ -236,7 +239,7 @@ html[dir='rtl'] .nav-item.active::before {
 }
 
 .workspace-plan {
-  font-size: 11px;
+  font-size: var(--sm-text-xs);
   color: var(--sm-sidebar-text-muted);
   white-space: nowrap;
 }

@@ -1,5 +1,6 @@
 import { Component, signal, inject, computed, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,15 +16,15 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { toSignal, toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, debounceTime, distinctUntilChanged, finalize, switchMap } from 'rxjs/operators';
-import { from, of } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, finalize, map, startWith, switchMap } from 'rxjs/operators';
+import { from, of, timer } from 'rxjs';
 import { ResourceRepository } from '../../../core/services/resource.repository';
 import { ReservationRepository } from '../../../core/services/reservation.repository';
 import { CustomerRepository } from '../../../core/services/customer.repository';
 import { WorkspaceService } from '../../../core/services/workspace.service';
 import { AuthService } from '../../../services/auth.service';
 import { Resource } from '../../../core/models/resource.model';
-import { WorkspaceCustomer } from '../../../core/models/customer.model';
+import { CustomerLookupOption, WorkspaceCustomer } from '../../../core/models/customer.model';
 import { BookingMode, PaymentStatus } from '../../../core/models/enums';
 import { RecurrenceRule } from '../../../core/models/recurrence.model';
 import {
@@ -38,6 +39,12 @@ interface BookingWindowValue {
   endDate: Date | null;
   startDatetime: string;
   endDatetime: string;
+}
+
+interface CustomerAccountLookup {
+  query: string;
+  customers: CustomerLookupOption[];
+  status: 'idle' | 'loading' | 'ready' | 'error';
 }
 
 @Component({
@@ -65,6 +72,7 @@ interface BookingWindowValue {
   styleUrl: './reservation-form.component.scss',
 })
 export class ReservationFormComponent implements OnInit {
+  private breakpoints = inject(BreakpointObserver);
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -80,6 +88,10 @@ export class ReservationFormComponent implements OnInit {
   readonly PaymentStatus = PaymentStatus;
 
   isLoading = signal(false);
+  isCompactStepper = toSignal(
+    this.breakpoints.observe('(max-width: 720px)').pipe(map((state) => state.matches)),
+    { initialValue: true },
+  );
   today = new Date();
 
   // All active resources — use listAll to avoid composite index requirement
@@ -91,6 +103,26 @@ export class ReservationFormComponent implements OnInit {
   );
 
   customerLookupQuery = signal('');
+  customerAccountLookup = toSignal(
+    toObservable(computed(() => ({
+      workspaceId: this.ws.activeWorkspaceId(),
+      query: this.customerLookupQuery().trim().toLowerCase().replace(/\s+/g, ' '),
+    }))).pipe(
+      distinctUntilChanged((previous, current) => previous.workspaceId === current.workspaceId && previous.query === current.query),
+      switchMap(({ workspaceId, query }) => {
+        if (!workspaceId || query.length < 2) {
+          return of<CustomerAccountLookup>({ query, customers: [], status: 'idle' });
+        }
+        return timer(300).pipe(
+          switchMap(() => from(this.customerRepo.searchRegistered(workspaceId, query))),
+          map((customers): CustomerAccountLookup => ({ query, customers, status: 'ready' })),
+          catchError(() => of<CustomerAccountLookup>({ query, customers: [], status: 'error' })),
+          startWith<CustomerAccountLookup>({ query, customers: [], status: 'loading' }),
+        );
+      }),
+    ),
+    { initialValue: { query: '', customers: [], status: 'idle' } as CustomerAccountLookup },
+  );
   recentCustomers = toSignal(
     toObservable(this.ws.activeWorkspaceId).pipe(
       switchMap((wid) => wid ? this.customerRepo.listRecent(wid, 120) : of([] as WorkspaceCustomer[])),
@@ -98,14 +130,24 @@ export class ReservationFormComponent implements OnInit {
     { initialValue: [] as WorkspaceCustomer[] },
   );
   filteredCustomers = computed(() => {
-    const all = this.recentCustomers();
-    const q = this.customerLookupQuery().trim().toLowerCase();
+    const all: CustomerLookupOption[] = [...this.recentCustomers()];
+    const q = this.customerLookupQuery().trim().toLowerCase().replace(/\s+/g, ' ');
+    const account = this.customerAccountLookup();
+    if (account.query === q) {
+      for (const registered of account.customers) {
+        if (!all.some((customer) => customer.customerId === registered.customerId ||
+          (registered.email && customer.email?.trim().toLowerCase() === registered.email.toLowerCase()))) {
+          all.push(registered);
+        }
+      }
+    }
     if (!q) return all.slice(0, 10);
+    const phoneQuery = /^[+\d\s().-]+$/.test(q) ? this.normalizePhone(q) : '';
 
     return all
       .filter((customer) =>
         customer.nameLower.includes(q) ||
-        customer.phoneNormalized.includes(this.normalizePhone(q)) ||
+        (phoneQuery.length > 0 && customer.phoneNormalized.includes(phoneQuery)) ||
         (customer.email ?? '').toLowerCase().includes(q),
       )
       .slice(0, 10);
@@ -568,7 +610,7 @@ export class ReservationFormComponent implements OnInit {
   }
 
   selectCustomerById(customerId: string): void {
-    const customer = this.recentCustomers().find((x) => x.customerId === customerId);
+    const customer = this.filteredCustomers().find((option) => option.customerId === customerId);
     if (!customer) return;
 
     this.guestForm.patchValue({
@@ -580,8 +622,8 @@ export class ReservationFormComponent implements OnInit {
     this.customerLookupQuery.set(this.customerOptionLabel(customer));
   }
 
-  customerOptionLabel(customer: WorkspaceCustomer): string {
-    return `${customer.name} - ${customer.phone}`;
+  customerOptionLabel(customer: CustomerLookupOption): string {
+    return `${customer.name} - ${customer.phone || customer.email || ''}`;
   }
 
   private normalizePhone(value: string): string {

@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { initializeApp as initializeAdminApp } from 'firebase-admin/app';
+import { getAuth as getAdminAuth } from 'firebase-admin/auth';
 import { getFirestore as getAdminFirestore } from 'firebase-admin/firestore';
 import { initializeApp } from 'firebase/app';
 import {
@@ -38,6 +39,8 @@ async function createIdentity(email = `${randomUUID()}@example.test`): Promise<s
     email,
     testPassword,
   );
+  await getAdminAuth(adminApp).updateUser(credential.user.uid, { emailVerified: true });
+  await credential.user.getIdToken(true);
   return credential.user.uid;
 }
 
@@ -139,6 +142,15 @@ beforeEach(async () => {
   await seedWorkspace();
 });
 
+it('allows booking mutations without email verification for the MVP', async () => {
+  await getAdminAuth(adminApp).updateUser(ownerUid, { emailVerified: false });
+  await auth.currentUser!.getIdToken(true);
+  const created = await callCreate(createPayload());
+  const reservationId = created.data.reservationId;
+  await expect(callPayment({ workspaceId, reservationId, paymentStatus: 'PAID', paymentMethod: 'Cash' })).resolves.toMatchObject({ success: true });
+  await expect(callStatus({ workspaceId, reservationId, status: 'COMPLETED' })).resolves.toMatchObject({ success: true });
+}, 60_000);
+
 afterAll(async () => {
   await signOut(auth);
   if (workspaceId && ownerUid) {
@@ -170,6 +182,79 @@ describe('reservation callables (Firebase emulators)', () => {
     ]);
     expect(attempts.filter((result) => result.status === 'fulfilled')).toHaveLength(1);
     expect(attempts.filter((result) => result.status === 'rejected')).toHaveLength(1);
+  });
+
+  it('prevents a public customer request from overlapping an owner reservation', async () => {
+    await callCreate(createPayload());
+    await createIdentity();
+    const payload = createPayload({ isPublicRequest: true });
+    delete payload.price;
+
+    await expectCallableError(callCreate(payload), 'already-exists');
+    expect((await db.collection(`workspaces/${workspaceId}/reservations`).get()).size).toBe(1);
+  });
+
+  it('treats pending public requests as blocking reservations', async () => {
+    const firstCustomerUid = await createIdentity();
+    const firstPayload = createPayload({ isPublicRequest: true });
+    delete firstPayload.price;
+    const pending = await callCreate(firstPayload);
+
+    const secondCustomerUid = await createIdentity();
+    expect(secondCustomerUid).not.toBe(firstCustomerUid);
+    const secondPayload = createPayload({ isPublicRequest: true });
+    delete secondPayload.price;
+    await expectCallableError(callCreate(secondPayload), 'already-exists');
+    expect((await db.doc(`workspaces/${workspaceId}/reservations/${pending.data.reservationId}`).get()).get('status')).toBe('PENDING');
+  });
+
+  it('allows a date-range reservation to start at the previous checkout boundary', async () => {
+    await callCreate(createPayload());
+    const adjacent = await callCreate(createPayload({
+      startDate: '2026-11-04',
+      endDate: '2026-11-05',
+    }));
+
+    const reservation = await db.doc(`workspaces/${workspaceId}/reservations/${adjacent.data.reservationId}`).get();
+    expect(reservation.get('startDate')).toBe('2026-11-04');
+    expect((await db.collection(`workspaces/${workspaceId}/reservations`).get()).size).toBe(2);
+  });
+
+  it('enforces datetime turnaround buffers without rejecting the exact buffer boundary', async () => {
+    await db.doc(`workspaces/${workspaceId}/resources/room1`).update({
+      bookingMode: 'DATETIME_RANGE',
+      bufferMinutes: 30,
+    });
+
+    const firstPayload = createPayload({
+      bookingMode: 'DATETIME_RANGE',
+      start: '2026-11-02T09:00:00-05:00',
+      end: '2026-11-02T10:00:00-05:00',
+      price: { amount: 100, currency: 'USD', unit: 'PER_HOUR', quantity: 1, basePrice: 100 },
+    });
+    delete firstPayload.startDate;
+    delete firstPayload.endDate;
+    await callCreate(firstPayload);
+
+    const tooSoon = createPayload({
+      bookingMode: 'DATETIME_RANGE',
+      start: '2026-11-02T10:29:00-05:00',
+      end: '2026-11-02T11:00:00-05:00',
+      price: { amount: 50, currency: 'USD', unit: 'PER_HOUR', quantity: 1, basePrice: 100 },
+    });
+    delete tooSoon.startDate;
+    delete tooSoon.endDate;
+    await expectCallableError(callCreate(tooSoon), 'already-exists');
+
+    const atBoundary = createPayload({
+      bookingMode: 'DATETIME_RANGE',
+      start: '2026-11-02T10:30:00-05:00',
+      end: '2026-11-02T11:00:00-05:00',
+      price: { amount: 50, currency: 'USD', unit: 'PER_HOUR', quantity: 1, basePrice: 100 },
+    });
+    delete atBoundary.startDate;
+    delete atBoundary.endDate;
+    await expect(callCreate(atBoundary)).resolves.toBeDefined();
   });
 
   it('deduplicates retries with the same idempotency key', async () => {

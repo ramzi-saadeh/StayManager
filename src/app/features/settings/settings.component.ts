@@ -36,26 +36,58 @@ import { UserRepository } from '../../core/services/user.repository';
     </div>
   `,
   styles: [`
-    .settings-layout { display: flex; height: 100%; }
+    .settings-layout {
+      display: flex;
+      min-height: 100%;
+      background: var(--sm-page-bg);
+    }
     .settings-nav {
-      width: 220px; flex-shrink: 0;
-      border-inline-end: 1px solid #f1f5f9;
-      padding: 24px 0;
+      width: 232px;
+      flex-shrink: 0;
+      border-inline-end: 1px solid var(--sm-border);
+      padding: var(--sm-sp-6) var(--sm-sp-3);
+      background: var(--sm-surface-subtle);
     }
     .nav-title {
-      font-size: 11px; font-weight: 700; color: #94a3b8;
-      text-transform: uppercase; letter-spacing: 0.08em;
-      padding: 0 16px; margin: 0 0 8px;
+      font-size: var(--sm-text-xs);
+      font-weight: 800;
+      color: var(--sm-ink-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0 var(--sm-sp-3);
+      margin: 0 0 var(--sm-sp-3);
     }
-    .settings-content { flex: 1; overflow: auto; }
-    .active-link { background: #eff6ff !important; color: #2563eb !important; border-radius: 8px; }
+    .settings-content {
+      flex: 1;
+      min-width: 0;
+      min-height: 0;
+      overflow: auto;
+      margin: var(--sm-sp-5);
+      border: 1px solid var(--sm-border);
+      border-radius: var(--sm-r-md);
+      background: var(--sm-surface);
+      box-shadow: var(--sm-shadow-sm);
+    }
+    .settings-nav a { border-radius: var(--sm-r-sm); color: var(--sm-ink-secondary); }
+    .settings-nav a:hover { background: var(--sm-surface-muted); }
+    .active-link {
+      background: var(--sm-primary-soft) !important;
+      color: var(--sm-primary) !important;
+      border-radius: var(--sm-r-sm);
+    }
 
     :host-context([dir='rtl']) .settings-layout { direction: rtl; }
-    :host-context([dir='rtl']) .settings-nav { border-inline-end: none; border-inline-start: 1px solid #f1f5f9; }
 
     @media (max-width: 640px) {
       .settings-layout { flex-direction: column; }
-      .settings-nav { width: 100%; border-inline-start: none; border-inline-end: none; border-bottom: 1px solid #f1f5f9; padding: 12px 0; }
+      .settings-nav {
+        width: 100%;
+        border-inline-end: 0;
+        border-bottom: 1px solid var(--sm-border);
+        padding: var(--sm-sp-3) var(--sm-sp-4);
+      }
+      .settings-content { margin: var(--sm-sp-3); }
+      .nav-title { margin-bottom: var(--sm-sp-2); }
     }
   `],
 })

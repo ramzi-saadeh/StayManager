@@ -45,7 +45,14 @@
       <mat-hint>{{ 'PROFILE_SETTINGS.THEME_HINT' | translate }}</mat-hint>
     </mat-form-field>
 
+    <mat-form-field appearance="outline" class="field">
+      <mat-label>{{ 'LOGIN_PAGE.PHONE_LABEL' | translate }}</mat-label>
+      <input matInput formControlName="phoneNumber" type="tel" dir="ltr" />
+      <mat-icon matPrefix>phone</mat-icon>
+    </mat-form-field>
+
     <div class="form-actions">
+      <mat-checkbox formControlName="customerSearchConsent">{{ 'LOGIN_PAGE.SEARCH_CONSENT' | translate }}</mat-checkbox>
       <button mat-flat-button color="primary" type="submit"
         [disabled]="form.invalid || isSaving()">
         @if (isSaving()) { <mat-icon class="spin">autorenew</mat-icon> }

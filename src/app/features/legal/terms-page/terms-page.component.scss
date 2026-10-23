@@ -1,34 +1,31 @@
 .legal-page {
-  max-width: 920px;
-  margin: 0 auto;
-  padding-top: 2rem;
-  padding-bottom: 3rem;
+  max-width: 960px;
+  margin-inline: auto;
+  padding: var(--sm-sp-8) var(--sm-sp-6) var(--sm-sp-12);
 }
 
 .legal-header {
-  border-radius: 1rem;
-  border: 1px solid rgba(15, 23, 42, 0.09);
-  background: linear-gradient(150deg, rgba(16, 185, 129, 0.09), rgba(20, 184, 166, 0.05), #ffffff 70%);
-  padding: 1.25rem;
+  border-bottom: 1px solid var(--sm-border);
+  padding: 0 0 var(--sm-sp-5);
 }
 
 .eyebrow {
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: 0.72rem;
-  color: #0f766e;
+  font-size: var(--sm-text-xs);
+  color: var(--sm-primary);
   font-weight: 700;
 }
 
 h1 {
   margin: 0.4rem 0 0.2rem;
-  color: #0f172a;
+  color: var(--sm-ink);
 }
 
 .intro {
   margin: 0;
-  color: #475569;
+  color: var(--sm-ink-secondary);
 }
 
 .link-row {
@@ -39,7 +36,7 @@ h1 {
 }
 
 .link-row a {
-  color: #0f766e;
+  color: var(--sm-primary);
   text-decoration: none;
   font-weight: 600;
 }
@@ -49,27 +46,27 @@ h1 {
 }
 
 .legal-card {
-  margin-top: 0.85rem;
-  border-radius: 1rem;
-  border: 1px solid rgba(15, 23, 42, 0.09);
-  background: #ffffff;
-  padding: 1.05rem;
+  margin-top: var(--sm-sp-3);
+  border-radius: var(--sm-r-md);
+  border: 1px solid var(--sm-border);
+  background: var(--sm-surface);
+  padding: var(--sm-sp-5);
 }
 
 h2 {
   margin: 0;
-  font-size: 1.02rem;
-  color: #102a43;
+  font-size: var(--sm-text-md);
+  color: var(--sm-ink);
 }
 
 .legal-card p {
   margin: 0.5rem 0 0;
-  color: #334155;
-  line-height: 1.65;
+  color: var(--sm-ink-secondary);
+  line-height: var(--sm-line-relaxed);
 }
 
 @media (max-width: 700px) {
   .legal-page {
-    padding-top: 1.2rem;
+    padding: var(--sm-sp-5) var(--sm-sp-4) var(--sm-sp-8);
   }
 }

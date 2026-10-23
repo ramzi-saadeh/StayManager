@@ -67,7 +67,7 @@ npm start
 Default local URL:
 - `http://localhost:4300`
 
-The development environment uses the `demo-staymanager-local` Firebase project ID and connects Auth, Firestore, Functions, and Storage to local emulators. It does not connect to the configured production project.
+The development environment uses the `demo-staymanager-local` Firebase project ID and connects Auth, Firestore, and Functions to local emulators. It does not connect to the configured production project. Firebase Storage is omitted from default deployment and emulator startup for now; Storage-dependent uploads are unavailable. Existing Storage rule tests remain available separately.
 
 ### Build
 
@@ -85,6 +85,48 @@ npm run test:rules
 ```
 
 `npm run test:functions` starts local Auth, Firestore, and Functions emulators, runs callable integration tests, and shuts them down. FCM delivery is intentionally skipped in the emulator.
+
+### Registration and Customer Search
+
+MVP registration creates an email/password account in one step. An international phone number (for example, `+96171123456`) is required as customer contact information only, not as a login credential or proof of ownership. Firebase Auth enforces unique emails; a server-only `accountPhones` index enforces unique contact phones atomically, including simultaneous registrations. Existing Auth phone numbers are also checked for backwards compatibility. Phone ownership is not established, so numbers can be mistyped or claimed by someone else; support must resolve disputed contact details.
+
+Email verification is disabled for the MVP: no automatic verification message is sent, and users can register, sign in, manage workspaces and book without confirming their email. Password reset remains available with a non-enumerating confirmation. Unchecked "Remember me" uses browser-session persistence. Login remains email/password only.
+
+Future email verification support is retained, but gated off in three places. Enable all of them together and redeploy:
+
+- `src/app/core/auth-policy.ts`: set `REQUIRE_EMAIL_VERIFICATION` to `true` for signup messages, prompts and protected routes.
+- `functions/src/auth-policy.ts`: set the same switch to `true` for booking mutations and account lookups.
+- `firestore.rules`: set `requireEmailVerification` to `true` inside `isVerified()`.
+
+Google sign-in is available from the login and registration tabs using Firebase's account-selection popup. Existing complete profiles retain their UID, role, phone and consent. New Google identities must complete their name, required contact phone, account type and discovery choice through the `completeGoogleAccount` callable before entering protected routes. Profile completion is resumable after a reload; it does not send verification messages or set a password. Canceling the popup does not sign out the current session. Provider conflicts show an error rather than merging profiles by email in application code.
+
+To enable Google in production, open Firebase Console > Authentication > Sign-in method > Google, enable the provider, choose the project support email, and save. Add the deployed host and any development host to Authentication > Settings > Authorized domains. Deploy `completeGoogleAccount` with the other Functions before releasing the frontend. Google does not supply the required contact phone in this flow, so it is collected explicitly. Actual Google OAuth needs a real enabled provider; local emulators use Google's simulated provider screen and do not contact Google.
+
+The verified-email requirement for claiming historical reservations by matching an email address remains enforced even during MVP. Customers can still read their own bookings by requester UID; entering an unverified email must not grant access to another person's reservations.
+
+Direct listing of `/users` is denied, including one-record queries. Owners use `lookupMemberByEmail` for exact-email member lookup; no phone is returned. Active owners/staff use `searchRegisteredCustomers` for a case-insensitive name prefix (at least two characters), exact email, or exact international phone. Results require explicit `customerSearchConsent`, are capped at ten, and are rate-limited per caller to 30/minute. Contact details are user-entered and unverified. Saved workspace guests remain workspace-scoped. Profile settings allow consent withdrawal. Consent defaults to off and must never be bulk-enabled during migration.
+
+Before deploying:
+
+- Enable Email/Password in Firebase Authentication. Phone sign-in is not used and may be disabled in Firebase Console.
+- Configure authorized domains for the production site, password-reset email templates, quotas, and billing alerts.
+- Enable Email Enumeration Protection. Review email action URLs and test delivery on the real domain.
+- If an earlier version deployed `verifyAccountPhone`, delete that obsolete function as part of rollout. It is no longer exported or used. No phone-verification SDK, controls or code endpoints remain in this version.
+
+For existing profiles, run this idempotent name-only backfill against the local emulator:
+
+```bash
+FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 node functions/scripts/backfill-user-search.mjs --project=demo-staymanager-local
+```
+
+For production, deploy the endpoints and identity-write rules before releasing the frontend:
+
+```bash
+firebase deploy --only functions,firestore:rules,firestore:indexes,hosting
+node functions/scripts/backfill-user-search.mjs --project=YOUR_PROJECT_ID --production
+```
+
+The production backfill requires Application Default Credentials. It only populates searchable names; it does not grant consent, verify contacts, or assign phone numbers. Wait for the `customerSearchConsent + nameLower` index to finish building before testing directory search. Firebase Storage is not part of the default deployment, so Storage Console initialization is not required for this release.
 
 ## Environment Configuration
 

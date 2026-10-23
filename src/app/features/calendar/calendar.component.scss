@@ -15,20 +15,20 @@
 }
 
 .cal-month-label {
-  font-size: 20px;
+  font-size: var(--sm-text-xl);
   font-weight: 700;
-  color: #0f172a;
+  color: var(--sm-ink);
   margin: 0;
   min-width: 200px;
   text-align: center;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 .today-btn {
-  font-size: 13px !important;
-  height: 32px !important;
-  line-height: 32px !important;
-  border-radius: var(--sm-r-full) !important;
+  font-size: var(--sm-text-sm) !important;
+  min-height: 36px !important;
+  line-height: 36px !important;
+  border-radius: var(--sm-r-md) !important;
   border-color: var(--sm-border-color) !important;
 }
 
@@ -39,8 +39,8 @@
 }
 
 .toggle-label {
-  margin-left: 4px;
-  font-size: 13px;
+  margin-inline-start: var(--sm-sp-1);
+  font-size: var(--sm-text-sm);
 
   @media (max-width: 480px) { display: none; }
 }
@@ -48,7 +48,7 @@
 .new-booking-btn {
   @media (max-width: 480px) {
     min-width: 0 !important;
-    padding: 0 12px !important;
+    padding-inline: var(--sm-sp-3) !important;
 
     span:not(.mat-icon) { display: none; }
   }
@@ -67,21 +67,21 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 30px;
-  padding: 0 12px;
-  border-radius: var(--sm-r-full);
+  min-height: 34px;
+  padding: 0 var(--sm-sp-3);
+  border-radius: var(--sm-r-md);
   border: 1px solid var(--sm-border-color);
-  background: #fff;
-  color: #64748b;
-  font-size: 12px;
+  background: var(--sm-surface);
+  color: var(--sm-ink-secondary);
+  font-size: var(--sm-text-xs);
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color var(--sm-motion-fast), color var(--sm-motion-fast), border-color var(--sm-motion-fast);
   white-space: nowrap;
 
   &:hover {
-    border-color: #94a3b8;
-    color: #1e293b;
+    border-color: var(--sm-border-strong);
+    color: var(--sm-ink);
   }
 
   &.active {
@@ -91,7 +91,7 @@
   }
 
   &:not(.resource-chip).active {
-    background: #1e293b;
+    background: var(--sm-ink);
   }
 }
 
@@ -119,10 +119,10 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #94a3b8;
+  color: var(--sm-ink-tertiary);
   text-align: center;
 
-  &.weekend { color: #cbd5e1; }
+  &.weekend { color: var(--sm-ink-tertiary); }
 }
 
 .cal-body {
@@ -133,31 +133,31 @@
 .cal-day {
   min-height: 128px;
   padding: 7px;
-  border-right: 1px solid var(--sm-border-color);
+  border-inline-end: 1px solid var(--sm-border-color);
   border-bottom: 1px solid var(--sm-border-color);
-  transition: background 0.12s ease;
+  transition: background-color var(--sm-motion-fast);
 
-  &:nth-child(7n) { border-right: none; }
+  &:nth-child(7n) { border-inline-end: none; }
   &:nth-last-child(-n+7) { border-bottom: none; }
 
-  &.other-month { background: #fafafa; }
-  &.weekend:not(.today) { background: #fafbfc; }
+  &.other-month { background: var(--sm-surface-subtle); }
+  &.weekend:not(.today) { background: color-mix(in srgb, var(--sm-surface-subtle) 70%, var(--sm-surface)); }
   &.today {
-    background: #eff6ff;
+    background: var(--sm-primary-soft);
     .day-num-inner {
       background: var(--mat-sys-primary);
       color: #fff;
     }
   }
   &.has-reservations:not(.today) {
-    background-color: #f0fdfa;
-    box-shadow: inset 0 3px #0f766e;
+    background-color: color-mix(in srgb, var(--sm-confirmed-bg) 65%, var(--sm-surface));
+    box-shadow: inset 0 3px var(--sm-confirmed);
   }
   &.has-pending:not(.today) {
     background-color: #fffbeb;
     box-shadow: inset 0 3px var(--sm-pending);
   }
-  &:hover:not(.today) { background: #f8fafc; }
+  &:hover:not(.today) { background: var(--sm-surface-muted); }
 
   &.blocked-day {
     background-image: repeating-linear-gradient(
@@ -187,10 +187,10 @@
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
-  color: #374151;
+  color: var(--sm-ink-secondary);
   padding: 0 4px;
 
-  .other-month & { color: #d1d5db; }
+  .other-month & { color: var(--sm-ink-tertiary); }
 }
 
 .day-booking-count {
@@ -201,8 +201,8 @@
   min-width: 28px;
   height: 22px;
   padding: 0 6px;
-  border-radius: 999px;
-  background: #0f766e;
+  border-radius: var(--sm-r-sm);
+  background: var(--sm-confirmed);
   color: #fff;
   font-size: 11px;
   font-weight: 700;
@@ -233,13 +233,12 @@
   padding: 3px 6px;
   border-radius: 5px;
   border-inline-start: 3px solid var(--event-color);
-  background: #f1f5f9;
-  background: color-mix(in srgb, var(--event-color) 14%, white);
-  color: #1f2937;
+  background: color-mix(in srgb, var(--event-color) 13%, var(--sm-surface));
+  color: var(--sm-ink);
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.12s ease;
+  transition: opacity var(--sm-motion-fast), transform var(--sm-motion-fast);
   overflow: hidden;
 
   &:hover { opacity: 0.8; }
@@ -255,8 +254,8 @@
   }
 
   &.completed {
-    background: #ecfdf5;
-    color: #065f46;
+    background: var(--sm-confirmed-bg);
+    color: var(--sm-confirmed-fg);
   }
 }
 
@@ -264,7 +263,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  box-shadow: 0 0 0 2px #fff;
+  box-shadow: 0 0 0 2px var(--sm-surface);
   flex-shrink: 0;
 }
 
@@ -279,7 +278,7 @@
   margin-inline-start: auto;
   padding: 2px 5px;
   border-radius: 999px;
-  background: #fff;
+  background: var(--sm-surface);
   color: var(--sm-pending-fg);
   font-size: 9px;
   font-weight: 700;
@@ -288,7 +287,7 @@
 
 .event-more {
   padding: 2px 6px;
-  color: #0f766e;
+  color: var(--sm-primary);
   font-size: 10px;
   font-weight: 700;
 }
@@ -306,8 +305,8 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 12px;
-  color: #64748b;
+  font-size: var(--sm-text-xs);
+  color: var(--sm-ink-secondary);
 }
 
 .legend-dot {
@@ -339,7 +338,7 @@
   display: flex;
   position: sticky;
   top: 0;
-  background: #fff;
+  background: var(--sm-surface);
   z-index: var(--sm-z-sticky);
   border-bottom: 1px solid var(--sm-border-color);
 }
@@ -349,15 +348,15 @@
   min-width: var(--tl-resource-col-width);
   flex-shrink: 0;
   padding: 8px 12px;
-  border-right: 1px solid var(--sm-border-color);
+  border-inline-end: 1px solid var(--sm-border-color);
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #94a3b8;
+  color: var(--sm-ink-tertiary);
   position: sticky;
-  left: 0;
-  background: #fff;
+  inset-inline-start: 0;
+  background: var(--sm-surface);
   z-index: 2;
 }
 
@@ -370,13 +369,13 @@
   min-width: var(--tl-col-width);
   padding: 6px 4px;
   text-align: center;
-  border-right: 1px solid #f1f5f9;
+  border-inline-end: 1px solid var(--sm-border);
 
-  &.weekend { background: #fafbfc; }
+  &.weekend { background: var(--sm-surface-subtle); }
   &.today .tl-day-num {
     background: var(--mat-sys-primary);
     color: #fff;
-    border-radius: 50%;
+    border-radius: var(--sm-r-full);
   }
 }
 
@@ -389,24 +388,24 @@
   margin: 0 auto 1px;
   font-size: 12px;
   font-weight: 600;
-  color: #374151;
+  color: var(--sm-ink-secondary);
   border-radius: 50%;
 }
 
 .tl-day-dow {
   display: block;
   font-size: 9px;
-  color: #94a3b8;
+  color: var(--sm-ink-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .timeline-row {
   display: flex;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--sm-border);
 
   &:hover {
-    .tl-resource-col { background: #f8fafc; }
+    .tl-resource-col { background: var(--sm-surface-subtle); }
   }
 }
 
@@ -427,7 +426,7 @@
 .tl-resource-name {
   font-size: 13px;
   font-weight: 500;
-  color: #374151;
+  color: var(--sm-ink);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -441,25 +440,25 @@
 }
 
 .tl-day-cell {
-  border-right: 1px solid #f1f5f9;
+  border-inline-end: 1px solid var(--sm-border);
   height: var(--tl-row-height);
 
-  &.weekend { background: #fafbfc; }
-  &.today   { background: #eff6ff; }
+  &.weekend { background: var(--sm-surface-subtle); }
+  &.today   { background: var(--sm-primary-soft); }
 }
 
 .tl-event {
   position: relative;
   height: 28px;
   margin: 12px 2px;
-  border-radius: 5px;
+  border-radius: var(--sm-r-sm);
   display: flex;
   align-items: center;
   padding: 0 8px;
   overflow: hidden;
   cursor: pointer;
   opacity: 0.9;
-  transition: opacity 0.12s ease, transform 0.12s ease;
+  transition: opacity var(--sm-motion-fast), transform var(--sm-motion-fast);
   z-index: 1;
 
   &:hover {
@@ -504,7 +503,7 @@
   }
 
   .cal-month-label {
-    font-size: 16px;
+    font-size: var(--sm-text-md);
     min-width: 150px;
   }
 }
@@ -536,7 +535,7 @@
   position: sticky;
   top: 0;
   z-index: var(--sm-z-sticky);
-  background: #fff;
+  background: var(--sm-surface);
   border-bottom: 2px solid var(--sm-border-color);
 }
 
@@ -546,10 +545,10 @@
   flex-shrink: 0;
 
   &--head {
-    border-right: 1px solid var(--sm-border-color);
+    border-inline-end: 1px solid var(--sm-border-color);
     position: sticky;
-    left: 0;
-    background: #fff;
+    inset-inline-start: 0;
+    background: var(--sm-surface);
     z-index: 3;
   }
 }
@@ -559,10 +558,10 @@
   min-width: var(--wk-day-width);
   padding: 8px 4px;
   text-align: center;
-  border-right: 1px solid var(--sm-border-color);
+  border-inline-end: 1px solid var(--sm-border-color);
 
-  &.weekend { background: #fafbfc; }
-  &.today   { background: #eff6ff; }
+  &.weekend { background: var(--sm-surface-subtle); }
+  &.today   { background: var(--sm-primary-soft); }
 }
 
 .wk-dow {
@@ -571,7 +570,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #94a3b8;
+  color: var(--sm-ink-tertiary);
 }
 
 .wk-date {
@@ -583,7 +582,7 @@
   border-radius: 50%;
   font-size: 14px;
   font-weight: 600;
-  color: #374151;
+  color: var(--sm-ink-secondary);
   margin-top: 2px;
 
   &.today-badge {
@@ -602,13 +601,13 @@
   align-items: center;
   gap: 8px;
   padding: 6px 12px;
-  background: #f8fafc;
+  background: var(--sm-surface-subtle);
   border-bottom: 1px solid var(--sm-border-color);
   font-size: 12px;
   font-weight: 600;
-  color: #374151;
+  color: var(--sm-ink-secondary);
   position: sticky;
-  left: 0;
+  inset-inline-start: 0;
 }
 
 /* ── Hour grid ───────────────────────────────────────────────────────── */
@@ -620,10 +619,10 @@
 /* Time label gutter — sticky left */
 .wk-gutter:not(.wk-gutter--head) {
   position: sticky;
-  left: 0;
-  background: #fff;
+  inset-inline-start: 0;
+  background: var(--sm-surface);
   z-index: 2;
-  border-right: 1px solid var(--sm-border-color);
+  border-inline-end: 1px solid var(--sm-border-color);
 }
 
 .wk-hour-label {
@@ -631,14 +630,15 @@
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
-  padding: 2px 8px 0 0;
-  font-size: 10px;
-  color: #94a3b8;
+  padding-block: 2px 0;
+  padding-inline-end: 8px;
+  font-size: var(--sm-text-xs);
+  color: var(--sm-ink-tertiary);
   white-space: nowrap;
   border-bottom: 1px solid #f1f5f9;
 
   &.current-hour { color: var(--mat-sys-primary); font-weight: 600; }
-  &.off-hour     { color: #e2e8f0; background: #fafafa; }
+  &.off-hour     { color: var(--sm-ink-tertiary); background: var(--sm-surface-subtle); }
 }
 
 /* Day column */
@@ -646,25 +646,25 @@
   width: var(--wk-day-width);
   min-width: var(--wk-day-width);
   position: relative;
-  border-right: 1px solid var(--sm-border-color);
+  border-inline-end: 1px solid var(--sm-border-color);
 
-  &.weekend { background: #fafbfc; }
-  &.today   { background: #eff6ff33; }
+  &.weekend { background: var(--sm-surface-subtle); }
+  &.today   { background: color-mix(in srgb, var(--sm-primary-soft) 45%, transparent); }
 }
 
 .wk-hour-cell {
   height: var(--wk-hour-height);
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--sm-border);
   cursor: pointer;
   transition: background 0.12s ease;
 
   &:hover {
-    background: rgba(37, 99, 235, 0.08);
+    background: color-mix(in srgb, var(--sm-primary) 10%, var(--sm-surface));
   }
 
   &.current-hour { border-bottom-color: var(--mat-sys-primary); opacity: 0.4; }
   &.blocked-hour-cell {
-    background: linear-gradient(0deg, rgba(248, 113, 113, 0.14), rgba(248, 113, 113, 0.14));
+    background: var(--sm-cancelled-bg);
     cursor: not-allowed;
   }
 }
@@ -672,9 +672,8 @@
 /* Booking block — absolutely positioned within its day column */
 .wk-event-block {
   position: absolute;
-  left: 3px;
-  right: 3px;
-  border-radius: 6px;
+  inset-inline: 3px;
+  border-radius: var(--sm-r-sm);
   padding: 4px 7px;
   overflow: hidden;
   cursor: pointer;

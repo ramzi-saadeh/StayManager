@@ -9,7 +9,7 @@
     "test": "ng test",
     "test:rules": "firebase emulators:exec --only firestore,storage --project demo-staymanager-rules \"vitest run --config vitest.rules.config.ts\"",
     "build:functions": "npm --prefix functions run build",
-    "emulators": "npm run build:functions && firebase emulators:start --only auth,firestore,functions,storage --project demo-staymanager-local",
+    "emulators": "npm run build:functions && firebase emulators:start --only auth,firestore,functions --project demo-staymanager-local",
     "test:functions": "npm run build:functions && firebase emulators:exec --only auth,firestore,functions --project demo-staymanager-local \"npm --prefix functions test\""
   },
   "prettier": {

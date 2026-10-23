@@ -12,7 +12,7 @@ html {
       primary: mat.$azure-palette,
       tertiary: mat.$cyan-palette,
     ),
-    typography: Inter,
+    typography: Manrope,
     density: 0,
   ));
 }
@@ -21,42 +21,13 @@ body {
   color-scheme: var(--sm-color-scheme, light);
   background-color: var(--sm-page-bg, #f1f5f9);
   color: var(--sm-text-primary, var(--mat-sys-on-surface));
-  font-family: 'Inter', 'Roboto', system-ui, sans-serif;
+  font-family: var(--sm-font-sans, 'Manrope', sans-serif);
   margin: 0;
 }
 
-// ── Angular Material component overrides ──────────────────────────────────────
-
-// Rounder buttons
-.mdc-button,
-.mat-mdc-button {
-  border-radius: 8px !important;
-}
-
-.mat-mdc-raised-button,
-.mat-mdc-outlined-button,
-.mat-mdc-unelevated-button {
-  border-radius: 8px !important;
-}
-
-// Card radius
-.mat-mdc-card {
-  border-radius: 12px !important;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.04) !important;
-}
-
-// Chip radius
-.mat-mdc-chip {
-  border-radius: 6px !important;
-}
-
-// Remove sidenav container background so our custom bg shows
-.mat-drawer-container {
-  background: transparent !important;
-}
-
+.mat-drawer-container { background: transparent; }
 .mat-drawer {
-  background-color: var(--sm-sidebar-bg, #0f172a) !important;
-  border-right: none !important;
+  background-color: var(--sm-sidebar-bg);
+  border-inline-end: 0;
 }
 
